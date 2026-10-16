@@ -1,0 +1,60 @@
+test_attention_identity_and_axes (test_reference.ReferenceTests.test_attention_identity_and_axes) ... FAIL
+test_classifier_explicit_fma_cancellation (test_reference.ReferenceTests.test_classifier_explicit_fma_cancellation) ... ok
+test_classifier_hand_computed (test_reference.ReferenceTests.test_classifier_hand_computed) ... ok
+test_dimensions_rejected_before_access (test_reference.ReferenceTests.test_dimensions_rejected_before_access) ... ok
+test_exp_domain_rejected (test_reference.ReferenceTests.test_exp_domain_rejected) ... ok
+test_exp_known_values_and_boundaries (test_reference.ReferenceTests.test_exp_known_values_and_boundaries) ... FAIL
+test_gelu_independent_erf (test_reference.ReferenceTests.test_gelu_independent_erf) ... FAIL
+test_norm_centered_variance_and_second_residual (test_reference.ReferenceTests.test_norm_centered_variance_and_second_residual) ... ok
+test_packed_words (test_reference.ReferenceTests.test_packed_words) ... ok
+test_zero_layer_complete_topology (test_reference.ReferenceTests.test_zero_layer_complete_topology) ... ok
+
+======================================================================
+FAIL: test_attention_identity_and_axes (test_reference.ReferenceTests.test_attention_identity_and_axes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/11035/Desktop/ic/kwt—1/tests/encoder_reference/test_reference.py", line 102, in test_attention_identity_and_axes
+    np.testing.assert_allclose(stages[4],prob,rtol=3e-7,atol=3e-8)
+  File "/mnt/c/Users/11035/Desktop/ic/kwt—1/.venv-dv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 1768, in assert_allclose
+    assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+  File "/mnt/c/Users/11035/Desktop/ic/kwt—1/.venv-dv/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 983, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Not equal to tolerance rtol=3e-07, atol=3e-08
+
+Mismatched elements: 9 / 9 (100%)
+First 5 mismatches are at indices:
+ [0, 0]: 0.5628566145896912 (ACTUAL), 0.5742128517698835 (DESIRED)
+ [0, 1]: 0.2347870022058487 (ACTUAL), 0.23936752911414957 (DESIRED)
+ [0, 2]: 0.20235633850097656 (ACTUAL), 0.186419619115967 (DESIRED)
+ [1, 0]: 0.267452597618103 (ACTUAL), 0.2674499862175602 (DESIRED)
+ [1, 1]: 0.38913607597351074 (ACTUAL), 0.3891374337863064 (DESIRED)
+Max absolute difference among violations: 0.01593672
+Max relative difference among violations: 0.08548842
+ ACTUAL: array([[0.562857, 0.234787, 0.202356],
+       [0.267453, 0.389136, 0.343411],
+       [0.209878, 0.345934, 0.444188]], dtype=float32)
+ DESIRED: array([[0.574213, 0.239368, 0.18642 ],
+       [0.26745 , 0.389137, 0.343413],
+       [0.209832, 0.345954, 0.444214]])
+
+======================================================================
+FAIL: test_exp_known_values_and_boundaries (test_reference.ReferenceTests.test_exp_known_values_and_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/11035/Desktop/ic/kwt—1/tests/encoder_reference/test_reference.py", line 47, in test_exp_known_values_and_boundaries
+    self.assertLessEqual(abs(self.lib.kwt_exp_neg(x)-math.exp(x)), 3e-7*math.exp(x))
+AssertionError: 0.000537851661885913 not less than or equal to 1.103638323514327e-07
+
+======================================================================
+FAIL: test_gelu_independent_erf (test_reference.ReferenceTests.test_gelu_independent_erf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/11035/Desktop/ic/kwt—1/tests/encoder_reference/test_reference.py", line 54, in test_gelu_independent_erf
+    self.assertLess(abs(self.lib.kwt_gelu(x)-exact), 0.00048)
+AssertionError: nan not less than 0.00048
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.843s
+
+FAILED (failures=3)
