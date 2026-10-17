@@ -1,0 +1,400 @@
+{
+  "status": "PASS_SCOPED_W2_SOC_REVIEW",
+  "created_utc": "2026-10-17T08:10:23.341943+00:00",
+  "reviewer": "/root/rtl_independent",
+  "review_target": "W2 thin SoC adapter, derived official C driver, CPU TB and runner",
+  "independence": {
+    "non_author_of_reviewed_SoC_C_TB_runner": true,
+    "W2_core_author": true,
+    "scope_note": "W2 core was authored in this lane. This review does not independently accept that core; it reviews the separately authored SoC/C/TB/runner and interface boundary."
+  },
+  "source_sha256": {
+    "soc/revd_opt/revd_opt_icb_w2.sv": "080cff5057c8aa9ef61447279b3a6812d939df40f86262c272866a84e97a7997",
+    "sw/revd_opt/revd_opt_driver_w2.c": "304df45dfe325051db23794c5d3055f0551f141796327b7daa80bfc81050b01c",
+    "sw/revd_opt/revd_opt_driver_w2.h": "499caccc87ecf5e56fbf01f4b84bf6e692ebfc006da657c3f52f0ea796452f03",
+    "sw/revd_opt/main_w2.c": "7e863dca6602e1826e9c83a63699a114c78f150abb800778cc03f21f3db5f292",
+    "dv/revd_opt/soc_cpu_tb_w2.sv": "81c517b807fb8861b719327006329656f97f46d876026b39a55b97d4bd91b5ed",
+    "dv/revd_opt/soc_completion_tb_w2.sv": "7095fe45e09ef0dc2f5a18b3b5fdb078da8f5261f2d89061a68299ab33d7d4bf",
+    "dv/revd_opt/soc_bus_contract_tb_w2.sv": "634a8f31bdca80710208348a2f541932aad8a5c10cd4c9c25936580b7abb1124",
+    "dv/revd_opt/soc_w2_zero_return.c": "50bc812e5085adbae7e94129541296c5959f9f4b985efaf394e7dc6e686db926",
+    "scripts/revd_offline_soc_w2_run.py": "3aa942ad0ee1d03802b5d7d2c9c3bf78663051c647e003f06cc97288afcdb326",
+    "scripts/revd_offline_soc_w2_compare.py": "47d4fa70d80a334f242ee8d92edc9895940ba5388b724b71771a481e52762f5a",
+    "scripts/revd_offline_soc_w2_controls.py": "5451b961ceb10708b13e07c4ede5c73ed1ecf98b32aaab77611b5181616366a3",
+    "scripts/revd_offline_soc_w2_edges.py": "4250b37d124ce24060363b84ceb53f547acacc36357a4f08296fd9b8391c09bf",
+    "scripts/revd_offline_soc_edges.py": "f72771e6eb7304a5061b1ab0e3620e50d086c14a2d61501e849eb2b98ea0f315",
+    "numeric/__init__.py": "2824f70e652c8583299f596070809760f1e62d4652fcdcfc968a950aa1ca25f7",
+    "numeric/fixedpoint.py": "96ef466523177154a01cb126f3c40926c03752c0cf536feb3ea4491398031e87"
+  },
+  "checked_source_properties": [
+    {
+      "check": "adapter_only_namespace_and_core_selection",
+      "result": "PASS",
+      "file": "soc/revd_opt/revd_opt_icb_w2.sv",
+      "line": 35
+    },
+    {
+      "check": "C_only_namespace_and_one_START_move_after_tile0_COMMIT",
+      "result": "PASS",
+      "file": "sw/revd_opt/revd_opt_driver_w2.c",
+      "line": 66,
+      "method": "Independent reverse normalization matched the frozen normal driver byte for byte; main/header matched after namespace normalization."
+    },
+    {
+      "check": "capacity_polling_drains_one_Y_before_checking_event_capture_capacity",
+      "result": "PASS",
+      "file": "sw/revd_opt/revd_opt_driver_w2.c",
+      "line": 30,
+      "note": "drain uses if(status&2), not a loop consuming all Y; no blocking MMIO wait for a free W slot."
+    },
+    {
+      "check": "global_index_addressing_unique_seen_task_last_flags_and_fence_before_POP",
+      "result": "PASS",
+      "file": "sw/revd_opt/revd_opt_driver_w2.c",
+      "line": 14
+    },
+    {
+      "check": "MMIO_capture_core_accept_and_retire_are_distinct",
+      "result": "PASS",
+      "file": "dv/revd_opt/soc_cpu_tb_w2.sv",
+      "line": 78,
+      "small_actual": {
+        "captures": 4556,
+        "core_accepts": 4556,
+        "retires": 4556,
+        "deferred_open_cycles": 0,
+        "pops_with_pending_input": 0
+      }
+    },
+    {
+      "check": "Y_payload_stays_owned_until_POP_and_fault_does_not_create_success",
+      "result": "PASS_SMALL_AND_BFM",
+      "files": [
+        "soc/revd_opt/revd_opt_icb_w2.sv",
+        "dv/revd_opt/soc_completion_tb_w2.sv"
+      ]
+    },
+    {
+      "check": "system_done_waits_terminal_shared_response_and_all_actual_Y_flag_responses",
+      "result": "PASS_SMALL_AND_FULL_REAL_CPU",
+      "file": "dv/revd_opt/soc_cpu_tb_w2.sv",
+      "line": 153
+    },
+    {
+      "check": "real_E203_executes_compiled_C_and_expected_arrays_are_TB_only",
+      "result": "PASS_SMALL_AND_FULL_REAL_CPU",
+      "file": "dv/revd_opt/soc_cpu_tb_w2.sv",
+      "line": 17,
+      "note": "Only firmware/poison are initialized into CPU private memories; shared fixture contains inputs and poisoned destinations. No BFM drives the CPU integration bus; BFM boundary tests are separately labeled."
+    },
+    {
+      "check": "full_size_each_task_requires_deferred_OPEN_and_POP_while_adapter_input_pending",
+      "result": "PASS_FULL_REAL_CPU",
+      "file": "dv/revd_opt/soc_cpu_tb_w2.sv",
+      "line": 121,
+      "actual_per_task_hits": [
+        {
+          "task": 0,
+          "deferred_open_cycles": 968509,
+          "pops_with_pending_input": 8271
+        },
+        {
+          "task": 1,
+          "deferred_open_cycles": 968509,
+          "pops_with_pending_input": 8271
+        }
+      ]
+    },
+    {
+      "check": "source_input_artifact_command_receipt_closure",
+      "result": "PASS_RED_SMALL_FULL_AND_DIRECTED",
+      "small_sources": 158,
+      "small_commands": 21,
+      "small_artifacts": 84,
+      "full_sources": 154,
+      "full_commands": 6,
+      "full_artifacts": 26,
+      "directed_sources": 162
+    },
+    {
+      "check": "directed_nonzero_overflow_and_saturated_flags_through_real_CPU_shared_writes",
+      "result": "PASS",
+      "arithmetic_categories": {
+        "neither": 80,
+        "overflow_only": 50,
+        "saturated_only": 46,
+        "both": 16
+      },
+      "last_flags": [
+        5,
+        7
+      ],
+      "note": "Independently recomputed frozen numeric oracle from the saved signed16/48 inputs; checked 192 actual indexed Y/flags. Reuses unchanged verified small executable/firmware and is explicitly not a fresh compile."
+    }
+  ],
+  "findings": [
+    {
+      "id": "SOCW2-R1-001",
+      "severity": "P1",
+      "kind": "negative-control acceptance",
+      "status": "FIXED_SOFTWARE_RED_GREEN_VERIFIED",
+      "location": "scripts/revd_offline_soc_run.py:49 (frozen dependency), corrected only by scripts/revd_offline_soc_w2_run.py:21",
+      "finding": "Inherited negative branch accepted exit124 if the expected fatal text was present. Independent read-only mock reproduced false acceptance without starting a process or creating files.",
+      "fix": "New W2 Run rejects None/124/-999 and accepts negative controls only for the expected Verilator fatal -6 with exact reason, preserving the frozen normal runner.",
+      "evidence": [
+        "reports/revd_offline/soc/w2-software-controls-20261017T080220Z_46853340/result.json",
+        "reports/revd_offline/soc/w2-software-controls-20261017T080239Z_2a5c4de2/result.json"
+      ],
+      "independent_green_mock": {
+        "124": "REJECT",
+        "-999": "REJECT",
+        "None": "REJECT",
+        "1": "REJECT",
+        "0": "REJECT",
+        "-6_with_matching_fatal": "ACCEPT"
+      },
+      "RTL_mutation_credit": 0
+    },
+    {
+      "id": "SOCW2-R1-002",
+      "severity": "P1",
+      "kind": "CPU negative coverage",
+      "status": "FIXED_REAL_CPU_SMALL_VERIFIED",
+      "finding": "The original -77 return control did not exercise a zero-code fake successful CPU end.",
+      "fix": "A new W2-only return0 firmware is executed by the same real E203 and rejected by CPU coverage incomplete after success-code validation.",
+      "evidence_command": {
+        "argv": [
+          "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-small-20261017T080450Z/obj/Vsoc_cpu_tb_w2",
+          "+FIRMWARE=zero-return.hex",
+          "+FIRMWARE_BYTES=204"
+        ],
+        "cwd": "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-small-20261017T080450Z/negative-zero-work",
+        "started_utc": "2026-10-17T08:06:10.562230+00:00",
+        "timeout_seconds": 120.0,
+        "run_identity": "20261017-060807-650",
+        "parent_pid": 2203,
+        "exit_code": -6,
+        "pid": 2505,
+        "finished_utc": "2026-10-17T08:06:11.891119+00:00",
+        "seconds": 1.3190047990001403,
+        "log": "reports/revd_offline/soc/soc-w2-small-20261017T080450Z/negative-zero-work.log",
+        "log_sha256": "c4d94967c34dfc02445defe2b10676f783b28b18880db60c78b15c1e3fdfc9db"
+      },
+      "RTL_mutation_credit": 0
+    },
+    {
+      "id": "SOCW2-R1-003",
+      "severity": "P2",
+      "kind": "full-slot/fairness coverage",
+      "status": "FIXED_FULL_REAL_CPU_VERIFIED",
+      "finding": "M3/N32 small has only two tiles and observed zero deferred OPEN/pending-input POP counts. It cannot establish progress when the third OPEN is queued while both slots are occupied.",
+      "fix": "Full M99/N256 TB and runner now reject either per-task hit count being zero; actual full execution is pending.",
+      "file": "dv/revd_opt/soc_cpu_tb_w2.sv:121",
+      "actual_per_task_hits": [
+        {
+          "task": 0,
+          "deferred_open_cycles": 968509,
+          "pops_with_pending_input": 8271
+        },
+        {
+          "task": 1,
+          "deferred_open_cycles": 968509,
+          "pops_with_pending_input": 8271
+        }
+      ]
+    },
+    {
+      "id": "SOCW2-R1-004",
+      "severity": "P2",
+      "kind": "timing scope clarity",
+      "status": "DOCUMENTED",
+      "finding": "The phase marker follows global M/N/task-count header reads. It is not CPU boot or all-front-end setup timing.",
+      "fix": "Runner explicitly defines the phase-marker-to-final-shared-Y/flag-response window, including descriptor/X/W/bias/CPU/bus waits and excluding boot/global header reads.",
+      "definition": "Task phase marker immediately before driver invocation through final actual shared Y/flag write response. Includes descriptor and X/W/bias loading, CPU/bus waits, compute and draining; excludes CPU boot and the pre-phase global M/N/task-count header reads."
+    }
+  ],
+  "evidence": {
+    "red": {
+      "path": "reports/revd_offline/soc/soc-w2-red-20261017T080250Z/result.json",
+      "sha256": "14fa225453e627606b05a914cb2e880f58e5cbcfc23b6e5ab8a45d32e18a18aa",
+      "status": "RED_CONFIRMED",
+      "actual_reject_pid": 2125,
+      "actual_exit": -6
+    },
+    "small": {
+      "path": "reports/revd_offline/soc/soc-w2-small-20261017T080450Z/result.json",
+      "sha256": "9a9e7fdb98d17323478bdf065f27a8086b44ca5b30e7b341cd50c8b2ef4bd607",
+      "status": "PASS",
+      "metrics": {
+        "cycles": 567592,
+        "instructions": 403938,
+        "cpu_mcycle": 563223,
+        "mmio_reads": 5450,
+        "mmio_writes": 18440,
+        "outputs": 192,
+        "flags": 192,
+        "events": 4556,
+        "starts": 2,
+        "pops": 192,
+        "tasks": 2,
+        "response_outputs": 192,
+        "response_flags": 192
+      },
+      "lifecycle": {
+        "captures": 4556,
+        "core_accepts": 4556,
+        "retires": 4556,
+        "deferred_open_cycles": 0,
+        "pops_with_pending_input": 0
+      },
+      "task_windows": [
+        {
+          "task": 0,
+          "cold_start": 8420,
+          "last_write_response": 287909,
+          "cold_cycles": 279490,
+          "core_cycles": 133451,
+          "frontend_cycles": 279263,
+          "effective_macs": 6144,
+          "issue_count": 512,
+          "retire_count": 512
+        },
+        {
+          "task": 1,
+          "cold_start": 287995,
+          "last_write_response": 567482,
+          "cold_cycles": 279488,
+          "core_cycles": 133451,
+          "frontend_cycles": 279263,
+          "effective_macs": 6144,
+          "issue_count": 512,
+          "retire_count": 512
+        }
+      ]
+    },
+    "full": {
+      "path": "reports/revd_offline/soc/soc-w2-full-20261017T080700Z/result.json",
+      "sha256": "d9b861dbdc5f905afadc2c5e3cb687ca1a18269db19f8ef9d66fca0cd5604cff",
+      "status": "PASS",
+      "metrics": {
+        "cycles": 10535510,
+        "instructions": 7138750,
+        "cpu_mcycle": 10531141,
+        "mmio_reads": 275006,
+        "mmio_writes": 234904,
+        "outputs": 50688,
+        "flags": 50688,
+        "events": 46020,
+        "starts": 2,
+        "pops": 50688,
+        "tasks": 2,
+        "response_outputs": 50688,
+        "response_flags": 50688
+      },
+      "lifecycle": {
+        "captures": 46020,
+        "core_accepts": 46020,
+        "retires": 46020,
+        "deferred_open_cycles": 1937018,
+        "pops_with_pending_input": 16542
+      },
+      "task_windows": [
+        {
+          "task": 0,
+          "cold_start": 8420,
+          "last_write_response": 5271868,
+          "cold_cycles": 5263449,
+          "core_cycles": 4400761,
+          "frontend_cycles": 5259277,
+          "effective_macs": 1622016,
+          "issue_count": 102400,
+          "retire_count": 102400
+        },
+        {
+          "task": 1,
+          "cold_start": 5271954,
+          "last_write_response": 10535400,
+          "cold_cycles": 5263447,
+          "core_cycles": 4400761,
+          "frontend_cycles": 5259277,
+          "effective_macs": 1622016,
+          "issue_count": 102400,
+          "retire_count": 102400
+        }
+      ],
+      "per_task_fairness_hits": [
+        {
+          "task": 0,
+          "deferred_open_cycles": 968509,
+          "pops_with_pending_input": 8271
+        },
+        {
+          "task": 1,
+          "deferred_open_cycles": 968509,
+          "pops_with_pending_input": 8271
+        }
+      ],
+      "actual_pid": 2836,
+      "actual_exit": 0
+    },
+    "directed_flags": {
+      "path": "reports/revd_offline/soc/soc-w2-edges-20261017T081514Z_ed425203/result.json",
+      "sha256": "9190e2198ba781edda6fd24359177a183e9a37b2ee6a954c1bf348b6e58a0035",
+      "status": "PASS",
+      "fresh_compile": false,
+      "actual_pid": 2934,
+      "actual_exit": 0,
+      "negative_wrong_flags_actual_pid": 3002,
+      "negative_wrong_flags_actual_exit": -6,
+      "arithmetic_flag_categories": [
+        80,
+        50,
+        46,
+        16
+      ],
+      "last_flags": [
+        5,
+        7
+      ]
+    },
+    "matched_CPU_comparison": {
+      "path": "reports/revd_offline/soc/w2-comparison-20261017T081511Z_d6770d5e/result.json",
+      "sha256": "80a9d652080e6b96206148954cb44e91fa8010122c34785e9c5e1542efc519a3",
+      "matched_real_data_and_indexed_Y_flags": true,
+      "tasks": [
+        {
+          "case_id": "eight_750e3e75_nohash_0/layer_01",
+          "full_w_cold_cycles": 5708000,
+          "w2_cold_cycles": 5263449,
+          "cycles_saved": 444551,
+          "cycle_reduction": 0.07788209530483536,
+          "public_cpu_speedup": 1.084460018516376,
+          "full_w_core_window_with_cpu_backpressure": 2994172,
+          "w2_core_window_with_param_supply_and_cpu_backpressure": 4400761
+        },
+        {
+          "case_id": "eight_750e3e75_nohash_0/layer_02",
+          "full_w_cold_cycles": 5707998,
+          "w2_cold_cycles": 5263447,
+          "cycles_saved": 444551,
+          "cycle_reduction": 0.07788212259359584,
+          "public_cpu_speedup": 1.08446005060942,
+          "full_w_core_window_with_cpu_backpressure": 2994172,
+          "w2_core_window_with_param_supply_and_cpu_backpressure": 4400761
+        }
+      ],
+      "interpretation": "The matched two-task phase-marker window improved by about7.7882%; not a contest score, full encoder comparison, physical area or energy result."
+    }
+  },
+  "limitations": [
+    "Runtime scope is W2 PM4/PN4/L1, two complete99x64x256 cold FFN1 tasks with real E203, two small tasks, directed flags and explicit negative/boundary controls.",
+    "W2 CPU12 layers, CPU PM2/L2, full encoder and mid-program CPU reset are NOT_RUN by this scoped review; core-only and D3 evidence were not substituted.",
+    "Cold comparison excludes CPU boot/global M/N/task-count header reads as explicitly defined; it includes descriptor/X/W/bias loading and final actual shared Y/flag response.",
+    "Official600, specified-library150MHz/mm2/energy, official contest acceptance and overall profile selection remain outside this review.",
+    "Reviewer authored the W2 core earlier; independent acceptance here is only for the separately authored SoC/C/TB/runner and their boundary to that core."
+  ],
+  "open_normal_RTL_or_C_functional_defects": 0,
+  "review_scope_complete": true,
+  "parent_accepted": false,
+  "official_contest_acceptance": false,
+  "updated_utc": "2026-10-17T08:19:49.529239+00:00"
+}

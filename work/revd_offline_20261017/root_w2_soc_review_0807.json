@@ -1,0 +1,1127 @@
+{
+  "schema_version": 1,
+  "reviewer": "offline_architecture_priority",
+  "review_kind": "Independent read-only new W2 publicCPU/ICB/driver closure review; no re-review/acceptance of W2 arithmetic core",
+  "status": "PROVISIONAL_W2_SOC_SMALL_SUPPORTED_FULL_RUNNING",
+  "provisional": true,
+  "parent_accepted": false,
+  "observed_utc": "2026-10-17T08:10:28.750961+00:00",
+  "confirmed_functional_defects": [],
+  "namespace_equivalence_checks": {
+    "ICB_diff_only_module_and_core_selection": true,
+    "C_diff_only_namespace_and_START_after_tile0": true
+  },
+  "conclusions": [
+    {
+      "id": "W2SOC-START-001",
+      "status": "SOURCE_AND_ACTUAL_RED_SUPPORTED",
+      "observation": "Driver performs BEGIN/X then tile0 OPEN/W/b/COMMIT and immediately START; later OPENs are emitted only after START event in the same ordered stream. Actual red-only run executes unchanged fullW preload-all schedule against W2, obtains core error0x12/CPU-11 and real Verilator-6, with current source hashes. No D3 CPU PASS is reused."
+    },
+    {
+      "id": "W2SOC-LIVENESS-002",
+      "status": "SOURCE_SUPPORTED_FULL_DYNAMIC_PENDING",
+      "observation": "Adapter is byte-equivalent to D3 apart from namespace/core selection: response readiness never depends on core/input slot. Full COMMIT reports immediate error. During every emit poll driver first drains at most one available Y then tests event capacity. When thirdOPEN is core-deferred and followingW waits in adapter, CPU status/Y/POP remain usable and eventually release old slot. Small2tasks does not exercise this full-slot condition; full run explicitly requires deferredOPEN and POP-with-pending-input in each cold task before PASS."
+    },
+    {
+      "id": "W2SOC-BANK-003",
+      "status": "SOURCE_SUPPORTED",
+      "observation": "Driver uses original Wq_packed[n,k] data but streams each tile as k*16+col with w[(tile*16+col)*64+k], matching W2 public layout. Physical slot ID remains private; adapter forwards tile/index/data without address transform. Bias48 payload uses high16/low32 staging as in accepted driver."
+    },
+    {
+      "id": "W2SOC-WRITEBACK-004",
+      "status": "ACTUAL_SMALL_CPU_SUPPORTED_FULL_PENDING",
+      "observation": "Driver checks task/index/duplicate/last, writes destination[y_index] and flags[y_index], fences thenPOPs. W2 TB checks every actual shared Y/flag command and byte mask, unique coverage, matched write responses and complete final SRAM. Small actual CPU emits192Y+192flags across2independent3x32tasks and both commands/actual writes pass."
+    },
+    {
+      "id": "W2SOC-COMPLETION-005",
+      "status": "SOURCE_AND_SHORT_BOUNDARIES_SUPPORTED",
+      "observation": "core done remains sticky accelerator fact. Final system_done is only TB observation on successful CPU BOOT mailbox write response, after every expected Y/flags write response; C handles fault before done. New short bus/completion TBs actually pass current source and cover response backpressure/reset and illegal queued event around finalY capture/accept/retire. No hardware system_done output is newly claimed."
+    },
+    {
+      "id": "W2SOC-NEGATIVE-006",
+      "status": "ACTUAL_SMALL_NEGATIVES_SUPPORTED",
+      "observation": "Current smallCPU run includes nonzero-return, zero-return/no-work and one-bit incorrect verifier-only expected result. Each actual compiled CPU binary simulation fails via intended Verilator fatal(-6), not timeout. These are CPU/software negative controls, not additional W2 coreRTL mutation credit."
+    },
+    {
+      "id": "W2SOC-SAME-EDGE-007",
+      "status": "SOURCE_SUPPORTED_DISTINCT_DYNAMIC_SCOPES",
+      "observation": "No additional state transform exists in adapter, so same-edge core COMMIT/oldY and slot switching use the established W2 stream semantics. Adapter short boundary tests useN16 and do not claim a distinct two-slot CPU COMMIT/oldtileY simultaneous-hit count; fullCPU lifecycle counters prove progress/ownership at their measured scope, while existing core-directed same-edge case remains separate evidence."
+    }
+  ],
+  "pending_acceptance": [
+    "Full W2 CPU run currently RUNNING with completed compilation/firmware commands and an actual live simulator command receipt; no complete full output/cycle/lifecycle report exists yet. Do not label it passed or substitute D3/P1 results.",
+    "Require full --tasks2 actual exit0, current source_unchanged, all50688 indexed outputs and flags, final response counts, lifecycle captures=coreaccepts=retires and deferredOPEN/POP-pending coverage for both tasks.",
+    "Independently parse fullCPU output tuples, log/receipt/binary/firmware/input/source SHA identities and fresh check gate before same-profile comparison or selection.",
+    "Keep original08:30UTC W2 cutoff and09:45 hardstop. If W2 fails or lacks full closure by cutoff, preserve evidence and retain validated fullW selected profile without relabeling W2 success.",
+    "Fresh matched comparison must verify identical inputs/tools/output contract, byte-equivalent adapter except namespace/core and Cdiff only START placement; core window includes different parameter loading and CPU backpressure, so compare cold task windows.",
+    "W2CPU scope is two independent layer tasks1/2, not all12, complete encoder, official600, official platform or physicalPPA. D3 remains selected until root explicitly accepts change."
+  ],
+  "trusted_input_boundary": "Driver assumes valid nonoverlapping aligned shared descriptor offsets and signed48 bias from the frozen fixture, as accepted D3 did; reusable untrusted-descriptor validation is not newly implemented.",
+  "observed_runs": [
+    {
+      "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\result.json",
+      "status": "RUNNING",
+      "report_sha256": "65d5bbf168bdd0cd4903c7bbe30f97d8aa6784f7167a0590e91d7ed06e7e2e49",
+      "profile": {
+        "architecture": "CTX4_W2_Y1_X4",
+        "pm": 4,
+        "pn": 4,
+        "latency": 1,
+        "tasks": 2,
+        "stage": "full",
+        "red_only": false
+      },
+      "source_unchanged": null,
+      "source_current": {},
+      "error": null,
+      "current_commands": [
+        {
+          "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\attributes-revd-w2-driver.log.command.json",
+          "argv": [
+            "riscv64-unknown-elf-readelf",
+            "-h",
+            "-A",
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/revd-w2-driver.elf"
+          ],
+          "started_utc": "2026-10-17T08:08:32.505789+00:00",
+          "timeout_seconds": 240.0,
+          "exit_code": 0,
+          "pid": 2833,
+          "finished_utc": "2026-10-17T08:08:32.519382+00:00",
+          "seconds": 0.008272824000414403
+        },
+        {
+          "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\binary-revd-w2-driver.log.command.json",
+          "argv": [
+            "riscv64-unknown-elf-objcopy",
+            "-O",
+            "binary",
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/revd-w2-driver.elf",
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/revd-w2-driver.bin"
+          ],
+          "started_utc": "2026-10-17T08:08:32.604059+00:00",
+          "timeout_seconds": 240.0,
+          "exit_code": 0,
+          "pid": 2835,
+          "finished_utc": "2026-10-17T08:08:32.626244+00:00",
+          "seconds": 0.01609181899948453
+        },
+        {
+          "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\build-revd-w2-driver.log.command.json",
+          "argv": [
+            "riscv64-unknown-elf-gcc",
+            "-march=rv32imac_zicsr_zifencei",
+            "-mabi=ilp32",
+            "-mcmodel=medany",
+            "-nostdlib",
+            "-nostartfiles",
+            "-ffreestanding",
+            "-fno-builtin",
+            "-Wl,--no-relax",
+            "-Os",
+            "-g",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-I",
+            "/mnt/d/github/kwt/sw/revd_opt",
+            "-T",
+            "/mnt/d/github/kwt/sw/e203/link.ld",
+            "-Wl,-Map,/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/revd-w2-driver.map",
+            "/mnt/d/github/kwt/sw/e203/start.S",
+            "/mnt/d/github/kwt/sw/revd_opt/main_w2.c",
+            "/mnt/d/github/kwt/sw/revd_opt/revd_opt_driver_w2.c",
+            "-o",
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/revd-w2-driver.elf"
+          ],
+          "started_utc": "2026-10-17T08:08:31.913320+00:00",
+          "timeout_seconds": 240.0,
+          "exit_code": 0,
+          "pid": 2824,
+          "finished_utc": "2026-10-17T08:08:32.486806+00:00",
+          "seconds": 0.5658226979994652
+        },
+        {
+          "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\compile-cpu-verilator.log.command.json",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--build-jobs",
+            "4",
+            "-Wno-fatal",
+            "-CFLAGS",
+            "-O3",
+            "-Diverilog",
+            "-DDISABLE_SV_ASSERTION=1",
+            "--top-module",
+            "soc_cpu_tb_w2",
+            "-GM=99",
+            "-GN=256",
+            "-GTASKS=2",
+            "-GPM=4",
+            "-GREAD_LATENCY=1",
+            "--Mdir",
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/obj",
+            "-I/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core",
+            "-I/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips",
+            "-I/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c",
+            "/mnt/d/github/kwt/dv/e203_boot/timescale.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/config.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_biu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_clk_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_clkgate.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_core.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_cpu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_cpu_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_defines.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_dtcm_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_dtcm_ram.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_extend_csr.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_bjp.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_csrctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_dpath.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_lsuagu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_muldiv.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_rglr.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_branchslv.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_commit.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_csr.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_decode.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_disp.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_excp.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_longpwbck.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_nice.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_oitf.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_regfile.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_wbck.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_ifetch.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_ift2icb.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_litebpu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_minidec.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_irq_sync.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_itcm_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_itcm_ram.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_lsu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_lsu_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_reset_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_srams.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_csr.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_module.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_ram.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_rom.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_jtag_dtm.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to16_bus.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to2_bus.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to8_bus.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_1cyc_sram_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_bufs.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_dffs.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_icbs.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_ram.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_xchecker.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_sim_ram.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_sram_icb_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/mems/sirv_mrom.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/mems/sirv_mrom_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/adv_timer_apb_if.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/apb_adv_timer.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/comparator.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/input_stage.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/prescaler.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/timer_cntrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/timer_module.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/up_down_counter.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_gpio/apb_gpio.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/apb_i2c.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_bit_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_byte_ctrl.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_defines.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/apb_spi_master.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_apb_if.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_clkgen.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_controller.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_fifo.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_rx.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_tx.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/apb_uart.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/io_generic_fifo.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_interrupt.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_rx.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_tx.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetReg.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_1.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_129.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_36.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_DeglitchShiftRegister.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_LevelGateway.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_ResetCatchAndSync.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_ResetCatchAndSync_2.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_lclkgen_regs.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_porrst.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_wrapper.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_clint.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_clint_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_expl_axi_slv.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_flash_qspi.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_flash_qspi_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_hclkgen_regs.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_jtaggpioport.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_plic_man.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_plic_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_pmu.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_pmu_core.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_arbiter.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_fifo.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_media.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_physical.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_queue.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_queue_1.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_repeater_6.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_rtc.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_spi_flashmap.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tl_repeater_5.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tlfragmenter_qspi_1.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tlwidthwidget_qspi.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_wdog.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/soc/e203_soc_top.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_clint.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_gfcm.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_hclkgen.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_hclkgen_rstsync.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_main.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_mems.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_nice_core.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_perips.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_plic.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_pll.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_pllclkdiv.v",
+            "/mnt/d/github/kwt/vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_top.v",
+            "/mnt/d/github/kwt/rtl/revd_opt/core_stream_tiled_w2_opt.sv",
+            "/mnt/d/github/kwt/rtl/revd/banked_sp16.sv",
+            "/mnt/d/github/kwt/rtl/revd/quant_epilogue.sv",
+            "/mnt/d/github/kwt/soc/revd_opt/revd_opt_icb_w2.sv",
+            "/mnt/d/github/kwt/soc/e203_common/e203_cpu_shell.sv",
+            "/mnt/d/github/kwt/soc/e203_common/icb_shared_ram.sv",
+            "/mnt/d/github/kwt/dv/revd_opt/soc_cpu_tb_w2.sv"
+          ],
+          "started_utc": "2026-10-17T08:07:36.902914+00:00",
+          "timeout_seconds": 600.0,
+          "exit_code": 0,
+          "pid": 2615,
+          "finished_utc": "2026-10-17T08:08:31.859496+00:00",
+          "seconds": 53.764437871000155
+        },
+        {
+          "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\cpu.log.command.json",
+          "argv": [
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/obj/Vsoc_cpu_tb_w2",
+            "+FIRMWARE=revd-w2-driver.hex",
+            "+FIRMWARE_BYTES=1350"
+          ],
+          "started_utc": "2026-10-17T08:08:32.721626+00:00",
+          "timeout_seconds": 880.0,
+          "exit_code": null,
+          "pid": 2836
+        },
+        {
+          "path": "reports\\revd_offline\\soc\\soc-w2-full-20261017T080700Z\\disassemble-revd-w2-driver.log.command.json",
+          "argv": [
+            "riscv64-unknown-elf-objdump",
+            "-d",
+            "-S",
+            "/mnt/d/github/kwt/reports/revd_offline/soc/soc-w2-full-20261017T080700Z/revd-w2-driver.elf"
+          ],
+          "started_utc": "2026-10-17T08:08:32.542827+00:00",
+          "timeout_seconds": 240.0,
+          "exit_code": 0,
+          "pid": 2834,
+          "finished_utc": "2026-10-17T08:08:32.584066+00:00",
+          "seconds": 0.03290620699954161
+        }
+      ]
+    },
+    {
+      "path": "reports\\revd_offline\\soc\\soc-w2-red-20261017T080250Z\\result.json",
+      "status": "RED_CONFIRMED",
+      "report_sha256": "14fa225453e627606b05a914cb2e880f58e5cbcfc23b6e5ab8a45d32e18a18aa",
+      "profile": {
+        "architecture": "CTX4_W2_Y1_X4",
+        "pm": 4,
+        "pn": 4,
+        "latency": 1,
+        "tasks": 2,
+        "stage": "small",
+        "red_only": true
+      },
+      "source_unchanged": true,
+      "source_current": {
+        "rtl/revd_opt/core_stream_tiled_w2_opt.sv": true,
+        "rtl/revd/banked_sp16.sv": true,
+        "rtl/revd/quant_epilogue.sv": true,
+        "soc/revd_opt/revd_opt_icb_w2.sv": true,
+        "soc/e203_common/e203_cpu_shell.sv": true,
+        "soc/e203_common/icb_shared_ram.sv": true,
+        "dv/revd_opt/soc_cpu_tb_w2.sv": true,
+        "dv/e203_boot/timescale.v": true,
+        "sw/e203/start.S": true,
+        "sw/e203/link.ld": true,
+        "scripts/revd_offline_soc_w2_run.py": true,
+        "scripts/revd_offline_soc_run.py": true,
+        "scripts/revd_offline_common.py": true,
+        "config/e203-source-manifest.json": true,
+        "reports/prototype/vectors/manifest.json": true,
+        "sw/revd_opt/main.c": true,
+        "sw/revd_opt/revd_opt_driver.c": true,
+        "sw/revd_opt/revd_opt_driver.h": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/config.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_biu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_clk_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_clkgate.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_core.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_cpu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_cpu_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_defines.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_dtcm_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_dtcm_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_extend_csr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_bjp.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_csrctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_dpath.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_lsuagu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_muldiv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_rglr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_branchslv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_commit.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_csr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_decode.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_disp.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_excp.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_longpwbck.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_nice.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_oitf.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_regfile.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_wbck.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_ifetch.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_ift2icb.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_litebpu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_minidec.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_irq_sync.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_itcm_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_itcm_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_lsu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_lsu_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_reset_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_srams.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_csr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_module.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_rom.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_jtag_dtm.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to16_bus.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to2_bus.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to8_bus.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_1cyc_sram_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_bufs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_dffs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_icbs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_xchecker.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_sim_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_sram_icb_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/mems/sirv_mrom.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/mems/sirv_mrom_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/adv_timer_apb_if.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/apb_adv_timer.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/comparator.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/input_stage.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/prescaler.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/timer_cntrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/timer_module.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/up_down_counter.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_gpio/apb_gpio.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/apb_i2c.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_bit_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_byte_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_defines.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/apb_spi_master.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_apb_if.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_clkgen.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_controller.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_fifo.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_rx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_tx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/apb_uart.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/io_generic_fifo.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_interrupt.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_rx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_tx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetReg.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_1.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_129.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_36.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_DeglitchShiftRegister.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_LevelGateway.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_ResetCatchAndSync.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_ResetCatchAndSync_2.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_lclkgen_regs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_porrst.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_wrapper.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_clint.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_clint_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_expl_axi_slv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_flash_qspi.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_flash_qspi_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_hclkgen_regs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_jtaggpioport.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_plic_man.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_plic_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_pmu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_pmu_core.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_arbiter.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_fifo.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_media.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_physical.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_queue.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_queue_1.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_repeater_6.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_rtc.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_spi_flashmap.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tl_repeater_5.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tlfragmenter_qspi_1.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tlwidthwidget_qspi.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_wdog.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/soc/e203_soc_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_clint.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_gfcm.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_hclkgen.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_hclkgen_rstsync.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_main.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_mems.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_nice_core.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_perips.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_plic.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_pll.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_pllclkdiv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_top.v": true
+      },
+      "error": null,
+      "actual_command_binding_checks": [
+        {
+          "name": "compile-cpu-verilator.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "build-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "attributes-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "disassemble-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "binary-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "negative-preload-before-start.log",
+          "exit_code": -6,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        }
+      ],
+      "cpu_metrics": null,
+      "cpu_lifecycle": null,
+      "cpu_task_coverage": null,
+      "result_keys": [
+        "negative_future_open_before_start"
+      ]
+    },
+    {
+      "path": "reports\\revd_offline\\soc\\soc-w2-small-20261017T080450Z\\result.json",
+      "status": "PASS",
+      "report_sha256": "9a9e7fdb98d17323478bdf065f27a8086b44ca5b30e7b341cd50c8b2ef4bd607",
+      "profile": {
+        "architecture": "CTX4_W2_Y1_X4",
+        "pm": 4,
+        "pn": 4,
+        "latency": 1,
+        "tasks": 2,
+        "stage": "small",
+        "red_only": false
+      },
+      "source_unchanged": true,
+      "source_current": {
+        "rtl/revd_opt/core_stream_tiled_w2_opt.sv": true,
+        "rtl/revd/banked_sp16.sv": true,
+        "rtl/revd/quant_epilogue.sv": true,
+        "soc/revd_opt/revd_opt_icb_w2.sv": true,
+        "soc/e203_common/e203_cpu_shell.sv": true,
+        "soc/e203_common/icb_shared_ram.sv": true,
+        "dv/revd_opt/soc_cpu_tb_w2.sv": true,
+        "dv/e203_boot/timescale.v": true,
+        "sw/e203/start.S": true,
+        "sw/e203/link.ld": true,
+        "scripts/revd_offline_soc_w2_run.py": true,
+        "scripts/revd_offline_soc_run.py": true,
+        "scripts/revd_offline_common.py": true,
+        "config/e203-source-manifest.json": true,
+        "reports/prototype/vectors/manifest.json": true,
+        "sw/revd_opt/main_w2.c": true,
+        "sw/revd_opt/revd_opt_driver_w2.c": true,
+        "sw/revd_opt/revd_opt_driver_w2.h": true,
+        "dv/revd_opt/soc_completion_tb_w2.sv": true,
+        "dv/revd_opt/soc_bus_contract_tb_w2.sv": true,
+        "dv/revd_opt/soc_red_stub.c": true,
+        "dv/revd_opt/soc_w2_zero_return.c": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/config.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_biu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_clk_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_clkgate.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_core.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_cpu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_cpu_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_defines.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_dtcm_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_dtcm_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_extend_csr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_bjp.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_csrctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_dpath.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_lsuagu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_muldiv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_alu_rglr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_branchslv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_commit.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_csr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_decode.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_disp.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_excp.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_longpwbck.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_nice.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_oitf.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_regfile.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_exu_wbck.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_ifetch.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_ift2icb.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_litebpu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_ifu_minidec.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_irq_sync.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_itcm_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_itcm_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_lsu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_lsu_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_reset_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_srams.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_csr.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_module.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_debug_rom.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/debug/sirv_jtag_dtm.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to16_bus.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to2_bus.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/fab/sirv_icb1to8_bus.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_1cyc_sram_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_bufs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_dffs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_icbs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_gnrl_xchecker.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_sim_ram.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/general/sirv_sram_icb_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/mems/sirv_mrom.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/mems/sirv_mrom_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/adv_timer_apb_if.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/apb_adv_timer.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/comparator.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/input_stage.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/prescaler.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/timer_cntrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/timer_module.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_adv_timer/up_down_counter.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_gpio/apb_gpio.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/apb_i2c.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_bit_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_byte_ctrl.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_defines.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/apb_spi_master.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_apb_if.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_clkgen.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_controller.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_fifo.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_rx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_spi_master/spi_master_tx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/apb_uart.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/io_generic_fifo.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_interrupt.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_rx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_uart/uart_tx.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetReg.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_1.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_129.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_AsyncResetRegVec_36.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_DeglitchShiftRegister.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_LevelGateway.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_ResetCatchAndSync.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_ResetCatchAndSync_2.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_lclkgen_regs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_porrst.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_aon_wrapper.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_clint.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_clint_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_expl_axi_slv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_flash_qspi.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_flash_qspi_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_hclkgen_regs.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_jtaggpioport.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_plic_man.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_plic_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_pmu.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_pmu_core.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_arbiter.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_fifo.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_media.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_qspi_physical.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_queue.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_queue_1.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_repeater_6.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_rtc.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_spi_flashmap.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tl_repeater_5.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tlfragmenter_qspi_1.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_tlwidthwidget_qspi.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/sirv_wdog.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/soc/e203_soc_top.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_clint.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_gfcm.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_hclkgen.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_hclkgen_rstsync.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_main.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_mems.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_nice_core.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_perips.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_plic.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_pll.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_pllclkdiv.v": true,
+        "vendor/e203_hbirdv2-upstream/rtl/e203/subsys/e203_subsys_top.v": true
+      },
+      "error": null,
+      "actual_command_binding_checks": [
+        {
+          "name": "compile-cpu-verilator.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "build-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "attributes-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "disassemble-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "binary-revd-w2-driver.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "compile-soc_bus_contract_tb_w2.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "simulate-soc_bus_contract_tb_w2.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "compile-soc_completion_tb_w2.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "simulate-soc_completion_tb_w2.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "build-red-stub.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "attributes-red-stub.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "disassemble-red-stub.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "binary-red-stub.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "negative-return.log",
+          "exit_code": -6,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "build-zero-return.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "attributes-zero-return.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "disassemble-zero-return.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "binary-zero-return.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "negative-zero-work.log",
+          "exit_code": -6,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "cpu.log",
+          "exit_code": 0,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        },
+        {
+          "name": "negative-wrong-expected.log",
+          "exit_code": -6,
+          "log_sha_matches": true,
+          "receipt_matches": true
+        }
+      ],
+      "cpu_metrics": {
+        "cycles": 567592,
+        "instructions": 403938,
+        "cpu_mcycle": 563223,
+        "mmio_reads": 5450,
+        "mmio_writes": 18440,
+        "outputs": 192,
+        "flags": 192,
+        "events": 4556,
+        "starts": 2,
+        "pops": 192,
+        "tasks": 2,
+        "response_outputs": 192,
+        "response_flags": 192
+      },
+      "cpu_lifecycle": {
+        "captures": 4556,
+        "core_accepts": 4556,
+        "retires": 4556,
+        "deferred_open_cycles": 0,
+        "pops_with_pending_input": 0
+      },
+      "cpu_task_coverage": [
+        {
+          "task": 0,
+          "deferred_open_cycles": 0,
+          "pops_with_pending_input": 0
+        },
+        {
+          "task": 1,
+          "deferred_open_cycles": 0,
+          "pops_with_pending_input": 0
+        }
+      ],
+      "result_keys": [
+        "boundaries",
+        "negative_cpu_return",
+        "negative_zero_work",
+        "cpu",
+        "negative_wrong_expected"
+      ]
+    }
+  ],
+  "source_identity": {
+    "soc/revd_opt/revd_opt_icb_w2.sv": {
+      "sha256": "080cff5057c8aa9ef61447279b3a6812d939df40f86262c272866a84e97a7997",
+      "bytes": 4120,
+      "mtime_utc": "2026-10-17T07:50:41.846295+00:00"
+    },
+    "sw/revd_opt/revd_opt_driver_w2.c": {
+      "sha256": "304df45dfe325051db23794c5d3055f0551f141796327b7daa80bfc81050b01c",
+      "bytes": 3341,
+      "mtime_utc": "2026-10-17T08:04:57.082769+00:00"
+    },
+    "sw/revd_opt/revd_opt_driver_w2.h": {
+      "sha256": "499caccc87ecf5e56fbf01f4b84bf6e692ebfc006da657c3f52f0ea796452f03",
+      "bytes": 379,
+      "mtime_utc": "2026-10-17T08:04:57.080768+00:00"
+    },
+    "sw/revd_opt/main_w2.c": {
+      "sha256": "7e863dca6602e1826e9c83a63699a114c78f150abb800778cc03f21f3db5f292",
+      "bytes": 579,
+      "mtime_utc": "2026-10-17T08:04:57.090241+00:00"
+    },
+    "dv/revd_opt/soc_cpu_tb_w2.sv": {
+      "sha256": "81c517b807fb8861b719327006329656f97f46d876026b39a55b97d4bd91b5ed",
+      "bytes": 11781,
+      "mtime_utc": "2026-10-17T07:59:50.132048+00:00"
+    },
+    "dv/revd_opt/soc_completion_tb_w2.sv": {
+      "sha256": "7095fe45e09ef0dc2f5a18b3b5fdb078da8f5261f2d89061a68299ab33d7d4bf",
+      "bytes": 3645,
+      "mtime_utc": "2026-10-17T07:50:41.848841+00:00"
+    },
+    "dv/revd_opt/soc_bus_contract_tb_w2.sv": {
+      "sha256": "634a8f31bdca80710208348a2f541932aad8a5c10cd4c9c25936580b7abb1124",
+      "bytes": 2288,
+      "mtime_utc": "2026-10-17T07:50:41.839454+00:00"
+    },
+    "scripts/revd_offline_soc_w2_run.py": {
+      "sha256": "3aa942ad0ee1d03802b5d7d2c9c3bf78663051c647e003f06cc97288afcdb326",
+      "bytes": 11302,
+      "mtime_utc": "2026-10-17T08:02:36.460647+00:00"
+    },
+    "scripts/revd_offline_soc_w2_compare.py": {
+      "sha256": "47d4fa70d80a334f242ee8d92edc9895940ba5388b724b71771a481e52762f5a",
+      "bytes": 5095,
+      "mtime_utc": "2026-10-17T08:04:57.308934+00:00"
+    },
+    "scripts/revd_offline_soc_run.py": {
+      "sha256": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+      "bytes": 13202,
+      "mtime_utc": "2026-10-17T06:20:27.075603+00:00"
+    },
+    "soc/revd_opt/README_W2.md": {
+      "sha256": "e8e087a0e093e1f09802872a7f7fc4953069b51ff6e67def18cd1ff8ef5fad0a",
+      "bytes": 3286,
+      "mtime_utc": "2026-10-17T08:08:23.927090+00:00"
+    }
+  },
+  "line_references": {
+    "soc/revd_opt/revd_opt_icb_w2.sv": [
+      {
+        "line": 33,
+        "text": "wire pop=fire&&write_ok&&icb_cmd_addr[7:0]==8'h2c&&out_valid;"
+      },
+      {
+        "line": 34,
+        "text": "assign icb_cmd_ready=!icb_rsp_valid;"
+      },
+      {
+        "line": 35,
+        "text": "core_stream_tiled_w2_opt #(.M(M),.N(N),.PM(PM),.READ_LATENCY(READ_LATENCY)) core("
+      },
+      {
+        "line": 53,
+        "text": "if(event_valid&&core_ready)begin"
+      },
+      {
+        "line": 62,
+        "text": "8'h00:icb_rsp_rdata<={28'b0,fault,done,out_valid,!event_valid};"
+      },
+      {
+        "line": 83,
+        "text": "8'h18:begin"
+      }
+    ],
+    "sw/revd_opt/revd_opt_driver_w2.c": [
+      {
+        "line": 10,
+        "text": "static int drain(uint32_t status)"
+      },
+      {
+        "line": 12,
+        "text": "if(status&8u)return -11;"
+      },
+      {
+        "line": 19,
+        "text": "destination[index]=(int32_t)value;"
+      },
+      {
+        "line": 20,
+        "text": "flag_destination[index]=(uint8_t)flags;"
+      },
+      {
+        "line": 21,
+        "text": "__asm__ volatile(\"fence iorw,iorw\" ::: \"memory\");"
+      },
+      {
+        "line": 22,
+        "text": "wr(0x2c,1);"
+      },
+      {
+        "line": 27,
+        "text": "static int emit(uint32_t op,uint32_t layer,uint32_t shift,uint32_t tile,uint32_t index,int64_t value)"
+      },
+      {
+        "line": 33,
+        "text": "int error=drain(status);if(error)return error;"
+      },
+      {
+        "line": 34,
+        "text": "if(status&1u)break;"
+      },
+      {
+        "line": 40,
+        "text": "__asm__ volatile(\"fence iorw,iorw\" ::: \"memory\");"
+      },
+      {
+        "line": 63,
+        "text": "EMIT(3,tile,index,w[(tile*16u+col)*64u+k]);"
+      },
+      {
+        "line": 66,
+        "text": "EMIT(5,tile,0,0);"
+      },
+      {
+        "line": 67,
+        "text": "if(tile==0u)EMIT(6,0,0,0);"
+      },
+      {
+        "line": 71,
+        "text": "uint32_t status=rd(0);int error=drain(status);if(error)return error;"
+      },
+      {
+        "line": 72,
+        "text": "if(status&4u){if(result_count!=expected_count)return -17;break;}"
+      },
+      {
+        "line": 74,
+        "text": "__asm__ volatile(\"fence iorw,iorw\" ::: \"memory\");"
+      }
+    ],
+    "dv/revd_opt/soc_cpu_tb_w2.sv": [
+      {
+        "line": 48,
+        "text": "reg pending_terminal=0,terminal_seen=0,system_done=0;"
+      },
+      {
+        "line": 74,
+        "text": "if(held_w2&&(!accelerator.out_valid||payload_w2!==held_payload_w2))"
+      },
+      {
+        "line": 78,
+        "text": "if(accelerator.fire&&accelerator.write_ok&&sysper_icb_cmd_addr[7:0]==8'h18&&!accelerator.event_valid&&!accelerator.fault)captures_w2<=captures_w2+1;"
+      },
+      {
+        "line": 81,
+        "text": "if(accelerator.core.deferred_open)begin"
+      },
+      {
+        "line": 85,
+        "text": "if(accelerator.pop&&accelerator.event_valid)begin"
+      },
+      {
+        "line": 108,
+        "text": "if(pending_kind!=0||pending_terminal)$fatal(1,\"multiple outstanding shared transaction\");"
+      },
+      {
+        "line": 122,
+        "text": "$fatal(1,\"W2 full-slot deferred OPEN/drain fairness not exercised task=%0d\",t);"
+      },
+      {
+        "line": 123,
+        "text": "$display(\"E203_W2_TASK task=%0d deferred_open_cycles=%0d pops_with_pending_input=%0d\",t,deferred_task_w2[t],blocked_pops_task_w2[t]);"
+      },
+      {
+        "line": 147,
+        "text": "if(sysmem_icb_cmd_addr==32'ha0000000)begin pending_terminal<=1;terminal_seen<=1;end"
+      },
+      {
+        "line": 158,
+        "text": "if(pending_terminal)begin"
+      },
+      {
+        "line": 159,
+        "text": "pending_terminal<=0;system_done<=1;"
+      },
+      {
+        "line": 161,
+        "text": "if(!terminal_seen||finished_tasks!=TASKS||output_writes!=TASKS*M*N||flag_writes!=TASKS*M*N||response_outputs!=output_writes||response_flags!=flag_writes||pops!=output_writes||starts!=TASKS||instructions<100)"
+      },
+      {
+        "line": 165,
+        "text": "if(ram.mem['h4000+t*'h10000+j]!==expected[t*M*N+j])$fatal(1,\"final shared data mismatch\");"
+      },
+      {
+        "line": 171,
+        "text": "$display(\"E203_W2_LIFECYCLE captures=%0d core_accepts=%0d retires=%0d deferred_open_cycles=%0d pops_with_pending_input=%0d\",captures_w2,accepts_w2,retires_w2,deferred_cycles_w2,blocked_pops_w2);"
+      }
+    ]
+  },
+  "scope_restrictions_obeyed": [
+    "No RTL/driver/test change",
+    "No simulation, runner, packaging or Git action",
+    "Only this review JSON written",
+    "No reuse of D3 CPU PASS as W2 evidence"
+  ]
+}

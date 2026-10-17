@@ -1,0 +1,343 @@
+{
+  "status": "READ_ONLY_RISK_REVIEW_COMPLETE",
+  "created_at_utc": "2026-10-17T06:01:21.636731+00:00",
+  "workspace": "D:\\github\\kwt",
+  "branch": "v2",
+  "scope": "3–4h offline score-oriented optimization verification, resource and submission-reproduction risk review; no implementation, environment, Git or runner changes",
+  "implementation_ownership": "Only the parent-selected persistent implementation lane may edit implementation. This reviewer only writes this JSON.",
+  "accepted_d2_observed": {
+    "record": "work/revd/root_acceptance.json",
+    "status": "ACCEPTED_LOCAL_TRIAL",
+    "actual_cli_exit_code": 0,
+    "engineering_cases": 36,
+    "engineering_outputs": 912384,
+    "bit_mismatches": 0,
+    "terminal_boundary_cases": 8,
+    "official_contest_acceptance": false,
+    "past_root_bug": "ROOT-FINAL-FIRE-001: accepted last-boundary input was pending when done was reported; now has preserved RED/GREEN and eight boundary tests"
+  },
+  "risks": [
+    {
+      "id": "V-P0-EARLY-READY",
+      "priority": "P0",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "scripts/revd_trial_gate.py:evaluate",
+        "config/revd/trial.json"
+      ],
+      "consequence": "Legacy gate only accepts PM4/PN4, no postprocessing overlap, fixed D0–D2 source inventory and exact compile argv. Reusing it as the offline-run completion condition can stop after rerunning D2, without any optimized candidate or submission work.",
+      "required_gate": "Use a separate offline status/gate/readiness path and explicit optimization/submission/repetition fields. READY_FOR_REVIEW is provisional. Require actual CLI exit0, current candidate comparison, source/output identities and independent review; never copy D2 booleans to satisfy it."
+    },
+    {
+      "id": "V-P0-BASELINE-LOSS",
+      "priority": "P0",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "work/revd/root_acceptance.json:source_sha256",
+        "work/revd/root_test_recheck.json",
+        "scripts/revd_trial_gate.py:validate_case"
+      ],
+      "consequence": "Modifying D2 sources in place invalidates their bound accepted artifacts and makes later claimed speedup/rollback ambiguous. Historical report copies can silently point to changed source files.",
+      "required_gate": "Freeze all D2 source/config/gate/input identities and acceptance record. Prefer new candidate module/source paths. Verify D2 hashes before and after the run. Preserve D2 as executable baseline and never relabel its accepted records as new-candidate PASS."
+    },
+    {
+      "id": "V-P0-PROTOCOL-DEADLOCK",
+      "priority": "P0",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "docs/revd/AGENT_TASK.md:public logic interface",
+        "rtl/revd/core_stream_frontend.sv:in_ready/core_done",
+        "sw/ffn1_driver.c:ROW_READY/ROW_ACK"
+      ],
+      "consequence": "Single-W/double-buffer scheduling changes legal backpressure, COMMIT/START ordering and slot ownership. A future OPEN may block a required START, or a blocking CPU write can prevent that same CPU draining Y. Current whole-row ACK driver is not the tile stream interface.",
+      "required_gate": "Drive public input and output concurrently. Test future OPEN before START, starvation at full W/Y slot, held last output, simultaneous ingress/retire/done, queued invalid event and held next BEGIN; assert progress only under stated fairness. For E203 use nonblocking status/capacity with feed/drain interleaving; system_done waits for final shared-memory write response."
+    },
+    {
+      "id": "V-P0-FAKE-PERFORMANCE",
+      "priority": "P0",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "reports/revd/d2/production/repair2-prod-l1-20261017-01/synthetic99/run_manifest.json:counters",
+        "docs/encoder/reports/00_赛题要求与验收对应表.md:timing"
+      ],
+      "consequence": "Analytic CTX4 cycles or lower RAM reads do not prove real DUT speedup, and core-only speedup is not contest end-to-end throughput. Different ready patterns, warm weights, configuration or frequency corrupt a comparison.",
+      "required_gate": "Run D2 and each candidate on identical hashed arrays, shifts, seeds, RAM latency and ready schedule with cold load. Count actual handshake/retirement cycles separately for load/compute/output/total; include all 25344 accepted outputs. End-to-end score claim additionally requires real CPU/bus load-to-writeback window. Record simulator wall seconds separately."
+    },
+    {
+      "id": "V-P0-CANDIDATE-MIXUP",
+      "priority": "P0",
+      "classification": "Inference from source-bound gates",
+      "evidence": [
+        "scripts/revd_trial_gate.py:validate_case/source inventory",
+        "docs/encoder/reports/00_赛题要求与验收对应表.md:same configuration"
+      ],
+      "consequence": "Fast compute, low inferred storage and best energy may belong to different configurations; choosing each separately creates a fictional winning design. A cached binary can also execute old source.",
+      "required_gate": "Use candidate_id and immutable run_id; bind top/source manifest/config/firmware/input/expected/tool hashes, simulator binary and actual compile/sim argv. Selection points to one complete artifact set. Cache key includes every HDL include/source/define/parameter and tool identity. Dirty source requires new run."
+    },
+    {
+      "id": "V-P1-NUMERIC-REGRESSION",
+      "priority": "P1",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "work/revd/root_acceptance.json",
+        "docs/revd/AGENT_TASK.md:numeric contract"
+      ],
+      "consequence": "CTX4 tags, partial sums and early postprocessing can drop/duplicate k63, mix row/tile/task, add bias repeatedly or quantize a partial sum. Small random vectors may miss tie/overflow behavior.",
+      "required_gate": "Keep old signed16→exact48 dot→signed49 bias→sat48→symmetric RNE0..47→sat32 order and both flag meanings. Check partial sums before quantization and all final records; all shifts, signed extrema, ties, saturation, zero, odd tail rows and k63-only impulses remain mandatory."
+    },
+    {
+      "id": "V-P1-OLD-SOC-PASS",
+      "priority": "P1",
+      "classification": "Evidence",
+      "evidence": [
+        "dv/e203_ffn1/run_system.py:OUT/main/compile_rtl",
+        "dv/e203_encoder/run_system.py:compile_soc/main"
+      ],
+      "consequence": "Old E203 FFN1 runner compiles rtl/ffn1_top.sv/dot64.sv, writes fixed reports/system/e203-ffn1 and work/e203_ffn1_handoff.json. Running it directly overwrites frozen evidence and still does not execute RevD.",
+      "required_gate": "Create a candidate-specific adapter/driver/TB/runner with output-root argument and independent manifest. Compile actual candidate top and verify CPU-visible results in poisoned shared SRAM. Preserve old runner/record. Until then mark RevD E203 NOT_RUN even when old E203 baseline PASS exists."
+    },
+    {
+      "id": "V-P1-DEPENDENCY-PACKAGING",
+      "priority": "P1",
+      "classification": "Evidence",
+      "evidence": [
+        "scripts/run_revd_trial.sh:trial_python",
+        "scripts/run_e203_ffn1.sh",
+        "docs/repository-delivery.md",
+        "scripts/prepare_repository.py",
+        "scripts/verify_repository.py"
+      ],
+      "consequence": "Current RevD entry defaults to a C-drive external DV venv, while old E203 entry requires repo .venv-dv. ZIP can omit ignored weights/binaries/headers/symlinks or include only evidence without reproducible inputs. Legacy verifier checks its manifest members and cannot establish new candidate inclusion.",
+      "required_gate": "Package one selected candidate with runtime requirements/lock, source includes/vendor license, numeric model, input generator or distributable fixtures, driver, TB, config and one entrypoint. New package manifest enumerates every new member and relative reference. Extract in a fresh directory, reconstruct the four pinned E203 symlinks on Linux, then compile/run short candidate independently without absolute workspace/venv dependencies. Do not bundle secrets or local virtualenv."
+    },
+    {
+      "id": "V-P1-RESOURCE-BUDGET",
+      "priority": "P1",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "reports/encoder/system/pingpong/status.json:wall_seconds",
+        "reports/encoder/system/reload/status.json:wall_seconds",
+        "reports/system/e203-ffn1/result.json:results"
+      ],
+      "consequence": "Historical full12-layer E203 pingpong/reload each cost about2.8–2.9h. Launching both consumes the entire new window and prevents optimized FFN1 validation/reproduction. Unbounded parallel Verilator builds also compete for RAM and filesystem.",
+      "required_gate": "Prioritize FFN1 candidate short tests and full sizes. Bound compile jobs/process count. Reserve final45–60min for regressions, independent repeat and fresh-extraction package check. Historical FFN1 full+repeat approximately443+416s are a resource estimate only; fresh candidate time must be measured. No giant whole-encoder rerun unless core goals finish and remaining budget supports it."
+    },
+    {
+      "id": "V-P1-FORMAL-SCORE-GAP",
+      "priority": "P1",
+      "classification": "Evidence",
+      "evidence": [
+        "docs/encoder/reports/00_赛题要求与验收对应表.md",
+        "work/revd/requirements.json"
+      ],
+      "consequence": "36 engineering examples and generic synthesis do not satisfy official600 precision, official12 cold performance tasks, target150MHz, <=2.25mm² area or physical power/energy. Efficiency/innovation scoring itself has eligibility gates.",
+      "required_gate": "Keep formal/official metrics null or EXTERNAL_PENDING when inputs/libraries are absent. Do not report formal points or physical units from model estimates. Prefer completing mandatory undergraduate task3 reproducibility/integration before optional whole-encoder scope. Keep physical area/energy unknown distinct from macro-count proxy."
+    },
+    {
+      "id": "V-P1-NO-FUNCTIONAL-NEGATIVE",
+      "priority": "P1",
+      "classification": "Evidence + inference",
+      "evidence": [
+        "work/revd/root_test_recheck.json:mutation",
+        "scripts/revd_trial_gate.py:check_gate_negative/check_boundary_evidence"
+      ],
+      "consequence": "A green scoreboard might not observe the candidate datapath, and a mutation failing compilation cannot prove detection of a functional bug.",
+      "required_gate": "At least compiled numeric(tag/sign/k63), concurrency(owner/credit/overwrite) and completion mutations must fail during simulation for expected assertions/mismatches. Separately remove one required boundary/case/hash/command from a copied evidence bundle and require aggregate-gate rejection. Never modify golden or weaken assertions."
+    },
+    {
+      "id": "V-P2-LONG-RUN-STOP",
+      "priority": "P2",
+      "classification": "Inference",
+      "evidence": [
+        ".omx/prototype-run.json:readiness/required_fields"
+      ],
+      "consequence": "Quick READY from baseline replay can end before the authorized sustained optimization. Conversely a deadline can leave an in-flight failing candidate incorrectly selected.",
+      "required_gate": "Completion requires meaningful measured candidate experiment(s), submission integrity and bounded review, not elapsed time alone. Stop launching long jobs before deadline, finish validation of last known good candidate, record declined/incomplete alternatives and preserve logs. The best verified design may remain D2 if all candidates fail or regress."
+    }
+  ],
+  "layered_verification_matrix": [
+    {
+      "level": "L0 identity/contract",
+      "scope": "D2 freeze + new release + candidate source/config/input/tools",
+      "must_pass": [
+        "D2 accepted SHA unchanged",
+        "no old report overwrite",
+        "complete transitive compile inventory",
+        "fresh RUNNING before test; no stale PASS",
+        "one persistent lane; bounded subprocesses"
+      ]
+    },
+    {
+      "level": "L1 arithmetic/unit",
+      "scope": "DOT/quant/context scheduler and memory wrapper",
+      "must_pass": [
+        "all48 output shifts",
+        "signed extrema and RNE exact ties both signs",
+        "48bit bias saturation and32bit output saturation flags independent",
+        "k0/k63 impulses, sparse and zero",
+        "tagged context retention across actual feedback delay",
+        "unit reset and blocked response stability"
+      ]
+    },
+    {
+      "level": "L2 small public-stream",
+      "scope": "M=1,3,4,5; N=16,32; PM=2,4; read latency1,2",
+      "must_pass": [
+        "all unique outputs and exact flags/index/task/last",
+        "producer gaps + long/random output stalls",
+        "full/tail masks, tile transition, consecutive tasks",
+        "reset during load/compute/drain",
+        "accepted events equal retired/faulted events at done",
+        "no private DUT memory/force/golden answer injection"
+      ]
+    },
+    {
+      "level": "L3 concurrent/negative",
+      "scope": "CTX4 and W/Y slots plus public entry queue",
+      "must_pass": [
+        "no overwrite until last bias consumer/last output handshake",
+        "slot credit conservation and tagged ownership",
+        "COMMIT/START waits for actual RAM retirement",
+        "futureOPEN does not block requiredSTART",
+        "last_fire_invalid/pending_last_fire/pending_last_blocked/next_begin_boundary at LAT1/LAT2",
+        "compiled mutants fail for intended functional reason"
+      ]
+    },
+    {
+      "level": "L4 production/coverage",
+      "scope": "99x64 x64x256+b and frozen3x12 engineering cases",
+      "must_pass": [
+        "25344 unique public accepted results per fullcase",
+        "1622016 effectiveMAC per case",
+        "all36 case identities/layer shifts with912384 outputs",
+        "selected candidate complete LAT1/LAT2 fullsize",
+        "fresh newprocess repeat same data/config/ready schedule",
+        "independent comparator recomputes from old frozen numeric model"
+      ]
+    },
+    {
+      "level": "L5 comparative evidence",
+      "scope": "D2 versus candidate under matched cold conditions",
+      "must_pass": [
+        "actual DUT load/compute/output/total cycles",
+        "same input/weights/shift/backpressure/read latency",
+        "same complete output/flags",
+        "count actual RAM read/write enables and paddingMAC separately",
+        "cross-simulator short run",
+        "speedup numerator/denominator named and reproducible"
+      ]
+    },
+    {
+      "level": "L6 integration/submission",
+      "scope": "selected candidate newadapter + fresh package if achieved",
+      "must_pass": [
+        "CPU executes production driver and no neural software substitute",
+        "shared RAM outputs poisoned then allwritten/verified",
+        "system_done after final write response",
+        "command error/currenttransaction response isolated from sticky prior fault",
+        "fresh extraction source/fixture/dependency/relativepath check",
+        "compile+shorttest from extracted location"
+      ]
+    },
+    {
+      "level": "L7 independent acceptance",
+      "scope": "two review rounds + root acceptance",
+      "must_pass": [
+        "first review before candidate selection",
+        "second review current final SHA after fixes",
+        "fresh actual CLIexit0 and aggregate gate",
+        "no openP0/P1 findings",
+        "candidate_scorecard and selected artifact set bound",
+        "external pending explicit; no theoretical/physical score conflation"
+      ]
+    }
+  ],
+  "selection_rule": {
+    "optimization_variables": [
+      "candidate scheduling and CTX count within released architecture family",
+      "single/double W/Y buffering",
+      "X4 versus optional XP2 only after correctness",
+      "PM2 versus PM4 fixed comparison configurations"
+    ],
+    "objective": "Maximize verified competition readiness and measured cold FFN1 throughput within exact numerical/protocol and known resource constraints; absolute contest score is not computable without other teams and target PPA.",
+    "hard_constraints": [
+      "all current bittrue/protocol tests pass",
+      "all25344 final outputs accepted before done",
+      "oldD2 and immutablevendor preserved",
+      "512KiB sharedSRAM interface contract",
+      "singleport synchronous16bit memory and permitted macrodepth mapping eventually required",
+      "no unmeasured150MHz/area/power claim",
+      "noGit publication or newnumeric precision search"
+    ],
+    "comparison_order": [
+      "reject every correctness/protocol/reproducibility failure",
+      "prefer closing mandatory integration/submission missing artifacts over speculative optional scope",
+      "among passing comparable candidates minimize measured cold frontendtotal/endtoend cycles",
+      "use measured resource/macrocount as separately labeled feasibilityproxy, never exactmm2 or energy",
+      "retain multiple Pareto options if actual PPA missing; select one conservative default with no unverified dependency"
+    ],
+    "candidate_scorecard_required": [
+      "candidate_id",
+      "release_id",
+      "source_manifest_sha256",
+      "config_sha256",
+      "input_manifest_sha256",
+      "tool_versions",
+      "compile_sim_exit_codes",
+      "tested_cases_and_layers",
+      "bit_mismatches",
+      "protocol_findings",
+      "read_latency",
+      "actual_load_compute_output_total_cycles",
+      "baseline_same_conditions_record",
+      "measured_speedup",
+      "logicalRAMbits_macrocount_proxy",
+      "physical_area_mm2_nullable",
+      "STA_MHz_nullable",
+      "power_W_nullable",
+      "energy_J_nullable",
+      "integration_status",
+      "package_reproduction_status",
+      "selection_reason"
+    ],
+    "no_improvement_behavior": "Keep D2 as last known good, retain failed candidate evidence, state no verified improvement. Never create gain by excluding load/output cycles or comparing different conditions."
+  },
+  "budget_evidence": {
+    "full_encoder_pingpong_seconds": 10039.541424036026,
+    "full_encoder_reload_seconds": 10458.903822660446,
+    "old_ffn1_full_seconds": 442.9041157039999,
+    "old_ffn1_repeat_seconds": 415.6774554990002,
+    "d2_synthetic99_lat1_wall_seconds_approx": 13.45,
+    "d2_synthetic99_lat1_frontend_cycles": 416680,
+    "d2_synthetic99_lat1_core_cycles": 388361,
+    "all_times_are_historical_estimates_not_guarantees": true
+  },
+  "not_retested_by_this_agent": true,
+  "unknowns": [
+    "Current competition platform/library availability",
+    "Actual optimized candidate synthesis/STA/resource/energy",
+    "Official600 data availability and final precision",
+    "New candidate E203 timing and fullsubmission completeness"
+  ],
+  "evidence_sha256": {
+    "work/revd/root_acceptance.json": "df54a96402f2b1fbc18aa06320bb1a8a0bcc19df9a614e346f8f7a6095bc7f06",
+    "work/revd/root_test_recheck.json": "ccf506edc0ca2725330e762836da54a758214299b92263692def90dde738e15b",
+    "work/revd/root_rtl_recheck.json": "b8b264bc364f25df8e36d7a65bd69edfdf8cde20e776e43a55b409d856fa9718",
+    "config/revd/trial.json": "c0998f201e39db234f5d23ce2f9c813d84f3e598bd5c7989c61af0e747b5cdd2",
+    "scripts/revd_trial_gate.py": "0e476c843181718bc8f73b52d91823db25c9dd96ffb5e3bd8c27c38e61d23b46",
+    "scripts/run_revd_trial.sh": "686db4997205615afd567e916f95de7cc8e0491b1c8f1aa27b3bb7224b5d3ee4",
+    "dv/e203_ffn1/run_system.py": "1ca89000c4caff92d590f6d55e7c8cbb5ec2a4cb71b09fa6e1ecdf762fe01efc",
+    "dv/e203_ffn1/README.md": "d8ebb42e30291c189b9c9e0947f1495649a51c4301e54c99fba284ab0636d101",
+    "dv/e203_encoder/run_system.py": "7330b0328c1b1e6e62deb7a3fc5a0968c704f468674166d824f6a4928405abd0",
+    "scripts/prepare_repository.py": "77548a1b339422309a1ba015d45cf2987fbad866b3c5c0e29e20e2effd0e3482",
+    "scripts/verify_repository.py": "493b1e8f9623794514f372f9e1622458826b1c48ea0cdac92e3f8c443cc5faac",
+    "docs/repository-delivery.md": "e12963cca789781f5b75be26b10049aaf32e2fc85764805dff2e04017212f1f5",
+    "docs/encoder/reports/00_赛题要求与验收对应表.md": "4297aae4d7194be251f7c584aaf2d139f1c2867670044cf5684b6d465cbb19b9",
+    "docs/revd/AGENT_TASK.md": "fe00f69a8f14b022d72dd958734be15501048fcabff928ca63baaa3e9b92027c",
+    "reports/system/e203-ffn1/result.json": "194817bb7c5743077b17baf58ebcdfa857e26d100741e44cec9046d8fb46e368",
+    "reports/encoder/system/pingpong/status.json": "a7f02731525f35de51b14b704f68034f71068a61baa0a37d39da39385e1890ef",
+    "reports/encoder/system/reload/status.json": "774e2f0b5079dd024c5f1f717612e42de39a1781bae48b9f9816d2d626bd61df",
+    "reports/revd/d2/production/repair2-prod-l1-20261017-01/synthetic99/run_manifest.json": "a58cbe54d47cf90906c577592b22ca55f2f7b3b65a988ef3a24ce05dc819ee91"
+  },
+  "no_implementation_environment_git_runner_changes": true
+}

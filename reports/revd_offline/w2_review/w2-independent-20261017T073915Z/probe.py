@@ -1,0 +1,104 @@
+
+from pathlib import Path
+from datetime import datetime,timezone
+import sys,types,json,copy,os
+sys.dont_write_bytecode=True
+ROOT=Path.cwd();sys.path.insert(0,str(ROOT))
+from scripts.revd_offline_common import put,sha,read_json,utc
+from dv.revd_opt.gate_negatives import Checks,identity
+out=Path(__file__).resolve().parent
+gp=ROOT/'scripts/revd_offline_tiled_w2_gate.py';data=gp.read_bytes();g=types.ModuleType('independent_tiled_gate_snapshot');g.__file__=str(gp);exec(compile(data,str(gp),'exec'),g.__dict__)
+(out/'gate_source_snapshot.txt').write_bytes(data)
+p4=ROOT/'reports/revd_offline/tiled/w2-protocol-pm4-final-002/summary.json';p2=ROOT/'reports/revd_offline/tiled/w2-protocol-pm4-final-002/summary.json';full=ROOT/'reports/revd_offline/tiled/w2-full36-pm4-l1-final-001/summary.json';numeric=ROOT/'reports/revd_offline/tiled/w2-numeric-001/summary.json'
+files=[gp,ROOT/'dv/revd_opt/gate_negatives.py',ROOT/'rtl/revd_opt/core_stream_tiled_w2_opt.sv',ROOT/'dv/revd_opt/tiled_w2_core_tb.sv',ROOT/'dv/revd_opt/tiled_w2_runner.py',ROOT/'dv/revd_opt/tiled_w2_protocol.py',ROOT/'config/revd_opt/tiled_w2_y1.json',p4,p2,full,numeric]
+before=[identity(p) for p in files];checks=Checks(g)
+def run(*args,**kw):
+ v=checks.run(*args,**kw);put(out/'progress.json',{'pid':os.getpid(),'updated_utc':utc(),'tests':checks.results});return v
+run('positive_PM4_protocol44',lambda:g.check_protocol(p4,4))
+entries={t['name']:t for t in g.read_json(p4)['tests']};partial_w=ROOT/entries['reset_partial_W_l1']['manifest'];partial_x=ROOT/entries['reset_partial_X_l1']['manifest']
+run('semantic_partial_W_reset_aliased_to_partial_X',lambda:g.check_protocol(p4,4),reject=True,fragments=('partial','reset','identity'),text_overrides={partial_w.parent/'commands.hex':lambda text:(partial_x.parent/'commands.hex').read_text()})
+
+prod=ROOT/'reports/revd_offline/tiled/w2-production-pm4-l1-final-002/summary.json';manifest=ROOT/g.read_json(prod)['cases'][0]['manifest'];case=lambda:g.check_case(manifest)
+run('positive_full_production_L1',lambda:g.check_suite(prod,4,1))
+for label,path,pm,lat in [('positive_full_production_L2','w2-production-pm4-l2-final-002',4,2),('positive_independent_full_repeat','w2-repeat-pm4-l1-final-001',4,1)]:
+ p=ROOT/'reports/revd_offline/tiled'/path/'summary.json';run(label,lambda p=p,pm=pm,lat=lat:g.check_suite(p,pm,lat));before.append(identity(p))
+run('positive_frozen36_912384',lambda:g.check_suite(full,4,1))
+run('positive_all48_tiled_shifts',lambda:g.check_numeric(numeric))
+
+def case_change(mutate,index=None):
+ j=copy.deepcopy(g.read_json(manifest));mutate(j);patches={manifest:j}
+ if index is not None:
+  cmd=j['commands'][index];log=ROOT/cmd['log'];patches[log.with_suffix(log.suffix+'.command.json')]=cmd
+ return patches
+for index,name in [(0,'nonzero_compile'),(1,'nonzero_simulation')]:
+ overrides=case_change(lambda j,i=index:j['commands'][i].update(exit_code=1),index)
+ run(name,case,reject=True,fragments=('compilation was not successful','missing successful simulator completion'),json_overrides=overrides)
+run('fake_true_simulator',case,reject=True,fragments=('simulation binary/input/output binding',),json_overrides=case_change(lambda j:j['commands'][1].update(argv=['/usr/bin/true']),1))
+run('fake_compile_shadow_source',case,reject=True,fragments=('compile source/parameter/binary binding',),json_overrides=case_change(lambda j:j['commands'][0].update(argv=[a.replace('/mnt/d/github/kwt/rtl/revd_opt/','/tmp/shadow/rtl/revd_opt/') for a in j['commands'][0]['argv']]),0))
+def missing_source(j):j['source_sha256']['./numeric/fixedpoint.py']=j['source_sha256'].pop('rtl/revd_opt/core_stream_tiled_w2_opt.sv')
+run('missing_RTL_with_path_alias',case,reject=True,fragments=('missing/aliased source inventory',),json_overrides=case_change(missing_source))
+
+def output_change(text,kind):
+ lines=text.splitlines()
+ if kind=='delete_final':lines=lines[:-1]
+ else:
+  f=lines[0].split()
+  if kind=='index':f[1]='00000001'
+  else:
+   k=3 if kind=='overflow' else 4;f[k]='1' if f[k]=='0' else '0'
+  lines[0]=' '.join(f)
+ return '\n'.join(lines)+'\n'
+for kind in ['overflow','saturated','index','delete_final']:
+ run('output_'+kind,case,reject=True,fragments=('Y/flags/task/index/last mismatch','missing/extra output'),text_overrides={manifest.parent/'output.hex':lambda s,k=kind:output_change(s,k)})
+
+def negative_raw(text):
+ lines=text.splitlines();which=[i for i,s in enumerate(lines) if s.startswith('RAW ')][-1];f=lines[which].split();f[2]='-1';lines[which]=' '.join(f);return '\n'.join(lines)+'\n'
+run('negative_raw_index',case,reject=True,fragments=('raw48 identity',),text_overrides={manifest.parent/'stats.txt':negative_raw})
+j=g.read_json(manifest);j['config']['PM']=2
+run('mixed_PM',case,reject=True,fragments=('compile source/parameter/binary binding','mixed configuration'),json_overrides={manifest:j,manifest.parent/'config.json':j['config']})
+
+j=g.read_json(p4);j['tests']=[t for t in j['tests'] if t['name']!='pending_last_blocked_l2']
+run('missing_boundary_case',lambda:g.check_protocol(p4,4),reject=True,fragments=('protocol exact test inventory',),json_overrides={p4:j})
+j=g.read_json(p4)
+for t in j['tests']:
+ if t['name']=='pending_last_blocked_l2':t['manifest']=entries['last_invalid_l1']['manifest']
+run('aliased_boundary_manifest',lambda:g.check_protocol(p4,4),reject=True,fragments=('aliased protocol receipts',),json_overrides={p4:j})
+boundary=ROOT/entries['last_invalid_l1']['manifest']
+run('missing_actual_boundary_trace',lambda:g.check_protocol(p4,4),reject=True,fragments=('boundary case identity',),text_overrides={boundary.parent/'stats.txt':lambda s:'\n'.join(line for line in s.splitlines() if not line.startswith('BOUNDARY '))+'\n'})
+j=g.read_json(p4);source=Path(entries['MUT_DROP_K63']['manifest']);alias=source.parent/'..'/source.parent.name/source.name
+for t in j['tests']:
+ if t['name']=='MUT_UNSIGNED':t['manifest']=str(alias)
+run('semantic_mutant_alias',lambda:g.check_protocol(p4,4),reject=True,fragments=('wrong RTL variant','aliased protocol receipts'),json_overrides={p4:j})
+mut=ROOT/entries['MUT_W_OWNER_EARLY']['manifest'];j=g.read_json(mut);j['commands'][0]['argv']=[a for a in j['commands'][0]['argv'] if a!='-DMUT_W_OWNER_EARLY'];cmd=j['commands'][0];lp=ROOT/cmd['log']
+run('mutant_without_real_define',lambda:g.check_protocol(p4,4),reject=True,fragments=('compile source/parameter/binary binding',),json_overrides={mut:j,lp.with_suffix(lp.suffix+'.command.json'):cmd})
+
+j=g.read_json(full);j['cases']=j['cases'][:-1]
+run('missing_frozen_case',lambda:g.check_suite(full,4,1),reject=True,fragments=('full36 exact identities/count',),json_overrides={full:j})
+j=g.read_json(full);j['cases'][-1]['manifest']=j['cases'][0]['manifest']
+run('aliased_frozen_receipt',lambda:g.check_suite(full,4,1),reject=True,fragments=('failed/aliased cases',),json_overrides={full:j})
+j=g.read_json(full);j['cases'][-1]['case']=j['cases'][0]['case']
+run('aliased_frozen_sample_layer',lambda:g.check_suite(full,4,1),reject=True,fragments=('full36 exact identities/count',),json_overrides={full:j})
+j=g.read_json(numeric);j['tests']=[t for t in j['tests'] if t['name']!='shift47']
+run('missing_tiled_shift47',lambda:g.check_numeric(numeric),reject=True,fragments=('missing/aliased all-shift tests',),json_overrides={numeric:j})
+
+# Direct RAM/MAC overlap counters must retain evidence beyond processing writes.
+r=g.read_json(manifest);a=copy.deepcopy(r)
+for row in a['w2_counters']:row[3:6]=[0,0,0]
+def erase_overlap(text):
+ lines=text.splitlines()
+ for i,line in enumerate(lines):
+  if line.startswith('W2_STATS '):
+   f=line.split();f[4:7]=['0','0','0'];lines[i]=' '.join(f)
+ return '\n'.join(lines)+'\n'
+run('processing_writes_are_not_actual_RW_overlap',case,reject=True,fragments=('no actual physical W2 overlap',),json_overrides={manifest:a},text_overrides={manifest.parent/'stats.txt':erase_overlap})
+commit=ROOT/entries['commit_last_Y_l1']['manifest']
+run('missing_COMMIT_last_Y_same_edge_trace',lambda:g.check_protocol(p4,4),reject=True,fragments=('COMMIT retirement/old final Y same-cycle event missing',),text_overrides={commit.parent/'stats.txt':lambda text:'\n'.join(l for l in text.splitlines() if not l.startswith('COMMIT_LAST_Y '))+'\n'})
+a=g.read_json(p4);a['tests']=[t for t in a['tests'] if t['name']!='commit_last_Y_l2']
+run('missing_COMMIT_last_Y_L2_case',lambda:g.check_protocol(p4,4),reject=True,fragments=('protocol exact test inventory',),json_overrides={p4:a})
+# Check tool name/path identity without modifying either executable or run files.
+a=copy.deepcopy(r);a['tools']['iverilog'].update(path='/usr/bin/true',sha256=sha(Path('/usr/bin/true')))
+run('iverilog_tool_name_aliased_to_true_binary',case,reject=True,json_overrides={manifest:a})
+changed=[i['path'] for i in before if sha(ROOT/i['path'])!=i['sha256']];ok=all(t['passed'] for t in checks.results) and not changed
+result={'schema_version':1,'status':'PASS' if ok else 'FAIL','created_utc':utc(),'pid':os.getpid(),'run_identity':os.environ.get('KWT_OFFLINE_RUN_ID'),'source_and_input_sha256':before,'changed_during_review':changed,'tests':checks.results,'test_count':len(checks.results),'software_negative_count':sum(t['expected']=='REJECT' for t in checks.results),'positive_count':sum(t['expected']=='ACCEPT' for t in checks.results),'real_RTL_mutation_classes_from_protocol':10,'negative_method':'Only in-memory read_json/read_text substitutions. All normal disks and RTL untouched. A negative passes only expected ValueError.','parent_accepted':False,'official_contest_acceptance':False}
+put(out/'summary.json',result);print(json.dumps({'status':result['status'],'tests':len(checks.results),'failed':[t['name'] for t in checks.results if not t['passed']],'changed':changed}),flush=True)
+raise SystemExit(0 if ok else 1)

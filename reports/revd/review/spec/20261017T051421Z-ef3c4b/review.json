@@ -1,0 +1,217 @@
+{
+  "status": "PASS",
+  "review_kind": "independent_read_only_spec_review",
+  "review_round": 2,
+  "created_at_utc": "2026-10-17T05:14:21.775263+00:00",
+  "checked_scope": [
+    "D0 pinned numeric/source identity and exhaustive W/b reordering logic",
+    "D1 exact signed arithmetic, raw48/Y/overflow/saturated separation, all shifts and RNE boundary generation",
+    "D1 PM4/PM2 input stalls/k63 retirement/sparse row mask/continuous task/reset/postprocess/backpressure",
+    "D2 serial synchronous SP RAM1/2 behavior, row masks and mathematical X/W addressing",
+    "D2 ordered command acceptance versus physical write retirement and COMMIT/START ordering",
+    "D2 last product retirement before quantization, tile/row_group/row/column publication and y_index",
+    "D2 fault retention including invalid-retire simultaneous out_fire and no false done",
+    "D2 fresh protocol/reset/mutation evidence and source binding; full36 completion remains root-control gate responsibility"
+  ],
+  "source_sha256": {
+    "rtl/revd/core_stream_frontend.sv": "11d8b1797eeb76a4709303831bf2ea6ea27810ccb0618659f7afd388af9ce0e2",
+    "rtl/revd/banked_sp16.sv": "64e43e4db91677966c5eafb44e61d38e2640b01f3154ace19e2163ec8453ea36",
+    "rtl/revd/quant_epilogue.sv": "f2590a7a36d8fcc99e286189d06b1ebb6853af540d3e8acacfbafbad08078911",
+    "rtl/revd/mac_lane.sv": "aa5a5e32085f143f557266f21750189c0f0178cc46269ad9755093ae3a20d99a",
+    "rtl/revd/micro_tile.sv": "c9f7fc2e10cb42d35ae9baf0c67607ebbf47d7ecdf8515e7cf89083fdcf48f7c",
+    "dv/revd/core_tb.sv": "1e50f306e2535f8c48566a30f81064d70b3d125f09137d70ea35f387fcbf63ca",
+    "dv/revd/d2_runner.py": "ae418277c475efbd9393023e904c47a167bb4163794d8ce9c6d511406fb72061",
+    "dv/revd/d2_protocol.py": "349b35d942a36ad56ac6be571c41b3a4aa4a19199ab193e9455ecf63651b4eab",
+    "dv/revd/d1_micro_tb.sv": "cf1dbecd2c9992a5ebd6bf9a69b11d313e5d87584e4b1fe32f3eba1ac1a6d0be",
+    "dv/revd/d1_quant_tb.sv": "ef4390f64178dbdbfb9bc85474414c16f2dd025699ae612f30ef1f7d35bed3b8",
+    "dv/revd/d1_runner.py": "41cdb620ed334334a897ac5b01237218e98a07022c8f6a848699e04172d49206",
+    "dv/revd/d0_inputs.py": "c95751b6f019af3402f273eeb7bd92ced9cdfefcfb66ef0f52a68fb8398282ab",
+    "dv/revd/d0_run.py": "08bd7e08378a4302e1537fca7e029c63f568a9f871b42574e81ea24fab02e53a",
+    "dv/revd/d0_test_inputs.py": "b82817bb6f4dccf5041036c925632067410b6e3f2913daf4ec43778401ea0ae2"
+  },
+  "blocking_findings": [],
+  "resolved_findings": [
+    {
+      "id": "SPEC-COVERAGE-001",
+      "location": "dv/revd/d1_micro_tb.sv:152",
+      "resolution": "Micro reset now waits for QWAIT q_valid with ready held low. Both PM2 and PM4 actual simulation logs prove retired=64, reset clearing, then 18 complete ordinary cases."
+    },
+    {
+      "id": "SPEC-COVERAGE-002",
+      "location": "dv/revd/d2_runner.py:152",
+      "resolution": "run_case takes declared layer; full36 passes each source layer and binds commands.hex to it. Fresh full36 execution is verified separately by root gate."
+    },
+    {
+      "id": "SPEC-COVERAGE-003",
+      "location": "dv/revd/d2_protocol.py:26",
+      "resolution": "Two continuous tasks actually change X/W/b/shift/layer. The new protocol run compiles and simulates current RTL; its second BEGIN is task28 layer12 shift7."
+    },
+    {
+      "id": "SPEC-EVIDENCE-001",
+      "location": "dv/revd/d2_protocol.py:11",
+      "resolution": "Protocol summary now captures and rechecks its execution source hash, and current source has a fresh passing run."
+    }
+  ],
+  "evidence": {
+    "d1": "reports/revd/d1/green/20261017-130810-4493f4b2/run_manifest.json",
+    "protocol": "reports/revd/d2/protocol/20261017-131233-b945ed/summary.json",
+    "previous_review": "reports/revd/review/spec/20261017T051026Z-a650d1/review.json"
+  },
+  "evidence_checks": [
+    {
+      "name": "reset_l1_phase1",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": false
+    },
+    {
+      "name": "reset_l1_phase2",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": false
+    },
+    {
+      "name": "reset_l1_phase3",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": false
+    },
+    {
+      "name": "reset_l2_phase1",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": false
+    },
+    {
+      "name": "reset_l2_phase2",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": false
+    },
+    {
+      "name": "reset_l2_phase3",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": false
+    },
+    {
+      "name": "continuous",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 320,
+      "rtl_mutation": false
+    },
+    {
+      "name": "early_commit",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 0,
+      "rtl_mutation": false
+    },
+    {
+      "name": "duplicate_x",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 0,
+      "rtl_mutation": false
+    },
+    {
+      "name": "bad_dtype_value",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 0,
+      "rtl_mutation": false
+    },
+    {
+      "name": "bad_layer",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 0,
+      "rtl_mutation": false
+    },
+    {
+      "name": "wrong_tile",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 0,
+      "rtl_mutation": false
+    },
+    {
+      "name": "fault_preserves_block",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 64,
+      "rtl_mutation": false
+    },
+    {
+      "name": "fault_on_fire",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 64,
+      "rtl_mutation": false
+    },
+    {
+      "name": "MUT_DROP_K63",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": true
+    },
+    {
+      "name": "MUT_UNSIGNED",
+      "actual_iverilog_vvp_exit_codes": [
+        0,
+        0
+      ],
+      "output_count": 160,
+      "rtl_mutation": true
+    }
+  ],
+  "observations": [
+    "No new definite RTL numeric/address/last-k/tail/output-order/done bug was found in current source.",
+    "Result holding on fault is retained until handshakes or reset, including the cycle an invalid command retires.",
+    "SP memories are not bulk reset; valid pipelines and FSM state flush on synchronous low reset. No DUT private RAM writes, force, or answer injection found in public-stream TB.",
+    "D2 exposes and compares Y/overflow/saturated/task/index/last; raw48 acceptance remains the D1 public quantization unit.",
+    "One-entry ordered frontend and serial read/return/MAC scheduling intentionally stay within approved D0-D2 micro/full-cache scope.",
+    "This review did not launch a simulator; it checked actual existing compile/simulation exit codes, source/input/output hashes, and independently parsed protocol result files.",
+    "Gate implementation and complete36/repeat/lint acceptance are separate final root-control/quality-review checks; this PASS is a source-bound specification review only."
+  ],
+  "parent_accepted": false,
+  "official_contest_acceptance": false
+}

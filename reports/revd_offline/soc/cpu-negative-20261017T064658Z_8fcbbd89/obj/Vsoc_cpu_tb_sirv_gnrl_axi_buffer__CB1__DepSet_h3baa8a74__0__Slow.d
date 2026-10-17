@@ -1,0 +1,3 @@
+Vsoc_cpu_tb_sirv_gnrl_axi_buffer__CB1__DepSet_h3baa8a74__0__Slow.o: \
+ Vsoc_cpu_tb_sirv_gnrl_axi_buffer__CB1__DepSet_h3baa8a74__0__Slow.cpp \
+ Vsoc_cpu_tb__pch.h Vsoc_cpu_tb_sirv_gnrl_axi_buffer__CB1.h

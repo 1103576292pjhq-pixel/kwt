@@ -1,0 +1,94 @@
+"""Package-relative reproduction with fresh builds and an explicit interpreter."""
+from pathlib import Path, PurePosixPath
+import argparse
+import json
+import sys
+from concurrent.futures import ThreadPoolExecutor
+sys.dont_write_bytecode=True
+ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT));sys.path.insert(0,str(ROOT/'dv/revd_opt'))
+from scripts.revd_offline_common import sha,put,run_id,command,utc
+
+def manifest_check(root=None,allow_runtime=True):
+    root=(root or ROOT).resolve();path=root/'MANIFEST.json'
+    if not path.is_file():raise ValueError('run this entry from an extracted candidate package')
+    manifest=json.loads(path.read_text(encoding='utf-8'));seen=set()
+    for name in manifest['files']:
+        parts=PurePosixPath(name).parts
+        if (name.casefold() in seen or Path(name).is_absolute() or '\\' in name or ':' in name
+            or name!=PurePosixPath(name).as_posix() or '..' in parts or '.' in parts):
+            raise ValueError('unsafe/aliased package member '+name)
+        seen.add(name.casefold())
+    def verify(item):
+        name,digest=item;p=(root/name).resolve()
+        if root not in p.parents:raise ValueError('unsafe/aliased package member '+name)
+        if not p.is_file() or sha(p)!=digest:raise ValueError('package SHA mismatch/missing '+name)
+        return str(p).casefold()
+    # Independent reads are I/O bound on mounted Windows volumes. Consume every
+    # result so an exception in any worker still rejects the whole manifest.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        resolved=list(pool.map(verify,manifest['files'].items()))
+    if len(set(resolved))!=len(resolved):raise ValueError('resolved package member alias')
+    # Only fresh run outputs may be added. Unlisted code/config/vendor files
+    # cannot silently shadow an import or expand the submitted source cone.
+    for p in root.rglob('*'):
+        if not p.is_file():continue
+        name=p.relative_to(root).as_posix()
+        if name=='MANIFEST.json' or name in manifest['files']:continue
+        if not allow_runtime or not name.startswith('reports/revd_offline/'):
+            raise ValueError('unlisted package member '+name)
+    return {'status':'PASS','members':len(seen),'manifest_sha256':sha(path)}
+
+def main():
+    ap=argparse.ArgumentParser();ap.add_argument('--suite',choices=['manifest','smoke','numeric','full36','cpu-small','portable'],default='smoke');ap.add_argument('--with-cpu',action='store_true');args=ap.parse_args()
+    initial=manifest_check();out=ROOT/'reports/revd_offline/reproduction'/run_id();out.mkdir(parents=True,exist_ok=False)
+    result={'status':'FAIL','suite':args.suite,'started_utc':utc(),'python':sys.executable,'manifest':initial}
+    try:
+        if args.suite!='manifest':
+            from scripts.revd_offline_final_regression import tool_inventory
+            result['tool_binary_sha256_before']=tool_inventory()
+        phases=(['smoke','numeric']+(['cpu-small'] if args.with_cpu else [])) if args.suite=='portable' else [args.suite]
+        result['completed_phases']=['manifest'];result['phase_results']=[]
+        for phase in phases:
+            if phase=='smoke':
+                from core_runner import run_case,synthetic
+                from scripts.revd_offline_gate import check_case
+                import numeric.fixedpoint as arithmetic
+                import core_runner as driver
+                import scripts.revd_offline_common as common
+                origins={name:str(Path(module.__file__).resolve()) for name,module in [('numeric.fixedpoint',arithmetic),('core_runner',driver),('revd_offline_common',common)]}
+                if any(ROOT not in Path(p).parents for p in origins.values()):raise ValueError('local dependency escaped extracted package')
+                result['local_module_origins']=origins
+                x,w,b=synthetic(5,32);runs=[]
+                for latency in (1,2):
+                    folder=out/f'latency{latency}';r=run_case(folder,x,w,b,8,latency=latency)
+                    if r['status']!='PASS':raise ValueError('fresh package RTL '+str(r.get('error')))
+                    runs.append(check_case(folder/'run_manifest.json'))
+                result['phase_results'].append({'phase':phase,'runs':runs})
+            elif phase in ('numeric','full36','cpu-small'):
+                evidence_base=ROOT/'reports/revd_offline'/('numeric' if phase=='numeric' else 'core' if phase=='full36' else 'soc')
+                evidence_name='summary.json' if phase!='cpu-small' else 'result.json'
+                before=set(evidence_base.glob('*/'+evidence_name))
+                argv=([sys.executable,'-B',ROOT/'dv/revd_opt/numeric_checks.py'] if phase=='numeric' else
+                     [sys.executable,'-B',ROOT/'dv/revd_opt/core_runner.py','--profile','full36','--run-id','package-'+run_id()] if phase=='full36' else
+                     [sys.executable,'-B',ROOT/'scripts/revd_offline_soc_run.py','--stage','small','--tasks','2','--run-id','package-cpu-'+run_id()])
+                c=command(argv,out/(phase+'.log'),timeout=880)
+                if c['exit_code']!=0:raise ValueError('fresh package '+phase+' failed')
+                evidence=set(evidence_base.glob('*/'+evidence_name))-before
+                if len(evidence)!=1:raise ValueError('fresh package '+phase+' evidence identity/cardinality')
+                actual=evidence.pop()
+                from scripts.revd_offline_gate import check_numeric,check_suite,check_cpu
+                gate=check_numeric(actual) if phase=='numeric' else check_suite(actual,36,4) if phase=='full36' else check_cpu(actual)
+                result['phase_results'].append({'phase':phase,'command':c,'gate':gate,
+                    'evidence':str(actual.relative_to(ROOT)),'evidence_sha256':sha(actual)})
+            if phase!='manifest':result['completed_phases'].append(phase)
+        final=manifest_check()
+        if final!=initial:raise ValueError('package changed while reproducing')
+        if args.suite!='manifest':
+            result['tool_binary_sha256_after']=tool_inventory()
+            result['tools_unchanged']=result['tool_binary_sha256_before']==result['tool_binary_sha256_after']
+            if not result['tools_unchanged']:raise ValueError('tools changed during portable reproduction')
+        result.update(status='PASS',finished_utc=utc())
+    except Exception as e:result.update(error=str(e),finished_utc=utc())
+    put(out/'result.json',result);print(out,result['status'],flush=True)
+    return 0 if result['status']=='PASS' else 1
+if __name__=='__main__':raise SystemExit(main())

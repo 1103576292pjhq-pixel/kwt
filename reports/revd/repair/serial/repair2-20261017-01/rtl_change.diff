@@ -1,0 +1,14 @@
+--- before/core_stream_frontend.sv
++++ after/core_stream_frontend.sv
+@@ -36,7 +36,10 @@
+  wire w_write=retire_event&&state==LOAD&&q_op==3&&command_ok;
+  integer row,col;
+  // Registered ordered entry: acceptance precedes actual RAM retirement.
+- assign in_ready=!fault&&(!q_valid||retire_event);
++ // Close ingress while the final record is published, including backpressure.
++ // An earlier accepted event still retires (and may fault) before success.
++ // BEGIN held across this boundary belongs to the next task after the done pulse.
++ assign in_ready=!fault&&!core_done&&!(state==DRAIN&&out_last)&&(!q_valid||retire_event);
+  always @* begin
+   command_ok=0;
+   if(q_op==0) command_ok=state==IDLE&&q_shift<=47&&q_layer>=1&&q_layer<=12;

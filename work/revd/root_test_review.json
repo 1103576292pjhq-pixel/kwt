@@ -1,0 +1,174 @@
+{
+  "status": "ITERATE",
+  "review_kind": "ROOT_INDEPENDENT_TEST_AND_EVIDENCE_REVIEW",
+  "created_utc": "2026-10-17T05:25:28.916089+00:00",
+  "parent_accepted": false,
+  "official_contest_acceptance": false,
+  "source_sha256": {
+    "dv/revd/d1_runner.py": "41cdb620ed334334a897ac5b01237218e98a07022c8f6a848699e04172d49206",
+    "dv/revd/d1_micro_tb.sv": "cf1dbecd2c9992a5ebd6bf9a69b11d313e5d87584e4b1fe32f3eba1ac1a6d0be",
+    "dv/revd/d1_quant_tb.sv": "ef4390f64178dbdbfb9bc85474414c16f2dd025699ae612f30ef1f7d35bed3b8",
+    "dv/revd/d2_runner.py": "ae418277c475efbd9393023e904c47a167bb4163794d8ce9c6d511406fb72061",
+    "dv/revd/d2_protocol.py": "349b35d942a36ad56ac6be571c41b3a4aa4a19199ab193e9455ecf63651b4eab",
+    "dv/revd/core_tb.sv": "1e50f306e2535f8c48566a30f81064d70b3d125f09137d70ea35f387fcbf63ca",
+    "scripts/revd_trial_gate.py": "d8b2234c1a7911b697283342b9688a2a0e38253b8c4ed21b086724657859f940",
+    "rtl/revd/core_stream_frontend.sv": "11d8b1797eeb76a4709303831bf2ea6ea27810ccb0618659f7afd388af9ce0e2"
+  },
+  "bundle_sha256": "5eb519ba215bd311cbaf8e62e016f82904c71fa008ff4f1eb73765a17cecb328",
+  "independent_recomputation": {
+    "execution_exit_code": 0,
+    "method": "Read stored X/W/b arrays. Compute signed int64 dense X@W+b independently, clip48, magnitude-based integer quotient/remainder RNE, clip32. Parse actual output.hex and check each task/index/Y/two flags/last plus independent publication order; do not call DUT scheduler or candidate ffn1_reference.",
+    "profiles": [
+      {
+        "profile": "small",
+        "cases": 5,
+        "outputs_recomputed": 432
+      },
+      {
+        "profile": "production",
+        "cases": 1,
+        "outputs_recomputed": 25344
+      },
+      {
+        "profile": "latency2",
+        "cases": 1,
+        "outputs_recomputed": 25344
+      },
+      {
+        "profile": "full36",
+        "cases": 36,
+        "outputs_recomputed": 912384
+      },
+      {
+        "profile": "repeat",
+        "cases": 1,
+        "outputs_recomputed": 25344
+      }
+    ],
+    "all_outputs_match": true,
+    "all_current_source_input_output_hashes_match": true,
+    "D1_quant_vectors_recomputed": 2170,
+    "D1_shifts": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "D1_flagpairs": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "D1_RNE_ties": {
+      "positive_even": 95,
+      "positive_odd": 98,
+      "negative_even": 96,
+      "negative_odd": 95
+    }
+  },
+  "coverage_observed": [
+    "D0 W/b mathematical repack exhaustively checks all16384 weights+256bias per source case, with transpose/shape/dtype/range rejection tests.",
+    "D1 PM4 and PM2 exercise64 issue/retire, sparse row masks, input stalls, final result stalls, accumulator/postprocess/output reset abort, and continuous tasks.",
+    "D1 actual compile0/simulate1 RTL mutations cover omittedk63, unsigned product, advancing without output handshake, and swapped flags.",
+    "D2 all36 frozen3x12 inputs are reloaded by public stream and use physical layer identities; actual outputs were independently recomputed with zero difference.",
+    "D2 production latency1 and2 and a distinct later repeated full engineering case compile/run exist with bound commands/sources/outputs.",
+    "D2 directed tests cover6 reset phase/latency variants, changed-parameter continuous tasks, invalid ordering/value/layer, and two real arithmetic RTL mutations.",
+    "Gate enforces exact per-case source/input/output sets, compiler/simulator argv, dense stream/oracle binding, literal subprocess success, per-bank CE and actual stats/counters, current source hashes and frozen inputs.",
+    "Gate rejection tests include actual bad-output/missing-result/unknown/duplicate/source/input/command/latency/counter/bank-evidence cases; classified correctly as software-only rejection tests."
+  ],
+  "blocking_findings": [
+    {
+      "id": "ROOT-TEST-001",
+      "priority": "P1",
+      "title": "Final out_fire and newly accepted invalid old-task event can publish success before the event retires",
+      "source_locations": [
+        "rtl/revd/core_stream_frontend.sv:39",
+        "rtl/revd/core_stream_frontend.sv:105",
+        "rtl/revd/core_stream_frontend.sv:191"
+      ],
+      "test_locations": [
+        "dv/revd/d2_protocol.py:38",
+        "dv/revd/d2_protocol.py:39",
+        "dv/revd/core_tb.sv:48",
+        "dv/revd/core_tb.sv:99"
+      ],
+      "evidence_kind": "Static confirmation of root-reported candidate; root owns actual RTL reproduction",
+      "trigger": "With q_valid empty, normal final out_valid/out_last/out_ready and in_valid/op7/oldtask asserted on the same edge, input ready remains high. That edge enqueues q and DRAIN sets core_done. Illegal event fault is only evaluated one clock later.",
+      "coverage_gap": "Existing fault_on_fire/fault_preserves_block act at the first valid64-result block of M5N32, compare only64of160 outputs. op13 waits only out_valid; there is no final-output simultaneous command test. early-done TB assertion checks output count/fault, not unresolved accepted event.",
+      "required_resolution": "Add a directed last-output concurrent event test proving no successful completion while an accepted old-task event is unresolved/invalid. Consider legal next-BEGIN transition as well. Repair protocol/completion ordering within current scope. Add new case to required aggregate gate and rerun affected current-source D2 profiles, repeat/protocol/lint and source-bound reviews."
+    }
+  ],
+  "limits": [
+    "This review did not launch a new RTL simulator or modify implementation. Existing real simulator outputs, source/test logic and hashes were inspected.",
+    "No E203, official600, formal12 performance, synthesis, STA or PPA acceptance is granted."
+  ],
+  "evidence_paths": {
+    "d0": "work/revd/d0_result.json",
+    "d1": "reports/revd/d1/green/20261017-130810-4493f4b2/run_manifest.json",
+    "small": "reports/revd/d2/small/small-final-20261017-02/summary.json",
+    "production": "reports/revd/d2/production/production-final-l1-20261017-02/summary.json",
+    "latency2": "reports/revd/d2/production/production-final-l2-20261017-02/summary.json",
+    "full36": "reports/revd/d2/full36/full36-layer-l1-20261017-02/summary.json",
+    "repeat": "reports/revd/d2/repeat/independent-repeat-20261017-02/summary.json",
+    "protocol": "reports/revd/d2/protocol/20261017-131233-b945ed/summary.json",
+    "lint": "reports/revd/d2/lint/20261017-131538-92321c/run_manifest.json",
+    "gate_negative": "reports/revd/gate/green/20261017-02/receipt.json"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "stage": "D1",
+  "kind": "two_round_self_review",
+  "evidence": "reports/revd/d1/green/20261017-130810-4493f4b2/run_manifest.json",
+  "source_binding": [
+    {
+      "path": "rtl/revd/quant_epilogue.sv",
+      "expected_sha256": "f2590a7a36d8fcc99e286189d06b1ebb6853af540d3e8acacfbafbad08078911",
+      "actual_sha256": "f2590a7a36d8fcc99e286189d06b1ebb6853af540d3e8acacfbafbad08078911",
+      "matches": true
+    },
+    {
+      "path": "dv/revd/d1_quant_tb.sv",
+      "expected_sha256": "ef4390f64178dbdbfb9bc85474414c16f2dd025699ae612f30ef1f7d35bed3b8",
+      "actual_sha256": "ef4390f64178dbdbfb9bc85474414c16f2dd025699ae612f30ef1f7d35bed3b8",
+      "matches": true
+    },
+    {
+      "path": "dv/revd/d1_runner.py",
+      "expected_sha256": "41cdb620ed334334a897ac5b01237218e98a07022c8f6a848699e04172d49206",
+      "actual_sha256": "41cdb620ed334334a897ac5b01237218e98a07022c8f6a848699e04172d49206",
+      "matches": true
+    },
+    {
+      "path": "rtl/revd/mac_lane.sv",
+      "expected_sha256": "aa5a5e32085f143f557266f21750189c0f0178cc46269ad9755093ae3a20d99a",
+      "actual_sha256": "aa5a5e32085f143f557266f21750189c0f0178cc46269ad9755093ae3a20d99a",
+      "matches": true
+    },
+    {
+      "path": "rtl/revd/micro_tile.sv",
+      "expected_sha256": "c9f7fc2e10cb42d35ae9baf0c67607ebbf47d7ecdf8515e7cf89083fdcf48f7c",
+      "actual_sha256": "c9f7fc2e10cb42d35ae9baf0c67607ebbf47d7ecdf8515e7cf89083fdcf48f7c",
+      "matches": true
+    },
+    {
+      "path": "dv/revd/d1_micro_tb.sv",
+      "expected_sha256": "cf1dbecd2c9992a5ebd6bf9a69b11d313e5d87584e4b1fe32f3eba1ac1a6d0be",
+      "actual_sha256": "cf1dbecd2c9992a5ebd6bf9a69b11d313e5d87584e4b1fe32f3eba1ac1a6d0be",
+      "matches": true
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "scope": "numeric_and_protocol_specification",
+      "passed": true,
+      "checks": [
+        "signed16 multiply registered before signed48 accumulation; products retire in increasing k only on issued pairs",
+        "last k63 retirement precedes quantization; snapshot owner retained through final out_fire",
+        "49-bit add then sat48 then sign-magnitude RNE then sat32; overflow and saturated are independent",
+        "2170 quant records cover every shift 0..47, signed48 endpoints, positive and negative ties and bias48 extremes",
+        "PM4/PN4 and PM2/PN4 each run 18 cases; output rows masked; invalid input lanes contain X without output contamination",
+        "64 issue/retire tags checked per task; effective MAC and virtual lane counters checked",
+        "accumulation reset, actual quant QWAIT/q_valid reset after retired64 with ready0, and stalled output reset; consecutive task identities checked"
+      ],
+      "evidence_paths": [
+        "reports/revd/d1/red/20261017-130032-e8ddcd63/run_manifest.json",
+        "reports/revd/d1/red/20261017-130245-0b2fed3e/run_manifest.json",
+        "reports/revd/d1/green/20261017-130810-4493f4b2/run_manifest.json"
+      ]
+    },
+    {
+      "round": 2,
+      "scope": "quality_source_binding_and_test_strength",
+      "passed": true,
+      "checks": [
+        "actual output files independently parsed in Python for exact count, ordered payload, flags, and unknown-token rejection",
+        "Verilator -Wall PM4 and PM2 both exit zero without suppressed warnings",
+        "four independently compiled real RTL mutants fail simulation for omitted k63, unsigned multiply, completion before ready, and confused flags",
+        "all run folders use exist_ok=False; each compile and simulation records command, exit code, duration and log",
+        "testbench setup failure is retained separately and never counted as functional RED",
+        "testbench monitor gap at final retire was corrected; original failure and later passing run remain separate",
+        "all source digests match final evidence; runner disables bytecode and calls use python -B"
+      ],
+      "evidence_paths": [
+        "reports/revd/d1/green/20261017-130810-4493f4b2/run_manifest.json",
+        "reports/revd/d1/green/20261017-130353-1621f600/micro_pm4_simulate.log",
+        "reports/revd/d1/green/20261017-130753-8917089b/micro_pm4_simulate.log"
+      ]
+    }
+  ],
+  "limitations": [
+    "This is D1 self review; parent independent acceptance remains required",
+    "micro has a paired vector interface and no RAM; synchronous banks and full FFN scheduler are covered by D2",
+    "padded_macs counts virtual lane opportunities, while invalid lane MAC registers are disabled",
+    "shift inputs to this primitive are constrained by its caller to 0..47"
+  ],
+  "parent_accepted": false,
+  "independent_review_correction": {
+    "finding": "Prior case1 reset reached FINAL_SUM/SELECT only; prior postprocessing claim was insufficient",
+    "resolution": "Passively wait for real QWAIT and q_valid, assert retired64/out_valid/not ready, then synchronous reset",
+    "new_regression": "Explicit setup check initially exposed inherited ready; configure now resets out_ready before each task",
+    "markers_verified": [
+      "PM4 state=QWAIT q_valid=1 retired=64",
+      "PM2 state=QWAIT q_valid=1 retired=64"
+    ]
+  }
+}

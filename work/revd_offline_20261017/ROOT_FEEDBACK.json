@@ -1,0 +1,230 @@
+{
+  "status": "READ_ONLY_MONITOR_FINDINGS_PENDING_IMPLEMENTER",
+  "observed_utc": "2026-10-17T09:40:12.548923+00:00",
+  "implementation_lane_active": true,
+  "source_changes_by_root": false,
+  "review_paths": [
+    "work/revd_offline_20261017/root_soc_review_0627.json",
+    "work/revd_offline_20261017/root_gate_review_0627.json",
+    "work/revd_offline_20261017/root_gate_recheck_0647.json",
+    "work/revd_offline_20261017/root_package_review_0647.json",
+    "work/revd_offline_20261017/root_package_progress_0707.json",
+    "work/revd_offline_20261017/root_w2_review_0727.json",
+    "work/revd_offline_20261017/root_cpu_gate_review_0727.json",
+    "work/revd_offline_20261017/root_cpu_gate_review_0747.json",
+    "work/revd_offline_20261017/root_package_review_0747.json",
+    "work/revd_offline_20261017/root_cpu12_review_0807.json",
+    "work/revd_offline_20261017/root_w2_soc_review_0807.json",
+    "work/revd_offline_20261017/root_cpu_gate_review_0827.json",
+    "work/revd_offline_20261017/root_w2_soc_review_0827.json",
+    "work/revd_offline_20261017/root_cpu_binding_repair_spec_0847.json",
+    "work/revd_offline_20261017/root_package_review_0847.json",
+    "work/revd_offline_20261017/root_final_package_review_0907.json",
+    "work/revd_offline_20261017/root_final_zip_review_0927.json",
+    "work/revd_offline_20261017/root_actual_final_proof_0937.json"
+  ],
+  "findings": [
+    {
+      "id": "ROOT-0627-SOC-INCLUDE-CLOSURE",
+      "priority": "INFORMATIONAL_HARDENING",
+      "state": "RESOLVED_NOT_A_CURRENT_DEFECT",
+      "location": "scripts/revd_offline_soc_run.py inventory/verify_upstream",
+      "description": "Recursive literal-include resolution confirmed current closure config.v/e203_defines.v/i2c_master_defines.v is already included by .v inventory; current upstream has no .vh/.vi and no unresolved literal includes. Initial extension-only concern was provisional and is not a current defect.",
+      "required_action": "No current fix required for missing include types. Recheck actual include closure if later sources add dependencies."
+    },
+    {
+      "id": "ROOT-0627-SOC-VERILATOR-BINARY",
+      "priority": "HIGH_FOR_FINAL_ACCEPTANCE",
+      "state": "PARTIALLY_FIXED_SIDECAR_PRESENT_GATE_CONSUMPTION_PENDING",
+      "location": "scripts/revd_offline_soc_run.py artifacts_sha256 / obj/Vsoc_cpu_tb",
+      "description": "Verilator obj/ files excluded from artifact inventory and no explicit executed simulator binary SHA observed. Final CPU proof must bind executed binary digest, exact compile and sim argv, firmware/fixture and actual writeback outputs; source count/PASS alone insufficient.",
+      "required_action": "Record actual simulator binary identity and enforce independent CPU gate and false-evidence rejection before final acceptance",
+      "latest_observation": "06:47 root review: real full2 and D2 supplemental binary bindings exist; actual report/binary/fw.bin hashes match. Latest inspected check_cpu still recomputes binary SHA into output without comparing recorded binding digest; ensure final gate consumes/validates binding and rejects changed binary.",
+      "latest_root_evidence": "Independent read-only audit of actual full2 candidate and D2 records confirms current155/157 sources and32/33 artifacts, report/binary/fw.bin aux hashes, ELF-load sections=fw.bin=actual CPU hex, 512KiB shared descriptor/X/W/b/poison reconstruction and each50688 Y+flags. These concrete records are genuine; remaining issue is final automatic gate consumption of expected aux binding and exact compile configuration.",
+      "superseded_for_remaining_gate_scope_by": "ROOT-CPU-GATE-IDENTITY-HARDENING-001"
+    },
+    {
+      "id": "ROOT-0627-CPU-INDEPENDENT-GATE",
+      "priority": "HIGH_FOR_FINAL_ACCEPTANCE",
+      "state": "PARTIALLY_FIXED_CPU_GATE_AND_REAL_NEGATIVES_PRESENT",
+      "description": "At 06:27 the standalone offline gate only covered case/suite/protocol/numeric, with no CPU evidence gate. Before final acceptance independently bind actual E203 source/firmware/fixture, compile and simulator argv/binary SHA, cold timestamps and final shared writeback contents; reject fake CPU completion/missing last write/mixed profiles.",
+      "required_action": "Before final acceptance bind/check aux report/binary/firmware/hex/shared input closure and exact compiler M/N/PM/latency/TASKS (-G/-P) against declared profile; preserve successful Verilator fake-work/missing-last-write negative proofs. If gate remains incomplete, explicitly cover these in root acceptance and do not claim portable CPU gate fully closed.",
+      "latest_observation": "check_cpu now present and full2 numeric/50,688-output proof exists. 06:46:58 Verilator normal/zero-return/missing-last-write negative group PASS at06:48:18; earlier Icarus failure remains historical FAIL. Firmware/hex/shared fixture byte closure independently checked by root reviewer; final automated gate should bind or reconstruct these, not merely recite counts.",
+      "superseded_for_remaining_gate_scope_by": "ROOT-CPU-GATE-IDENTITY-HARDENING-001"
+    },
+    {
+      "id": "ROOT-0647-PACKAGE-CPU-ROUNDTRIP",
+      "priority": "HIGH_FOR_SELECTED_CPU_PACKAGE",
+      "state": "CLOSED_EXACT_FINAL_ZIP_ACTUAL_CPU_ROUNDTRIP_ROOT_VERIFIED",
+      "description": "Current staged package uses a137-file derived E203 manifest unlike old full upstream manifest. Pure manifest/core/numeric smoke is insufficient to prove packaged CPU dependency closure; package_check CPU option is currently optional.",
+      "required_action": "For a selected profile claiming CPU integration, actually run fresh extracted package cpu-small and verify package-local sources/includes/firmware rather than original workspace fallback, plus final profile/evidence hash match. Preserve official library/STA/netlist missing status.",
+      "latest_observation": "Actual final ZIP949037... independently full-member audited and actually extracted/portable-with-CPU completed exit0 PID467 at09:34:25; inner96 actual CPU Y/flags independently parsed zero difference, paths/receipts/source/binary match. This closes package portability evidence only; generic expected-binary gate and README command defects remain separately OPEN.",
+      "evidence": "work/revd_offline_20261017/root_actual_final_proof_0937.json"
+    },
+    {
+      "id": "ROOT-CPU-GATE-IDENTITY-HARDENING-001",
+      "priority": "HIGH_FOR_FINAL_ACCEPTANCE_GATE",
+      "state": "OPEN_OFFSET0_EXPECTED_BINARY_UNCONSUMED_CURRENT_390856DF_AT_0827",
+      "description": "The existing actual candidate and D2 CPU full2 record bytes independently passed executable/firmware/fixture and all50688 Y/flag checks. This is not a CPU arithmetic failure. Remaining reusable check_cpu issue: offset0 ignores recorded binary-binding.json and declared PM/LAT/M/N/TASKS is not bound to exact compiler -G/-P args. Pure-read in-memory pm4/lat1 report changed to pm2/lat2 was falsely accepted.",
+      "required_action": "Only close the remaining offset0 expected-executable receipt: require/compare recorded aux binding with immutable report, actual simulator executable, firmware binary, CPU command receipt and log hashes. Add two explicit negative probes (missing expected aux binding; changed actual executable digest) against final gate SHA. Keep valid normal positive. Reuse already independently verified unchanged CPU records; do not rerun unchanged CPU arithmetic solely for this checker repair. Root will independently recheck before acceptance.",
+      "evidence": "work/revd_offline_20261017/root_cpu_gate_review_0827.json",
+      "current_gate_sha256": "47b7b0320bc5ba9b952a9eaa3957c8da00d103df47fdc8509db7fcfa58e1d27f",
+      "latest_observation": "Root0827 source branch unchanged for offset0: no binary-binding.json/actual_executable_sha256 consumption, if offset has no equivalent offset0 binding else. New390856df15-test actual suite validly closes strict child-exit checks (7positive8negative) but does not cover missing expected aux binding or changed actual binary digest. Prior exact-record CPU arithmetic/firmware/fixture audit remains PASS; repeated identical negative probes and CPU simulations not rerun.",
+      "latest_gate_source_observed": "e3f705... at0807 still no binary-binding.json reference; duplicate unchanged probe not rerun",
+      "minimal_repair_spec": "work/revd_offline_20261017/root_cpu_binding_repair_spec_0847.json",
+      "repair_scope": "gate + reproduce consumer only; keep production soc_run.py hash f17b... and prior12layer/36 arithmetic valid. Before check_cpu, consumer creates missing aux after final wrapper report completion; strict gate never self-generates expected identity. Fresh isolated package CPU must prove this path."
+    },
+    {
+      "id": "ROOT-PKG-W2-README-CLI-001",
+      "priority": "MEDIUM_FINAL_PACKAGE_REPRODUCTION",
+      "state": "OPEN_IN_V3_STAGE_084841",
+      "description": "Generated README W2 command passes --sim verilator --tasks2, but actual revd_offline_soc_w2_run.py parser only accepts stage/red-only/run-id/cutoff. Literal documented W2 entry is rejected before simulation. Current v3 actual W2 executable omissions are already fixed and are not an open issue.",
+      "required_action": "Remove unsupported --sim/--tasks from the README generator and final README command, keeping --stage small and optional supported flags. Verify documented argv parses, bind new final manifest. No RTL/CPU resimulation solely for this documentation repair.",
+      "evidence": "work/revd_offline_20261017/root_package_review_0847.json"
+    }
+  ],
+  "not_a_final_acceptance": true,
+  "remaining_high_final_acceptance_findings": 1,
+  "read_only_gate_review_sha256": "a580b76edea666f129523b0b2f5bf030ee57c2c2d3ec339f7cbc00d10d063289",
+  "review_sha256": {
+    "work/revd_offline_20261017/root_soc_review_0627.json": "44fe201d7642dba7cf1a8b65eaa39d88832435afdf653a5a3386da7fef1cbbcc",
+    "work/revd_offline_20261017/root_gate_review_0627.json": "a580b76edea666f129523b0b2f5bf030ee57c2c2d3ec339f7cbc00d10d063289",
+    "work/revd_offline_20261017/root_gate_recheck_0647.json": "732722c517dfde4a61d97a2fd292d58383e1ca958e7416521fb25af3b7e53038",
+    "work/revd_offline_20261017/root_package_review_0647.json": "d554a18ec6836df1e6df5fb8ad5924c67b242ff772d19f0d366e3a2405db1260",
+    "work/revd_offline_20261017/root_package_progress_0707.json": "ea3d9cb59cce0b63ecef984dbc9f6e4d9082f0f6bd18abd8a609c8e8fcd97b40",
+    "work/revd_offline_20261017/root_w2_review_0727.json": "270351467476eadca7f36c971d3aec8ac6cd47cdbc23f100656783c8b51ffd11",
+    "work/revd_offline_20261017/root_cpu_gate_review_0727.json": "1b7c49609394bdcc9faef2f8500d7e648081e902bebbba2e6654984c25f5d1ec",
+    "work/revd_offline_20261017/root_cpu_gate_review_0747.json": "ec14d4bdd7acb276ddf617e6f35aa1f41ef80c9b932b1883293571ba7973d2e5",
+    "work/revd_offline_20261017/root_package_review_0747.json": "2868f99e69397daaffa4f4462caf4bad404348ed9ea229e3b49bbe8c469b45aa",
+    "work/revd_offline_20261017/root_cpu12_review_0807.json": "5ad9c614073257b49685e2eb51b5c141309f54bcb865cedb40d5b7bd78ac1e49",
+    "work/revd_offline_20261017/root_w2_soc_review_0807.json": "cb08f0477e9671921d756627f7d181f976b2945b2de297e817a73a0debbbaaca",
+    "work/revd_offline_20261017/root_cpu_gate_review_0827.json": "1c5c40462a8cf871085b499e37ad1f5c9c804017224620ccf4e06157230ad545",
+    "work/revd_offline_20261017/root_w2_soc_review_0827.json": "4f48a3fd8d84f4c3ecb38bac41c542dfd86d3d3d685aaf3b3cd0438b29952e0f",
+    "work/revd_offline_20261017/root_cpu_binding_repair_spec_0847.json": "f3982a3161d1441a55f7f4c0fa13e76042cbe073e1f3ce5bf5bf02edfb6dcea6",
+    "work/revd_offline_20261017/root_package_review_0847.json": "d9fed1905b0b594011abda2c937a4acd2771566ff315b1a5bbf1087454da0cc1",
+    "work/revd_offline_20261017/root_final_package_review_0907.json": "7240966c99751da4859d5490b4c7aa3dc748632f8ca19fe2afed4bc0ba5b5ed5",
+    "work/revd_offline_20261017/root_final_zip_review_0927.json": "2d813b0e29d84df8e113eb433b0c040ea10a5d424003f2e31d1a7d69e51fe065",
+    "work/revd_offline_20261017/root_actual_final_proof_0937.json": "2105047b491217347cc412886cc454865d1d011e81f8888dac18b5987e914f19"
+  },
+  "w2_root_provisional_observation": "Root07:27 source review found no confirmed W2 RTL defect; matched L1/L2 same-edge COMMIT/finalY tests and10 sampled receipt bindings valid. Full36/repeat/final W2 gate negative evidence is still in progress. See root_w2_review_0727.json when available.",
+  "root_task_advisory_append": {
+    "marker": "## ROOT_ACCEPTANCE_FOLLOWUP_20261017T0747Z",
+    "previous_task_sha256": "0f0c6e9d58ec6ff7a43055856748f09dfb3b4cf79b4812ad02dd0159bb503ab2",
+    "current_task_sha256": "0a98039f98c01ceb4b3c1f9d404953d37a724849ffd524388bca9c24f3a872e0",
+    "implementation_modified": false,
+    "deadline_extended": false
+  },
+  "cpu12_independent_root_observation": {
+    "evidence": "work/revd_offline_20261017/root_cpu12_review_0807.json",
+    "actual_boots": 6,
+    "engineering_layer_tasks": 12,
+    "unique_Y": 304128,
+    "unique_flags": 304128,
+    "mismatches": 0,
+    "all_actual_exits_zero": true,
+    "scope": "public E203 engineering frozen parameters; NOT official12 task benchmark",
+    "directed_real_CPU_shared_SRAM_Y_flags": 96,
+    "flag_classes_0_1_2_3_covered": true,
+    "overflow_expected_bit_flip_negative_actual_exit": -6,
+    "shared_final_memory_readback_by": "TB after final write response, not a second firmware readback self-test",
+    "status_scalar_cleanup": "cpu_completed_layers/cpu_full_tasks/cpu_total_unique_y remain older lower values; reconcile final STATUS to actual current evidence"
+  },
+  "w2_soc_root_provisional_observation": {
+    "evidence": "work/revd_offline_20261017/root_w2_soc_review_0827.json",
+    "status": "PASS_SCOPED_W2_CPU2_AND_FLAGS_EVIDENCE",
+    "confirmed_adapter_defects": 0,
+    "independently_recomputed_unique_Y": 50688,
+    "independently_compared_flags": 50688,
+    "bit_mismatches": 0,
+    "actual_CPU_exit": 0,
+    "actual_CPU_pid": 2836,
+    "matched_source_files": 154,
+    "matched_artifact_files": 26,
+    "actual_command_receipts": 6,
+    "per_task_deferred_OPEN_cycles": 968509,
+    "per_task_POP_with_pending_input": 8271,
+    "per_task_captured_accepted_retired_events": 46020,
+    "directed_unique_Y_and_flags": 192,
+    "directed_flag_class_counts": [
+      80,
+      50,
+      46,
+      16
+    ],
+    "directed_last_flags": [
+      5,
+      7
+    ],
+    "wrong_expected_flags_real_negative_exit": -6,
+    "matched_D3_CPU_saved_cycles_per_task": 444551,
+    "matched_D3_CPU_cycle_reduction_fraction": 0.07788209530483536,
+    "comparison_scope": "same input/tool/image and actual indexed outputs; task-phase marker inclusive to final shared write response; excludes boot/global dimensions header and is not isolated core compute",
+    "not_accepted": [
+      "W2CPU12",
+      "W2CPU_L2",
+      "official12",
+      "official600",
+      "mappedSTA_PPA"
+    ],
+    "D3_CPU_not_reused_for_W2": true,
+    "whole_batch_parent_accepted": false
+  },
+  "root_task_minimal_repair_append": {
+    "marker": "## ROOT_MINIMAL_CLOSURE_REPAIR_20261017T0847Z",
+    "previous_task_sha256": "0a98039f98c01ceb4b3c1f9d404953d37a724849ffd524388bca9c24f3a872e0",
+    "current_task_sha256": "df7398513302fee1f505cde098ffdd311cbbd01071af48f29a5c6e794c64439c",
+    "implementation_modified": false
+  },
+  "remaining_medium_final_package_findings": 1,
+  "final_delivery_review_0907": {
+    "evidence": "work/revd_offline_20261017/root_final_package_review_0907.json",
+    "prepublication_V3_manifest": "e1366b19888466c9026e038074ede60325edbb9c3bef803f123e265238829ef2",
+    "prepublication_V3_portable_actual_exit": 0,
+    "actual_child_PID": 423,
+    "actual_fresh_CPU_unique_Y_and_flags": 96,
+    "final_ZIP": "NOT_YET_CREATED_AT_REVIEW",
+    "delivery_copy": "RUNNING_NOT_SIGNED",
+    "current_open_repairs": [
+      "ROOT-CPU-GATE-IDENTITY-HARDENING-001",
+      "ROOT-PKG-W2-README-CLI-001"
+    ],
+    "do_not_modify_active_implementation": true,
+    "serial_repair_only_after_current_worker_exit": true,
+    "original_hard_deadline_utc": "2026-10-17T09:45:00Z"
+  },
+  "root_0927_continuation_priority": {
+    "marker": "CURRENT_ROOT_CLOSURE_ONLY_20261017T0927Z",
+    "previous_task_sha256": "df7398513302fee1f505cde098ffdd311cbbd01071af48f29a5c6e794c64439c",
+    "current_task_sha256": "bad15be724f081b42b4ebefc193c073cd5750231cf5428ef1991f837c207bbf6",
+    "active_implementation_modified": false,
+    "not_a_restart": true,
+    "hard_stop_utc": "2026-10-17T09:45:00Z"
+  },
+  "final_ZIP_independent_byte_audit": {
+    "evidence": "work/revd_offline_20261017/root_final_zip_review_0927.json",
+    "archive": "deliverables/kwt_revd_v2_candidate_20261017.zip",
+    "size_bytes": 181523014,
+    "sha256": "949037af1a6b32176ddcd80d671702e32763b04d83e624165ea613484a876795",
+    "members": 6937,
+    "manifested_payload_files": 6936,
+    "all_crc_and_file_SHA_paths_unique_safe_pass": true,
+    "identical_to_V3_prepublication_archive": true,
+    "old_actual_V3_portable_with_CPU_exit0_still_valid_for_exact_same_archive": true,
+    "remaining_code_documentation_findings_not_hidden": [
+      "ROOT-CPU-GATE-IDENTITY-HARDENING-001",
+      "ROOT-PKG-W2-README-CLI-001"
+    ],
+    "whole_batch_parent_accepted": false
+  },
+  "actual_final_ZIP_portable_root_check": {
+    "evidence": "work/revd_offline_20261017/root_actual_final_proof_0937.json",
+    "outer_actual_pid": 467,
+    "outer_actual_exit_code": 0,
+    "actual_finished_utc": "2026-10-17T09:34:25Z",
+    "final_archive_sha256": "949037af1a6b32176ddcd80d671702e32763b04d83e624165ea613484a876795",
+    "actual_fresh_CPU_unique_Y_and_flags": 96,
+    "independently_parsed_mismatches": 0,
+    "package_local_compile_and_runtime_paths_verified": true,
+    "old_gate_and_README_findings_still_open": true
+  }
+}

@@ -1,0 +1,126 @@
+test_changed_input (__main__.GateTests.test_changed_input) ... FAIL
+test_changed_source (__main__.GateTests.test_changed_source) ... FAIL
+test_duplicate (__main__.GateTests.test_duplicate) ... FAIL
+test_failed_subprocess (__main__.GateTests.test_failed_subprocess) ... FAIL
+test_missing_evidence (__main__.GateTests.test_missing_evidence) ... FAIL
+test_missing_output (__main__.GateTests.test_missing_output) ... FAIL
+test_missing_result (__main__.GateTests.test_missing_result) ... FAIL
+test_positive (__main__.GateTests.test_positive) ... ok
+test_skip (__main__.GateTests.test_skip) ... FAIL
+test_timeout (__main__.GateTests.test_timeout) ... FAIL
+test_unknown (__main__.GateTests.test_unknown) ... FAIL
+
+======================================================================
+FAIL: test_changed_input (__main__.GateTests.test_changed_input)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 44, in test_changed_input
+    p=self.out/"X.npy";a=np.load(p);a[0,0]^=1;np.save(p,a,allow_pickle=False);self.reject()
+                                                                              ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_changed_source (__main__.GateTests.test_changed_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 42, in test_changed_source
+    key=next(iter(self.manifest["source_sha256"]));self.manifest["source_sha256"][key]="0"*64;self.reject()
+                                                                                              ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_duplicate (__main__.GateTests.test_duplicate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 38, in test_duplicate
+    p=self.out/"output.hex";s=p.read_text().splitlines();s[1]=s[0];p.write_text("\n".join(s)+"\n");self.reject()
+                                                                                                   ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_failed_subprocess (__main__.GateTests.test_failed_subprocess)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 31, in test_failed_subprocess
+    def test_failed_subprocess(self): self.manifest["commands"][-1]["exit_code"]=1;self.reject()
+                                                                                   ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_missing_evidence (__main__.GateTests.test_missing_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 46, in test_missing_evidence
+    self.manifest.pop("commands");self.reject()
+                                  ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_missing_output (__main__.GateTests.test_missing_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 34, in test_missing_output
+    def test_missing_output(self): (self.out/"output.hex").unlink();self.reject()
+                                                                    ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_missing_result (__main__.GateTests.test_missing_result)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 40, in test_missing_result
+    p=self.out/"output.hex";p.write_text("\n".join(p.read_text().splitlines()[:-1])+"\n");self.reject()
+                                                                                          ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_skip (__main__.GateTests.test_skip)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 33, in test_skip
+    def test_skip(self): self.manifest["status"]="SKIP";self.reject()
+                                                        ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_timeout (__main__.GateTests.test_timeout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 32, in test_timeout
+    def test_timeout(self): self.manifest["commands"][-1]["exit_code"]=124;self.reject()
+                                                                           ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+======================================================================
+FAIL: test_unknown (__main__.GateTests.test_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\github\kwt\dv\revd\gate_test.py", line 36, in test_unknown
+    p=self.out/"output.hex";p.write_text(p.read_text().replace(" "," x",1));self.reject()
+                                                                            ^^^^^^^^^^^^^
+  File "D:\github\kwt\dv\revd\gate_test.py", line 29, in reject
+    with self.assertRaises((ValueError,OSError,KeyError)): gate.validate_case(self.path)
+AssertionError: (<class 'ValueError'>, <class 'OSError'>, <class 'KeyError'>) not raised
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.196s
+
+FAILED (failures=10)

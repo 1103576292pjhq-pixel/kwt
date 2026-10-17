@@ -1,0 +1,3 @@
+Vsoc_cpu_tb_w2_timer_module__NB30__Slow.o: \
+ Vsoc_cpu_tb_w2_timer_module__NB30__Slow.cpp Vsoc_cpu_tb_w2__pch.h \
+ Vsoc_cpu_tb_w2__Syms.h Vsoc_cpu_tb_w2_timer_module__NB30.h

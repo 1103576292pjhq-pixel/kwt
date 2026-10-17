@@ -1,0 +1,71 @@
+{
+  "status": "FAIL",
+  "review_kind": "independent_read_only_spec_review",
+  "review_round": 1,
+  "created_at_utc": "2026-10-17T05:10:26.812037+00:00",
+  "checked_scope": [
+    "D0 pinned golden/source identity and all-element W/b repacking",
+    "D1 signed16 product/exact accumulation/signed49 bias/sat48/RNE/sat32 and flags",
+    "D1 micro k63 retirement/tail lanes/ready-valid/reset",
+    "D2 synchronous SP banks latency1/2, ordered accept versus write retirement",
+    "D2 W/X address mathematics, tail mask, product k identity, publication order and done",
+    "D2 fault retention and invalid-retire simultaneous out_fire",
+    "D2 test coverage and case layer identity"
+  ],
+  "source_sha256": {
+    "rtl/revd/core_stream_frontend.sv": "11d8b1797eeb76a4709303831bf2ea6ea27810ccb0618659f7afd388af9ce0e2",
+    "rtl/revd/banked_sp16.sv": "64e43e4db91677966c5eafb44e61d38e2640b01f3154ace19e2163ec8453ea36",
+    "rtl/revd/quant_epilogue.sv": "f2590a7a36d8fcc99e286189d06b1ebb6853af540d3e8acacfbafbad08078911",
+    "rtl/revd/mac_lane.sv": "aa5a5e32085f143f557266f21750189c0f0178cc46269ad9755093ae3a20d99a",
+    "rtl/revd/micro_tile.sv": "c9f7fc2e10cb42d35ae9baf0c67607ebbf47d7ecdf8515e7cf89083fdcf48f7c",
+    "dv/revd/core_tb.sv": "1e50f306e2535f8c48566a30f81064d70b3d125f09137d70ea35f387fcbf63ca",
+    "dv/revd/d2_runner.py": "ae418277c475efbd9393023e904c47a167bb4163794d8ce9c6d511406fb72061",
+    "dv/revd/d2_protocol.py": "ac9c42b4b3296f36af340b9a332b5b9e5dd564be2cf4502b8726b546a2b9d48e",
+    "dv/revd/d1_micro_tb.sv": "cf1dbecd2c9992a5ebd6bf9a69b11d313e5d87584e4b1fe32f3eba1ac1a6d0be",
+    "dv/revd/d1_quant_tb.sv": "ef4390f64178dbdbfb9bc85474414c16f2dd025699ae612f30ef1f7d35bed3b8",
+    "dv/revd/d1_runner.py": "41cdb620ed334334a897ac5b01237218e98a07022c8f6a848699e04172d49206",
+    "dv/revd/d0_inputs.py": "c95751b6f019af3402f273eeb7bd92ced9cdfefcfb66ef0f52a68fb8398282ab",
+    "dv/revd/d0_run.py": "08bd7e08378a4302e1537fca7e029c63f568a9f871b42574e81ea24fab02e53a",
+    "dv/revd/d0_test_inputs.py": "b82817bb6f4dccf5041036c925632067410b6e3f2913daf4ec43778401ea0ae2"
+  },
+  "blocking_findings": [
+    {
+      "id": "SPEC-EVIDENCE-001",
+      "severity": "medium",
+      "location": "dv/revd/d2_protocol.py:25",
+      "finding": "The distinct-W/b/shift/layer continuous-task coverage fix is present in source, but the newest available protocol summary predates that source change. Fresh execution evidence is required before this review can pass.",
+      "required_verification": "Run current d2_protocol.py in a new run directory, require compile/simulation/checker completion including continuous and both fault cases, and verify source hashes against current files."
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "SPEC-COVERAGE-001",
+      "location": "dv/revd/d1_micro_tb.sv:152",
+      "finding": "Old reset case occurred before the micro quant postprocessing owner became active.",
+      "resolution": "Current code waits for QWAIT plus q_valid, holds ready low, then resets. PM4 and PM2 logs in reports/revd/d1/green/20261017-130810-4493f4b2 record QWAIT q_valid=1 retired=64 and normal completion."
+    },
+    {
+      "id": "SPEC-COVERAGE-002",
+      "location": "dv/revd/d2_runner.py:152",
+      "finding": "Old full36 BEGIN layer defaulted to1 for every case.",
+      "resolution": "Current run_case propagates layer, and full36 consumes c[layer]. Full36 current execution remains a root-control evidence responsibility."
+    },
+    {
+      "id": "SPEC-COVERAGE-003",
+      "location": "dv/revd/d2_protocol.py:25",
+      "finding": "Old continuous test reused W and layer and did not exercise complete parameter replacement.",
+      "resolution": "Current source changes X/W/b/shift/layer on second task; pending fresh execution."
+    }
+  ],
+  "observations": [
+    "No new definite RTL numeric/address/tag/tail/done bug found in reviewed current files.",
+    "Core uses one ordered registered command entry; writes and LOAD retirement occur at the same edge, and following COMMIT cannot bypass that edge.",
+    "Serial READ/WAIT_READ/ACC scheduling preserves k and bank returns at both supported read latencies without CTX4.",
+    "Fault recovery retains a published block and handles out_fire on the same edge as invalid retirement; no success done is generated.",
+    "D2 public stream verification compares Y/overflow/saturated/task/index/last, not raw48.",
+    "No lint or simulation was launched by this review agent; actual existing logs and source logic were inspected.",
+    "Formal contest/E203/PDK/PPA/official600 acceptance is outside this review."
+  ],
+  "parent_accepted": false,
+  "official_contest_acceptance": false
+}

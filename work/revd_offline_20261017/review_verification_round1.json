@@ -1,0 +1,437 @@
+{
+  "schema_version": 1,
+  "review_round": 1,
+  "reviewer": "independent_verification_submission_inventory",
+  "created_utc": "2026-10-17T06:25:12.787229+00:00",
+  "recommendation": "REQUEST_CHANGES",
+  "reviews_passed": false,
+  "parent_accepted": false,
+  "official_contest_acceptance": false,
+  "scope": "独立测试/来源/交付闭包第一轮；只读现有代码与证据，仅输出本报告。所有动态probe为内存替换，不修改既有运行文件、不重跑RTL、不启动runner。",
+  "reviewed_sources": [
+    {
+      "path": "dv/revd_opt/core_runner.py",
+      "sha256": "1792cc10385fef5181d2030d48115044b016d25b1197ef5aadba81b537b821d3",
+      "bytes": 12421
+    },
+    {
+      "path": "dv/revd_opt/protocol.py",
+      "sha256": "9c41fff80cd6976c154acff3d185aecc512129ae76072ff8f5d176f88bc0e591",
+      "bytes": 4958
+    },
+    {
+      "path": "dv/revd_opt/numeric_checks.py",
+      "sha256": "d1116242c2f9b370ed577326e62b572d28aff3d405710e011964f9f95afece50",
+      "bytes": 3031
+    },
+    {
+      "path": "scripts/revd_offline_gate.py",
+      "sha256": "3fc226ab6bbba192de97767e7ca22e59179d6579e20ad5d5c5da4b95a00fae03",
+      "bytes": 14483
+    },
+    {
+      "path": "scripts/revd_offline_common.py",
+      "sha256": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+      "bytes": 4748
+    },
+    {
+      "path": "dv/revd_opt/core_tb.sv",
+      "sha256": "c9c79c2bbcc9033e8aeca865910ef629469d4d2a2e2975098e5f260004dc258b",
+      "bytes": 10102
+    },
+    {
+      "path": "rtl/revd_opt/core_stream_frontend_opt.sv",
+      "sha256": "af7bec5fb9a276e614348c80fd6adaa6e7153709b51b9b372eb0080ef9ba1bb1",
+      "bytes": 12995
+    }
+  ],
+  "reviewed_gate_sha256": "3fc226ab6bbba192de97767e7ca22e59179d6579e20ad5d5c5da4b95a00fae03",
+  "reviewed_gate_is_snapshot": true,
+  "positive_findings": [
+    "普通case逐值比较Y/两个flags/task/index/last，输出数和唯一性严格；未知值正则拒绝。",
+    "run_case编译/仿真实际exit、PID/timeout/log和源码snapshot有证据，结束时核源码和输入未变。",
+    "当前gate确实拒绝旧PASS的stale源；首次full36在源变更时FAIL，未将预算或历史PASS冒充新验收。",
+    "最终输出附近四模式及L1/L2已有新鲜独立case证据；其他协议/全36仍需当前源码重新汇总验收。"
+  ],
+  "findings": [
+    {
+      "id": "VERIF-R1-01",
+      "severity": "HIGH",
+      "status": "FOUND_IN_INITIAL_GATE_PARTIALLY_FIXED_DURING_REVIEW",
+      "location": "scripts/revd_offline_gate.py:105-123",
+      "finding": "初版gate存在协议/变异别名假接受，已独立动态证明。审查期间根控加入精确名字/manifest唯一性，3fc226...快照对直接重复manifest正确拒绝。之后ebbd...版本已进一步加入协议事件/BOUNDARY/reset和mutant身份、full36样本绑定；未在本轮完整重新接受。",
+      "fix": "保留初版红测，新增真实新鲜protocol+mutant绿测；最新版须复核各身份、唯一性、源/config/input/binary/日志闭包，不仅字符串去重。",
+      "initial_false_accept": {
+        "gate_sha256": "23b65feb1122a70d8291feff67deca747c02d7ec286ad18ea9e78aeb089f12f9",
+        "method": "只读内存summary替换：26 required名同一新鲜manifest，6 mutant名同一历史FAIL manifest；真实磁盘证据未改。",
+        "actual_result": {
+          "status": "PASS",
+          "functional_mutants": 6,
+          "tests": 26
+        }
+      },
+      "current_pinned_snapshot_probe": {
+        "outcome": "REJECT",
+        "error": "aliased protocol manifests"
+      }
+    },
+    {
+      "id": "VERIF-R1-02",
+      "severity": "HIGH",
+      "status": "CONFIRMED_DYNAMIC_FALSE_ACCEPT",
+      "location": "scripts/revd_offline_gate.py:40-52",
+      "finding": "sim_argv未使用。可把sim调用改成/usr/bin/true并同步sidecar receipt，仍用原log和二进制SHA通过，未绑定真正执行产物。source inventory只len>=7，删除候选RTL项并用./numeric/fixedpoint.py别名补数仍通过。",
+      "evidence": {
+        "fake_simulator_argv": {
+          "outcome": "ACCEPT",
+          "result": {
+            "status": "PASS",
+            "outputs": 160,
+            "manifest": "reports\\revd_offline\\protocol\\20261017T062232Z_d44560d2\\last_fire_invalid_l1\\run_manifest.json",
+            "sha256": "38ddd6f7e1952730022a3c07b56c3f732c20171d87bc328b5fb6c480200eb82b"
+          }
+        },
+        "omitted_candidate_source": {
+          "outcome": "ACCEPT",
+          "result": {
+            "status": "PASS",
+            "outputs": 160,
+            "manifest": "reports\\revd_offline\\protocol\\20261017T062232Z_d44560d2\\last_fire_invalid_l1\\run_manifest.json",
+            "sha256": "38ddd6f7e1952730022a3c07b56c3f732c20171d87bc328b5fb6c480200eb82b"
+          }
+        }
+      },
+      "fix": "按simulator精确校验编译器/二进制输出和仿真argv、+CMD/+OUT/+STATS；source/input/output名单用固定规范化相对路径集合，拒绝别名和缺项；绑定工具可执行文件SHA。"
+    },
+    {
+      "id": "VERIF-R1-03",
+      "severity": "HIGH",
+      "status": "FOUND_IN_INITIAL_GATE_FIX_IN_PROGRESS",
+      "location": "scripts/revd_offline_gate.py:125-130; dv/revd_opt/core_runner.py:164-179",
+      "finding": "suite仅minimum_cases和manifest路径去重；不要求full36精确3×12身份、输入与冻结manifest相等、M99/N256、912384输出或统一schedule/latency/shift/layer集合。不同目录重复同一输入可冒充全36；--pm只能单独限制PM，不能限制其余profile。",
+      "fix": "增加明确full36模式，逐项绑定冻结manifest的case_id/layer/Xq/Wq/bq/shift，恰36且25344输出每case、总912384；对照需同输入/接口/seed/latency；重复样本或混profile fail。",
+      "latest_fix_observed": "ebbdce9af8e5ee7fac35ee7903bd8e2c24c25c091e9b5eb61812210ede468dc7已加入profile==full36时恰36/912384/case set/源数组SHA检查；需要负测和同profile一致性补核。"
+    },
+    {
+      "id": "VERIF-R1-04",
+      "severity": "HIGH",
+      "status": "REQUIRED_ACCEPTANCE_FEATURE_MISSING",
+      "location": "scripts/revd_offline_gate.py:132-140; dv/revd_opt/numeric_checks.py:11-45",
+      "finding": "没有numeric/CPU gate。numeric 53项summary不可被当前gate独立验收；量化unit仅末尾source SHA、没有运行前snapshot/起止一致核验。当前无新CPU summary可审，fakeCPU结束拒绝尚无证据。",
+      "fix": "numeric gate重算量化vectors/output和全48shift/四extreme，核unit编译/仿真退出及SHA；CPU gate核真实E203固件/来源/写回实际内存、index唯一性、flags、最后写响应、MMIO真实时窗并拒绝缺末项/假done。未实现前相关验收字段保持false/PARTIAL。"
+    },
+    {
+      "id": "VERIF-R1-05",
+      "severity": "MEDIUM",
+      "status": "CONFIRMED_SOURCE_INSPECTION",
+      "location": "scripts/revd_offline_gate.py:60-69,96-103; dv/revd_opt/core_runner.py:132-144",
+      "finding": "gate对含控制事件或连续任务直接信expected.json，不独立重算每次任务数值；也不复核RAW trace、CE计数公式或banks字段。当前run_case本身会检查普通case raw/CE，但gate不能独立拒绝重写这些实测字段。",
+      "fix": "解析协议期望任务状态或绑定可信生成器和输入集，独立核RAW trace identity/value/count、实际X/W CE和issue/retire数，避免被手填summary或改stats后重hash替代。"
+    }
+  ],
+  "existing_suites_checked": [
+    {
+      "file": {
+        "path": "reports/revd_offline/core/ctx4-full36-l1-001/summary.json",
+        "sha256": "faaeb95d248f28694845c5b87d0c5aae725ae29a40e8994d3398af3af49a9738",
+        "bytes": 2825
+      },
+      "author_status": "FAIL",
+      "author_test_count": 12,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "suite failed"
+      }
+    },
+    {
+      "file": {
+        "path": "reports/revd_offline/core/ctx4-production-l1-001/summary.json",
+        "sha256": "e089aeca4bd7d16c03d6f4875e2ee09871060dc4192ea6b95b698f438520d626",
+        "bytes": 301
+      },
+      "author_status": "PASS",
+      "author_test_count": 1,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "stale current source rtl/revd_opt/core_stream_frontend_opt.sv"
+      }
+    },
+    {
+      "file": {
+        "path": "reports/revd_offline/core/ctx4-schedule-red-001/summary.json",
+        "sha256": "bb9283b32a5122dd0c4f2bdea9fac49a6c342510282ed445c80db2da6a6e21f9",
+        "bytes": 298
+      },
+      "author_status": "FAIL",
+      "author_test_count": 1,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "suite failed"
+      }
+    },
+    {
+      "file": {
+        "path": "reports/revd_offline/core/ctx4-small-green-001/summary.json",
+        "sha256": "ff416fccc2d576076feb332ab1bff6b189c119411c7c5114ae367036c7efa772",
+        "bytes": 798
+      },
+      "author_status": "PASS",
+      "author_test_count": 4,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "stale current source rtl/revd_opt/core_stream_frontend_opt.sv"
+      }
+    },
+    {
+      "file": {
+        "path": "reports/revd_offline/protocol/20261017T061612Z_fd635479/summary.json",
+        "sha256": "c5ff08cceba0ffc1ad6ea0d94e32201c95322aacdf605afde02fd2189fb419c0",
+        "bytes": 6375
+      },
+      "author_status": "FAIL",
+      "author_test_count": 33,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "protocol suite failed"
+      }
+    },
+    {
+      "file": {
+        "path": "reports/revd_offline/protocol/20261017T061817Z_0dbcf791/summary.json",
+        "sha256": "9f67b510fcd13123ab6686fbf256e431b535331ab593580819627734d4f91bcf",
+        "bytes": 6168
+      },
+      "author_status": "PASS",
+      "author_test_count": 32,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "stale current source dv/revd_opt/core_tb.sv"
+      }
+    },
+    {
+      "file": {
+        "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/summary.json",
+        "sha256": "6d24912c93fabcdea93959f51eace2092afe85ff451bcbb0cf39829a23c72006",
+        "bytes": 6168
+      },
+      "author_status": "PASS",
+      "author_test_count": 32,
+      "independent_gate_result": {
+        "outcome": "REJECT",
+        "error": "invalid literal for int() with base 10: 'a'"
+      }
+    }
+  ],
+  "fresh_current_case_manifests": [
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/bad_dtype_value/run_manifest.json",
+      "sha256": "786a7734f22fe2c32836885788049250d12cfbd524773b08c97aa3deb3e60e6c",
+      "bytes": 9079
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/bad_layer/run_manifest.json",
+      "sha256": "3b7766fe3ef8670d781abe9e9ee14de247ee45116c000b9e930b00776408b4b0",
+      "bytes": 9038
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/continuous/run_manifest.json",
+      "sha256": "2752edba96337b810362333b9b549e5408ffdd551e215eb5be5ce4fde0e29081",
+      "bytes": 11364
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/duplicate_x/run_manifest.json",
+      "sha256": "6c7e6cf2b264cd81567980e8ac14432c7cc299f66c13f66615e99dc317c6a8ed",
+      "bytes": 9052
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/early_commit/run_manifest.json",
+      "sha256": "dd1e76e9ceafb356c23a673dfc24937d5c12452b34eb50831c3ea6de58eb9628",
+      "bytes": 9060
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/fault_on_fire/run_manifest.json",
+      "sha256": "fc9c9694b90d4ebd61e86519c7b5820feb9a6b699cb89db17c7e6a1ef16273b3",
+      "bytes": 9068
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/fault_preserves_block/run_manifest.json",
+      "sha256": "4a5db45b1e1065321bd2b79e1b373ae936fb1265517b892a7a2d2a092b7fdca1",
+      "bytes": 9124
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/last_fire_invalid_l1/run_manifest.json",
+      "sha256": "38ddd6f7e1952730022a3c07b56c3f732c20171d87bc328b5fb6c480200eb82b",
+      "bytes": 10438
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/last_fire_invalid_l2/run_manifest.json",
+      "sha256": "5d2d891dda5eb57ad4e64ed2c57d1f31e25718b25af1c0cfc111ae6f68572c32",
+      "bytes": 10439
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/next_begin_boundary_l1/run_manifest.json",
+      "sha256": "54fc6f4693280c04cd9dd44d1a45c304f596b44be2491fcfc15837941d0f838f",
+      "bytes": 11444
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/next_begin_boundary_l2/run_manifest.json",
+      "sha256": "5f20643828c611128217161fad2e524ec7abb7670a96c2ccbe62dec65151e771",
+      "bytes": 11447
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/pending_last_blocked_l1/run_manifest.json",
+      "sha256": "61e4b56c2d48f16c88f21c8ab3d53060ed98393d866e80e67c6369e5d3291ece",
+      "bytes": 9140
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/pending_last_blocked_l2/run_manifest.json",
+      "sha256": "3e2fcecb225d07713ca10ec8a29328a7c1c79cd830a88fcfc39e04e57ae8aff0",
+      "bytes": 9139
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/pending_last_fire_l1/run_manifest.json",
+      "sha256": "41951850bc0523f5b56ff904228b8509ea2e63293fc7d7dd2867dbfbb6d40207",
+      "bytes": 9118
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/pending_last_fire_l2/run_manifest.json",
+      "sha256": "35e4f8511224d850a8580e0adf0beee0ced2e128a2a546335678ff0f6f9f64c8",
+      "bytes": 9118
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l1_phase1/run_manifest.json",
+      "sha256": "d3a7177e74506994e24146d9350300ca348877eda61fbff78e1a205e7df4425f",
+      "bytes": 10408
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l1_phase2/run_manifest.json",
+      "sha256": "207cadce1d9a573c3de72ae792ac60a5b057fd4b3531862fa2698da04178b8d0",
+      "bytes": 10407
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l1_phase3/run_manifest.json",
+      "sha256": "8e4e12eb6a3cb82ba8877730c21b1777ba043313487e301cb4e74bdfbf48d09d",
+      "bytes": 10409
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l1_phase4/run_manifest.json",
+      "sha256": "934af620cfea901155c30ffa9b2fabcfe38aaf3a10c311c33566729f105571f1",
+      "bytes": 10408
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l1_phase5/run_manifest.json",
+      "sha256": "aed051ad01cc0e03d1835895c23fa0c0cebb411b8c871e83cd5141f001abfadb",
+      "bytes": 10408
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l2_phase1/run_manifest.json",
+      "sha256": "a8cedbf47f1adcec3e777d8bd3e3fb374d11a4a9427094fb159c6669c9c5de3d",
+      "bytes": 10407
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l2_phase2/run_manifest.json",
+      "sha256": "61db97124c74ce59377e4d6b9fdf4c032c52eb3bdadeefeb6c76ec425489ab2f",
+      "bytes": 10408
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l2_phase3/run_manifest.json",
+      "sha256": "a36bae8d7f49c5b8366280b00a513ff295c1371e57b364f0f7e42e67365b6280",
+      "bytes": 10408
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l2_phase4/run_manifest.json",
+      "sha256": "1a25ea2e7ff1fe58a24d81cc2650d6456ebca47343068b14709ae1c196dc77fb",
+      "bytes": 10409
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/reset_l2_phase5/run_manifest.json",
+      "sha256": "8851ffd04dc1c8f5cff9c0a9a3be24391fccc8e55c46934012924634187a6d0c",
+      "bytes": 10408
+    },
+    {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/wrong_tile/run_manifest.json",
+      "sha256": "0272836d70d3ec6813da4eb79e09d05d62b0b88caf98c23e21a6a5dbcc70c93d",
+      "bytes": 9045
+    }
+  ],
+  "dynamic_probes": {
+    "case_manifest": {
+      "path": "reports/revd_offline/protocol/20261017T062232Z_d44560d2/last_fire_invalid_l1/run_manifest.json",
+      "sha256": "38ddd6f7e1952730022a3c07b56c3f732c20171d87bc328b5fb6c480200eb82b",
+      "bytes": 10438
+    },
+    "mutant_manifest": {
+      "path": "reports/revd_offline/protocol/20261017T061817Z_0dbcf791/MUT_DROP_K63/run_manifest.json",
+      "sha256": "144bc90b567755c7aab9a6f111a3fec1db0887094f5950bdc019e564c17131c4",
+      "bytes": 8531
+    },
+    "all_protocol_alias_false_accept": {
+      "outcome": "REJECT",
+      "error": "aliased protocol manifests"
+    },
+    "missing_boundary_honest_omission": {
+      "outcome": "REJECT",
+      "error": "missing/duplicate/unexpected protocol tests"
+    },
+    "mixed_PM_config": {
+      "outcome": "REJECT",
+      "error": "compile parameter differs from config PM"
+    },
+    "scoreboard_negatives": [
+      {
+        "name": "delete_last_output",
+        "method": "只读内存替换output.hex的读取内容，磁盘与原始SHA文件未改。",
+        "outcome": "REJECT",
+        "error": "missing/extra output including terminal record"
+      },
+      {
+        "name": "wrong_flag",
+        "method": "只读内存替换output.hex的读取内容，磁盘与原始SHA文件未改。",
+        "outcome": "REJECT",
+        "error": "output/flags/index/last mismatch 0"
+      },
+      {
+        "name": "wrong_index",
+        "method": "只读内存替换output.hex的读取内容，磁盘与原始SHA文件未改。",
+        "outcome": "REJECT",
+        "error": "output/flags/index/last mismatch 0"
+      }
+    ],
+    "missing_selected_RTL_false_accept": {
+      "outcome": "ACCEPT",
+      "result": {
+        "status": "PASS",
+        "outputs": 160,
+        "manifest": "reports\\revd_offline\\protocol\\20261017T062232Z_d44560d2\\last_fire_invalid_l1\\run_manifest.json",
+        "sha256": "38ddd6f7e1952730022a3c07b56c3f732c20171d87bc328b5fb6c480200eb82b"
+      }
+    },
+    "fake_simulator_argv_false_accept": {
+      "outcome": "ACCEPT",
+      "result": {
+        "status": "PASS",
+        "outputs": 160,
+        "manifest": "reports\\revd_offline\\protocol\\20261017T062232Z_d44560d2\\last_fire_invalid_l1\\run_manifest.json",
+        "sha256": "38ddd6f7e1952730022a3c07b56c3f732c20171d87bc328b5fb6c480200eb82b"
+      }
+    },
+    "probe_limit": "这些内存probe验证gate判断逻辑，不宣称真实变异RTL新编译运行；RTL mutation接受须另有运行证据。"
+  },
+  "full36_at_review": "ctx4-full36-l1-001 summary FAIL，仅12项，末项source changed while running；当前不能regression_checked。",
+  "CPU_at_review": "未发现本轮新SoC summary，不能CPU接受。",
+  "package_at_review": "候选包尚未进入本轮审查，需第二轮对实际ZIP解压复跑和依赖/许可证/路径闭包。",
+  "source_change_during_review": [],
+  "next_acceptance_requirements": [
+    "修复明确HIGH并保留software gate红绿负测；不混算RTL变异数量。",
+    "当前源码完整36/flags/unique/尾行及新进程完整例重跑；协议完整32项与numeric53项新鲜证据。",
+    "当前profile CPU若未完成准确PARTIAL；全部正式PPA/数据缺口保持NOT_RUN。",
+    "第二轮实际便携包/ZIP/独立ROOT/PYTHONPATH解压复跑审查。"
+  ],
+  "revision_note": {
+    "updated_utc": "2026-10-17T06:26:08.106507+00:00",
+    "initial_reviewed_gate_sha256": "23b65feb1122a70d8291feff67deca747c02d7ec286ad18ea9e78aeb089f12f9",
+    "dynamic_probe_pinned_snapshot_sha256": "3fc226ab6bbba192de97767e7ca22e59179d6579e20ad5d5c5da4b95a00fae03",
+    "latest_observed_gate_sha256": "1e7096204a6887cbf8507b92c55ba0f6e50c11e59099c9165b52a3bd9d1a037f",
+    "meaning": "本轮报告包含初版发现及修复中状态；当前源码快速变化，未把初版缺陷静默归到最新修复版，也未把观察到修复等同最终通过。"
+  }
+}

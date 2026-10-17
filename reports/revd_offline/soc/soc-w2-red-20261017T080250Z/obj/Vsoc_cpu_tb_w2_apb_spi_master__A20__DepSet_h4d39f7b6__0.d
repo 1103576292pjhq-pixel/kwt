@@ -1,0 +1,4 @@
+Vsoc_cpu_tb_w2_apb_spi_master__A20__DepSet_h4d39f7b6__0.o: \
+ Vsoc_cpu_tb_w2_apb_spi_master__A20__DepSet_h4d39f7b6__0.cpp \
+ Vsoc_cpu_tb_w2__pch.h Vsoc_cpu_tb_w2__Syms.h \
+ Vsoc_cpu_tb_w2_apb_spi_master__A20.h

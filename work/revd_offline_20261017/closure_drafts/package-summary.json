@@ -1,0 +1,1019 @@
+{
+  "schema_version": 1,
+  "status": "LOCAL_EVIDENCE_REVIEW_PENDING",
+  "created_utc": "2026-10-17T08:18:41.780088+00:00",
+  "release_id": "MASTER_RELEASE-KWT-OFFLINE-SCORE-20261017-001",
+  "selected_profile": "D3_CTX4_FULL_PM4_X4_Y1",
+  "selection_reason": "Full-W CTX4 PM4 is the reliable default with all36 core cases and public E203/C coverage of all12 frozen layers in six two-task boots. W2 is a separately validated two-full-task Pareto alternative with 7.7882% lower measured CPU cold cycles and smaller logical W capacity; physical timing, area and energy are unknown. Keeping the broader CPU-qualified default is not a claim that it is physically optimal.",
+  "parent_accepted": false,
+  "official_contest_acceptance": false,
+  "formal_score": null,
+  "submission_qualified": false,
+  "score_scope": "Undergraduate requirement/formula audit and local evidence comparison only.",
+  "undergraduate_weights": {
+    "function_and_precision": 40,
+    "soc_synthesis_reproducibility": 20,
+    "throughput": 8,
+    "energy": 8,
+    "area": 4,
+    "innovation": 20
+  },
+  "formal_gate": "All mandatory tasks + all required functional cases + numerical threshold + RTL bit equality + 150MHz + added area<=2.25mm2 must pass before efficiency AND innovation scoring.",
+  "score_formulas": {
+    "nrmse_layer": "sqrt(sum_all_samples_and_outputs((Y_decoded-Y_float)^2)/C_l) / max(sqrt(sum_all_samples_and_outputs(Y_float^2)/C_l),1e-8)",
+    "nrmse_design": "max(e_l for l in 1..12)",
+    "precision_points": "max(0,10-e_design/0.003), error represented as a fraction",
+    "throughput_tasks_per_second": "completed_task_count/sum_cold_task_seconds",
+    "energy_j_per_task": "average_full_soc_power_watt*sum_cold_task_seconds/completed_task_count",
+    "throughput_points": "round(8*T_team/T_max_qualified_undergraduate,2)",
+    "energy_points": "round(8*E_min_qualified_undergraduate/E_team,2)",
+    "area_points": "round(4*A_min_qualified_undergraduate/A_team,2)",
+    "formal_total_score": null,
+    "formal_total_score_reason": "\u8d44\u683c\u95e8\u5c1a\u6709\u5916\u90e8\u5f85\u9a8c\uff0c\u6b63\u5f0f600/12\u672a\u77e5\uff0c\u5408\u683c\u53c2\u8d5b\u961fT_max/E_min/A_min\u672a\u77e5\u3002"
+  },
+  "formal_gaps": [
+    "Official 600-sample inventory and the official selected 12 cold tasks have not been supplied.",
+    "Public E203 is exercised; organizer-provided platform equivalence remains untested.",
+    "Designated cell libraries, SRAM functional/timing/power models and macro area tables are absent.",
+    "150 MHz STA, mapped netlist functional equivalence and <=2.25 mm2 added-area gate are NOT_RUN.",
+    "Full-SoC mapped activity/power/energy and qualified competitor extrema are unavailable.",
+    "No formal efficiency/innovation score, global optimum, or contest acceptance is asserted."
+  ],
+  "requirements": [
+    {
+      "id": "TASK1_DOT64",
+      "physical_pages": [
+        8
+      ],
+      "requirement": "64\u9879\u70b9\u79ef\u3001\u504f\u7f6e\u4e0e\u6570\u503c\u8f6c\u6362\uff1b\u6b63\u5e38/\u8fb9\u754c/\u590d\u4f4d/\u8fde\u7eed\u4efb\u52a1\uff1b\u820d\u5165\u3001\u6ea2\u51fa\u53ca\u8bef\u5dee\u6765\u6e90\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_CURRENT_RTL",
+      "evidence_keys": [
+        "numeric",
+        "protocol"
+      ]
+    },
+    {
+      "id": "TASK2_MATRIX_BIAS",
+      "physical_pages": [
+        8
+      ],
+      "requirement": "99\u00d764\u8f93\u5165\u4e5864\u00d7256\u6743\u91cd\u52a0\u504f\u7f6e\uff0c25344\u4e2a\u552f\u4e00\u8f93\u51fa\uff1b\u7981\u6b62CPU/TB\u4ee3\u7b97\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_CURRENT_36_AND_INDEPENDENT_REPEAT",
+      "evidence_keys": [
+        "selected_full36",
+        "cross_simulator_repeat"
+      ]
+    },
+    {
+      "id": "TASK2_LAYER_SWITCH",
+      "physical_pages": [
+        8
+      ],
+      "requirement": "\u6307\u5b9abest_weights\u53ca\u5bf9\u5e94\u5c42\u8f93\u5165\uff0c\u4f9d\u6b21\u66f4\u6362\u5168\u90e812\u5c42\u53c2\u6570\uff1bFFN1\u8f93\u51fa\u4e0d\u4f5c\u4e0b\u4e00\u5c42\u8f93\u5165\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_CORE_3_INPUTS_X_12_LAYERS",
+      "evidence_keys": [
+        "selected_full36",
+        "cpu_twelve"
+      ]
+    },
+    {
+      "id": "TASK2_BUFFER_WRITEBACK",
+      "physical_pages": [
+        8
+      ],
+      "requirement": "\u53c2\u6570\u88c5\u8f7d\u3001\u8f93\u5165\u7f13\u51b2\u3001\u8ba1\u7b97\u63a7\u5236\u53ca\u8f93\u51fa\u5199\u56de\u5b8c\u6574\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_PUBLIC_E203_INDEXED_SHARED_WRITE_RESPONSES",
+      "evidence_keys": [
+        "cpu_first_two",
+        "cpu_fake_done_negatives",
+        "adapter_mutations",
+        "cpu_twelve"
+      ]
+    },
+    {
+      "id": "NUMERIC_FORMAT_MODEL_CONVERTER",
+      "physical_pages": [
+        5,
+        11,
+        14
+      ],
+      "requirement": "\u63d0\u4ea4\u4e0eRTL\u4e00\u81f4\u7684\u8f6f\u4ef6\u6570\u503c\u6a21\u578b\u3001\u53c2\u6570\u8f6c\u6362\u811a\u672c\u3001\u7f16\u7801\u89e3\u7801\u53ca\u6570\u636e\u683c\u5f0f\u8bf4\u660e\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_FROZEN_NUMERIC_AND_36_PARAMETER_CONVERSIONS",
+      "evidence_keys": [
+        "conversion",
+        "numeric"
+      ]
+    },
+    {
+      "id": "OFFICIAL_600_PRECISION",
+      "physical_pages": [
+        8,
+        11
+      ],
+      "requirement": "600\u7edf\u4e00\u8bc4\u6d4b\u6837\u672c\u00d712\u5c42\uff1b\u6709\u9650\u89e3\u7801\uff1bmax_layer_NRMSE\u22640.03\uff1b\u5206\u6bcdfloor1e-8\u3002",
+      "external_dependency": "\u7ec4\u59d4\u4f1a\u8bc4\u6d4b\u540e\u516c\u5e03600\u6e05\u5355\uff1b\u672c\u5730\u4e0d\u80fd\u9009\u62e9\u6216\u4f2a\u79f0\u6b63\u5f0f600\u901a\u8fc7\u3002",
+      "local_status": "NOT_RUN_OFFICIAL_600;_LOCAL_3X12_ONLY",
+      "evidence_keys": [
+        "precision"
+      ]
+    },
+    {
+      "id": "RTL_BIT_TRUE",
+      "physical_pages": [
+        11
+      ],
+      "requirement": "RTL\u4e0e\u63d0\u4ea4\u6570\u503c\u6a21\u578b\u9010\u4f4d\u4e00\u81f4\uff1b3%\u8bef\u5dee\u4e0d\u5bb9\u8bb8RTL\u5dee\u5f02\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_Y_FLAGS_TASK_INDEX_LAST_AND_PASSIVE_RAW48",
+      "evidence_keys": [
+        "selected_full36",
+        "numeric"
+      ]
+    },
+    {
+      "id": "TASK3_E203_DRIVER_SOC",
+      "physical_pages": [
+        8,
+        9,
+        12
+      ],
+      "requirement": "\u63a5\u5165E203\uff0c\u9a71\u52a8/\u6570\u636e\u4ea4\u6362/start/done\u53caSoC\u4eff\u771f\u3002",
+      "external_dependency": "\u516c\u5f00E203\u662fprototype\uff0c\u7ec4\u59d4\u4f1a\u5e73\u53f0\u7b49\u4ef7\u6027\u5f85\u9a8c\u8bc1\u3002",
+      "local_status": "PASS_PUBLIC_PROTOTYPE;_ORGANIZER_PLATFORM_NOT_RUN",
+      "evidence_keys": [
+        "cpu_first_two",
+        "cpu_fake_done_negatives",
+        "cpu_twelve"
+      ]
+    },
+    {
+      "id": "SYNTHESIS_CONSTRAINTS",
+      "physical_pages": [
+        9,
+        12,
+        14
+      ],
+      "requirement": "RTL\u3001TB\u3001\u7efc\u5408\u7f51\u8868\u3001\u6709\u6548SDC\u3001\u7efc\u5408\u5b8c\u6574\u6027\u3002",
+      "external_dependency": "\u6307\u5b9a\u6807\u51c6\u5355\u5143\u5e93/\u5de5\u827a\u89d2/\u8d1f\u8f7d\u53caSRAM\u5b8f\u6a21\u578b\u7f3a\u5931\uff1b\u5386\u53f2generic.v\u4e0d\u662f\u5f53\u524d\u6280\u672f\u6620\u5c04\u7f51\u8868\u3002",
+      "local_status": "GENERIC_STRUCTURE_ONLY;_DESIGNATED_MAPPING_NOT_RUN",
+      "evidence_keys": [
+        "generic_structure",
+        "technology_inventory"
+      ]
+    },
+    {
+      "id": "PRE_POST_SYNTH_FUNCTION",
+      "physical_pages": [
+        12,
+        14
+      ],
+      "requirement": "\u7efc\u5408\u524d\u540e\u529f\u80fd\u4e00\u81f4\u6027\u3002",
+      "external_dependency": "\u5f53\u524d\u6307\u5b9a\u5e93\u6620\u5c04\u7f51\u8868\u548cSRAM\u529f\u80fd\u6a21\u578b\u7f3a\u5931\u3002",
+      "local_status": "NOT_RUN_NO_DESIGNATED_MAPPED_NETLIST",
+      "evidence_keys": [
+        "technology_inventory"
+      ]
+    },
+    {
+      "id": "REPRODUCIBLE_PROJECT",
+      "physical_pages": [
+        12,
+        14
+      ],
+      "requirement": "\u5de5\u7a0b\u4e0e\u62a5\u544a\u53ef\u590d\u73b0\uff1b\u6a21\u578b\u3001\u6570\u636e\u3001\u811a\u672c\u3001\u5de5\u5177\u914d\u7f6e\u5747\u8bb0\u5f55\u7248\u672c\u53ca\u6821\u9a8c\u3002",
+      "external_dependency": null,
+      "local_status": "PACKAGE_SOURCE_AND_RECIPE_COMPLETE;_ACTUAL_ARCHIVE_PROOF_EXTERNAL",
+      "evidence_keys": [
+        "verification_review"
+      ]
+    },
+    {
+      "id": "TIMING150",
+      "physical_pages": [
+        4,
+        12
+      ],
+      "requirement": "150MHz\u7edf\u4e00\u65f6\u949f\u53ca\u7efc\u5408\u65f6\u5e8f\u76ee\u6807\uff1b\u7981\u6b62\u9690\u85cf\u8fdd\u4f8b\u7684\u65e0\u6548\u7ea6\u675f\u3002",
+      "external_dependency": "\u6307\u5b9a\u5e93/\u5b8f/PVT/\u771f\u5b9e\u6620\u5c04\u53caSTA\u5747\u7f3a\uff1b\u884c\u4e3a\u4eff\u771f\u5468\u671f\u4e0d\u662fSTA\u901a\u8fc7\u3002",
+      "local_status": "NOT_RUN_NO_DESIGNATED_STA",
+      "evidence_keys": [
+        "technology_inventory"
+      ]
+    },
+    {
+      "id": "AREA225",
+      "physical_pages": [
+        5,
+        13
+      ],
+      "requirement": "\u65b0\u589e\u6838+\u63a5\u53e3+\u5185\u90e8SRAM\u5b8f\u22642.25mm\u00b2\uff1b\u56fa\u5b9aCPU/\u5171\u4eabSRAM/\u56fa\u5b9a\u603b\u7ebf\u53ca\u5916\u8bbe\u6392\u9664\u5e76\u5355\u5217\u3002",
+      "external_dependency": "\u5b98\u65b9\u5e93\u6620\u5c04\u9762\u79ef\u4e0e\u5b8f\u9762\u79ef\u8868\u7f3a\u5931\uff1b\u5b8f\u6570\u4e0e\u5b57\u8282\u4e0d\u53ef\u6362\u7b97mm\u00b2\u3002",
+      "local_status": "NOT_RUN_MM2;_MEMORY_AND_LOGIC_PROXIES_ONLY",
+      "evidence_keys": [
+        "generic_structure",
+        "generic_memory_ledger"
+      ]
+    },
+    {
+      "id": "OFFICIAL12_COLD_THROUGHPUT",
+      "physical_pages": [
+        12,
+        13
+      ],
+      "requirement": "\u51bb\u7ed3\u540e\u7edf\u4e00\u62bd12\u4efb\u52a1\u8986\u76d612\u5c42\uff0c\u6bcf\u4efb\u52a1\u72ec\u7acb\u8bef\u5dee\u22643%\uff1b\u51b7\u8f93\u5165/\u53c2\u6570\u7f13\u5b58\uff0c\u8f93\u5165\u53ca\u53c2\u6570\u88c5\u8f7d\u8d77\u81f3\u5168\u90e8\u5199\u56de\u7ec8\u3002",
+      "external_dependency": "\u7ec4\u59d4\u4f1a\u6b63\u5f0f12\u4efb\u52a1\u672a\u77e5\uff1b\u7ade\u4e89\u7ec4\u5408\u683c\u6700\u9ad8\u541e\u5410\u672a\u77e5\u3002",
+      "local_status": "NOT_RUN_OFFICIAL_TASKS;_MATCHED_FRONTEND_AND_REAL_CPU_LOCAL_EVIDENCE",
+      "evidence_keys": [
+        "frontend_comparison",
+        "cpu_comparison"
+      ]
+    },
+    {
+      "id": "POWER_ENERGY",
+      "physical_pages": [
+        12,
+        13,
+        14
+      ],
+      "requirement": "\u540c\u914d\u7f6e\u540c\u7f51\u8868\u540c\u7a97\u53e3SAIF/VCD\u8986\u76d6\u6620\u5c04\uff1bE203+\u6838+\u4e92\u8fde+SRAM\u52a8\u6001\u9759\u6001\uff1bE=Pavg\u00d7t_total/task_count\u3002",
+      "external_dependency": "\u7edf\u4e00\u5e93/PVT/\u8d1f\u8f7d/\u4e92\u8fde\u4f30\u8ba1/SRAM\u529f\u8017\u6a21\u578b\u53ca\u6b63\u5f0f\u4efb\u52a1\u7f3a\u5931\uff1b\u4e0d\u53ef\u628a\u672a\u6807\u6ce8\u903b\u8f91\u6216SRAM\u8bb0\u96f6\u3002",
+      "local_status": "NOT_RUN_WATTS_JOULES;_ACTUAL_CE_AND_CYCLES_ONLY",
+      "evidence_keys": [
+        "frontend_comparison",
+        "cpu_comparison",
+        "technology_inventory"
+      ]
+    },
+    {
+      "id": "INNOVATION_COMPARISON",
+      "physical_pages": [
+        10,
+        13,
+        14
+      ],
+      "requirement": "\u65b9\u68488\u5206\uff0c\u540c\u6761\u4ef6\u5bf9\u71678\u5206\uff0c\u7b54\u8fa9\u8d21\u732e4\u5206\uff1b\u5148\u8fc7\u6240\u6709\u8d44\u683c\u95e8\u3002",
+      "external_dependency": "\u6b63\u5f0f\u8bc4\u5206\u8fd8\u53d7\u5168\u90e8\u8d44\u683c\u95e8\u4e0e\u8bc4\u5ba1\u3002",
+      "local_status": "LOCAL_COMPARISON_EVIDENCE_ONLY;_FORMAL_GATE_UNMET",
+      "evidence_keys": [
+        "frontend_comparison",
+        "cpu_comparison"
+      ]
+    },
+    {
+      "id": "FINAL_SDC_NETLIST_REPORTS",
+      "physical_pages": [
+        14
+      ],
+      "requirement": "\u51b3\u8d5b\uff1a\u53ef\u590d\u73b0\u5de5\u7a0b\u3001SDC\u3001\u7efc\u5408\u7f51\u8868\u3001\u529f\u80fd/\u65f6\u5e8f/\u9762\u79ef\u62a5\u544a\u3001SAIF/VCD\u3001\u529f\u8017\u3001\u541e\u5410/\u80fd\u8017\u8bb0\u5f55\u3001\u521b\u65b0\u5bf9\u7167\u3001\u7b54\u8fa9\u3002",
+      "external_dependency": "\u65e0\u5b98\u65b9\u6280\u672f\u8d44\u6599\u4e0d\u653e\u5360\u4f4dSDC\u6216\u7f51\u8868\u5192\u5145\u5b8c\u6574\u3002",
+      "local_status": "PARTIAL_LOCAL_ARTIFACTS;_NO_PLACEHOLDER_TECHNOLOGY_DELIVERABLES",
+      "evidence_keys": [
+        "generic_structure",
+        "technology_inventory"
+      ]
+    },
+    {
+      "id": "PUBLIC_MODEL_VERSION",
+      "physical_pages": [
+        6,
+        7,
+        14
+      ],
+      "requirement": "ARM keyword-transformer 237e4097\uff0cKWT-1 best_weights\uff1b\u65e0\u8bad\u7ec3\u5fae\u8c03\u84b8\u998f\u3001\u65e0\u6a21\u578b\u51e0\u4f55\u6539\u53d8\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_FROZEN_124_SOURCE_FILES_AND_WEIGHTS",
+      "evidence_keys": [
+        "source_inventory",
+        "conversion"
+      ]
+    },
+    {
+      "id": "DATA_PARTITION_POLICY",
+      "physical_pages": [
+        7,
+        8
+      ],
+      "requirement": "\u4ec5\u8bad\u7ec3\u5212\u5206\u65e0\u68af\u5ea6\u6807\u5b9a\uff1b\u9a8c\u8bc1\u7528\u4e8e\u8c03\u8bd5\u7cbe\u5ea6\uff1b\u6d4b\u8bd5\u4e0d\u5f97\u8c03\u6743\u91cd/\u91cf\u5316/\u6570\u503c\u914d\u7f6e\u3002",
+      "external_dependency": null,
+      "local_status": "PASS_NO_WEIGHT_OR_QUANTIZATION_TUNING",
+      "evidence_keys": [
+        "source_inventory",
+        "conversion",
+        "precision"
+      ]
+    },
+    {
+      "id": "MEMORY_MACRO_PLATFORM",
+      "physical_pages": [
+        4,
+        13
+      ],
+      "requirement": "\u5171\u4eab512KB\uff1b\u5185\u90e8SRAM\u4ec516\u00d7128/1024/4096 SP/DP\u7ec4\u5408\uff1b\u9762\u79ef/\u7aef\u53e3\u5206\u8d26\u3002",
+      "external_dependency": "\u6307\u5b9aSRAM\u529f\u80fd/\u65f6\u5e8f/\u529f\u8017/\u9762\u79ef\u8d44\u6599\u7f3a\u5931\u3002",
+      "local_status": "BEHAVIORAL_PORTS_AND_CAPACITY_VERIFIED;_DESIGNATED_MACRO_MAPPING_NOT_RUN",
+      "evidence_keys": [
+        "generic_memory_ledger",
+        "technology_inventory"
+      ]
+    }
+  ],
+  "completed": [
+    "Full-W tagged CTX4 PM4 and PM2 core regressions each cover 36 engineering cases and 912384 unique outputs.",
+    "D3 same-input cold frontend comparison, actual bank CE and retired effective MAC evidence.",
+    "Public E203 executes the C driver, performs indexed SRAM writes, and waits for final write response.",
+    "All 48 shifts, signed extremes, reset/continuous tasks and terminal-event barriers exercised.",
+    "Frozen numeric configuration unchanged; 36 conversions and local FP32-relative precision checked.",
+    "Independent specification/RTL and verification gate reviews, plus actual RTL mutation testing.",
+    "Real E203 covers all12 frozen layers for one engineering input in6 boots with2 cold tasks per boot:304128 actual shared-SRAM Y and304128 flag records.",
+    "W1 and W2 PM4/L1 each passed36 core cases/912384 outputs, independent complete-case recompilation, all shifts and lifecycle/mutation coverage.",
+    "PM2 real E203 ran two complete cold tasks; measured cold cycles5809223/5809221, slower than PM4 despite fewer generic multipliers.",
+    "W2 public E203 ran two complete cold tasks:50688 Y and flags with actual shared-write responses; deferred OPEN1937018 cycles and16542 POPs during pending input prove bounded feed/drain progress.",
+    "W2 independent directed CPU fixture covers192 Y/flags and all four flag combinations, with a real wrong-overflow-bit rejection."
+  ],
+  "incomplete_or_not_run": [
+    "Official600/selected12/organizer platform and all designated-process PPA gates remain NOT_RUN.",
+    "W1 CPU is NOT_RUN; W2 CPU covers two full tasks, not12; tiled PM2 has directed/protocol evidence, not full36.",
+    "Y2 and PM4 XP2 are NOT_RUN; native PM2 two X banks are not an XP2 packing experiment.",
+    "Final archive round-trip, independent package review and baseline recheck are external post-publication attestations; see the run SUMMARY/STATUS for final state."
+  ],
+  "candidates": [
+    {
+      "profile": "D2_pm4_l1",
+      "new_profile": false,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 input/public stream/seed",
+      "cold_frontend_cycles": 416681,
+      "start_to_last_output_cycles": 388361,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 405504,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 32768,
+      "logical_bias_bytes": 1536,
+      "manifest": {
+        "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/D2_pm4_l1/run_manifest.json",
+        "sha256": "df300b0f46ffa48f519023a40d095fdeeb8a61f9e588a05759a9728131308574",
+        "bytes": 10497
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null
+    },
+    {
+      "profile": "CTX4_pm4_l1",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 input/public stream/seed",
+      "cold_frontend_cycles": 211670,
+      "start_to_last_output_cycles": 183350,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 101376,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 32768,
+      "logical_bias_bytes": 1536,
+      "manifest": {
+        "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/CTX4_pm4_l1/run_manifest.json",
+        "sha256": "f6fdea50bab1e3d401e6c743b46583996ec3e50f178a9cf7b52db2ab6de7ccdb",
+        "bytes": 10505
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null
+    },
+    {
+      "profile": "D2_pm4_l2",
+      "new_profile": false,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 input/public stream/seed",
+      "cold_frontend_cycles": 519091,
+      "start_to_last_output_cycles": 490771,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 405504,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 32768,
+      "logical_bias_bytes": 1536,
+      "manifest": {
+        "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/D2_pm4_l2/run_manifest.json",
+        "sha256": "233cbad350917aaeff2aca1aaaef142776ba51a1cfe026f7aaef5171a88c7295",
+        "bytes": 10498
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null
+    },
+    {
+      "profile": "CTX4_pm4_l2",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 input/public stream/seed",
+      "cold_frontend_cycles": 212028,
+      "start_to_last_output_cycles": 183708,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 101376,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 32768,
+      "logical_bias_bytes": 1536,
+      "manifest": {
+        "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/CTX4_pm4_l2/run_manifest.json",
+        "sha256": "e19e2fa282566ad288674529780d8838b7587a4168ea208b2b4f316da236373b",
+        "bytes": 10505
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null
+    },
+    {
+      "profile": "CTX4_pm2_l1",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 input/public stream/seed",
+      "cold_frontend_cycles": 315078,
+      "start_to_last_output_cycles": 286758,
+      "effective_macs": 1622016,
+      "issue": 204800,
+      "retire": 204800,
+      "x_read_ce": 101376,
+      "w_read_ce": 819200,
+      "logical_W_bytes": 32768,
+      "logical_bias_bytes": 1536,
+      "manifest": {
+        "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/CTX4_pm2_l1/run_manifest.json",
+        "sha256": "a9f556acb94f97fdbc047d8d089403bc35dbf108bdc08d271c1e7510d5e87eef",
+        "bytes": 10393
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null
+    },
+    {
+      "profile": "CTX4_pm2_l2",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 input/public stream/seed",
+      "cold_frontend_cycles": 316015,
+      "start_to_last_output_cycles": 287695,
+      "effective_macs": 1622016,
+      "issue": 204800,
+      "retire": 204800,
+      "x_read_ce": 101376,
+      "w_read_ce": 819200,
+      "logical_W_bytes": 32768,
+      "logical_bias_bytes": 1536,
+      "manifest": {
+        "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/CTX4_pm2_l2/run_manifest.json",
+        "sha256": "f0a91d706ba74c3344956533e9fb6b31d1b45e2337f3a570bdcc30fcc8b002de",
+        "bytes": 10393
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null
+    },
+    {
+      "profile": "CTX4_PM4_W1_Y1_X4_L1",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 public stream and seed; full36 is PM4/L1 only",
+      "cold_frontend_cycles": 211630,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 101376,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 2048,
+      "logical_bias_bytes": 96,
+      "manifest": {
+        "path": "reports/revd_offline/tiled/w1-production-pm4-l1-001/synthetic99/run_manifest.json",
+        "sha256": "2d7159b45365efae8a06a639bb166dc94a8b13cf83b3549d25b7e2bb00bfdc8a"
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null,
+      "real_cpu_scope": "NOT_RUN"
+    },
+    {
+      "profile": "CTX4_PM4_W2_Y1_X4_L1",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 public stream and seed; full36 is PM4/L1 only",
+      "cold_frontend_cycles": 192452,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 101376,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 4096,
+      "logical_bias_bytes": 192,
+      "manifest": {
+        "path": "reports/revd_offline/tiled/w2-production-pm4-l1-final-002/synthetic99/run_manifest.json",
+        "sha256": "3ada0e6242544fb58728de6be40ef8103490a2f74c701c220a0a52e72edd5974"
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null,
+      "real_cpu_scope": "two full cold tasks; not12"
+    },
+    {
+      "profile": "CTX4_PM4_W1_Y1_X4_L2",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 public stream and seed; full36 is PM4/L1 only",
+      "cold_frontend_cycles": 212064,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 101376,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 2048,
+      "logical_bias_bytes": 96,
+      "manifest": {
+        "path": "reports/revd_offline/tiled/w1-production-pm4-l2-001/synthetic99/run_manifest.json",
+        "sha256": "d68140d2224b757dcdf35e51f569605d840a15106ec51e24375ebc201a772e72"
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null,
+      "real_cpu_scope": "NOT_RUN"
+    },
+    {
+      "profile": "CTX4_PM4_W2_Y1_X4_L2",
+      "new_profile": true,
+      "status": "PASS_LOCAL_FRONTEND",
+      "scope": "same synthetic99 public stream and seed; full36 is PM4/L1 only",
+      "cold_frontend_cycles": 192748,
+      "effective_macs": 1622016,
+      "issue": 102400,
+      "retire": 102400,
+      "x_read_ce": 101376,
+      "w_read_ce": 409600,
+      "logical_W_bytes": 4096,
+      "logical_bias_bytes": 192,
+      "manifest": {
+        "path": "reports/revd_offline/tiled/w2-production-pm4-l2-final-002/synthetic99/run_manifest.json",
+        "sha256": "cb03fa80a543dd2f64eaa75755abdd544dd36a567705b39d15664b3958a2d8b2"
+      },
+      "area_mm2": null,
+      "power_W": null,
+      "energy_J_per_task": null,
+      "formal_points": null,
+      "real_cpu_scope": "two full cold tasks; not12"
+    }
+  ],
+  "same_condition_frontend_comparisons": [
+    {
+      "baseline": "D2_pm4_l1",
+      "candidate": "CTX4_pm4_l1",
+      "scope": "public stream frontend/core proxy, not CPU or contest throughput",
+      "cold_frontend_speedup": 1.968540652903104,
+      "cold_frontend_reduction_fraction": 0.4920094748740643,
+      "core_speedup": 2.1181401690755384,
+      "x_reads_baseline": 405504,
+      "x_reads_candidate": 101376,
+      "physical_area_mm2": null,
+      "power_W": null,
+      "energy_J": null,
+      "formal_score": null
+    },
+    {
+      "baseline": "D2_pm4_l2",
+      "candidate": "CTX4_pm4_l2",
+      "scope": "public stream frontend/core proxy, not CPU or contest throughput",
+      "cold_frontend_speedup": 2.4482191031373213,
+      "cold_frontend_reduction_fraction": 0.5915398263502931,
+      "core_speedup": 2.671473207481438,
+      "x_reads_baseline": 405504,
+      "x_reads_candidate": 101376,
+      "physical_area_mm2": null,
+      "power_W": null,
+      "energy_J": null,
+      "formal_score": null
+    }
+  ],
+  "same_condition_real_cpu_comparison": {
+    "status": "PASS",
+    "checked_utc": "2026-10-17T06:41:42.621659+00:00",
+    "comparison_scope": "Two independent FFN1 layer tasks in the same public E203 boot, each with cold X/W/bias loading; actual C/ICB/shared-memory responses.",
+    "conditions": "Same exact shared image, firmware, adapter, SRAM response policy, tools and deterministic CPU supply/drain policy; no additional random stalls.",
+    "baseline_new_profile": false,
+    "baseline": "Accepted D2 micro, module identifier alias only",
+    "candidate": "CTX4 full-W PM4",
+    "actual_output_bytes_equal": true,
+    "tasks": [
+      {
+        "task": 0,
+        "case_id": "eight_750e3e75_nohash_0/layer_01",
+        "baseline_cold_cycles": 5910423,
+        "candidate_cold_cycles": 5708000,
+        "cycles_saved": 202423,
+        "cycle_reduction": 0.03424847933895758,
+        "speedup": 1.0354630343377715,
+        "baseline_core_cycles_with_cpu_output_backpressure": 3196595,
+        "candidate_core_cycles_with_cpu_output_backpressure": 2994172
+      },
+      {
+        "task": 1,
+        "case_id": "eight_750e3e75_nohash_0/layer_02",
+        "baseline_cold_cycles": 5910421,
+        "candidate_cold_cycles": 5707998,
+        "cycles_saved": 202423,
+        "cycle_reduction": 0.03424849092814197,
+        "speedup": 1.0354630467635062,
+        "baseline_core_cycles_with_cpu_output_backpressure": 3196595,
+        "candidate_core_cycles_with_cpu_output_backpressure": 2994172
+      }
+    ],
+    "competition_score": null,
+    "physical_area_mm2": null,
+    "energy_joules": null,
+    "limitations": [
+      "Public behavioral E203/SRAM prototype, not contest platform acceptance.",
+      "Core window includes real CPU output backpressure; it is not a standalone core latency.",
+      "No measured physical timing, area or energy; no official score inference."
+    ],
+    "report_sha256": {
+      "reports/revd_offline/soc/soc-full-pm4-20261017T062100Z/result.json": "f748503b34ee45b5d18fc77d59b1258650e59c30921e32f2e1ddabf16510d32a",
+      "reports/revd_offline/soc/soc-d2-20261017T063010Z/result.json": "c41f503ea6dc78a799fb6bb33fbb146ce6a3f750bae899ec2568bd2c7f14f7ca"
+    },
+    "comparison_script_sha256": "7de0c6314d5375dfd114388b75dba2b9bd1f855fec0a2bc43b8f6198db3b726d"
+  },
+  "engineering_precision": {
+    "worst_layer_nrmse": 0.0009342248801263425,
+    "scope": "Two actual validation unknown WAVs and synthetic silence, 3 inputs x12 layers; not official600 or selected official12.",
+    "formula": "e_l=sqrt(SSE_l/count_l)/max(sqrt(sum_reference_square_l/count_l),1e-8); e=max_l e_l",
+    "formal_precision_points": null
+  },
+  "negative_results_and_repairs": [
+    "A red scheduling run rejected the copied micro schedule's X-read reuse count; CTX4 implements and measures the intended reuse.",
+    "A first full36 became stale after timestamp instrumentation changed; retained as failed and replaced by a fresh accepted complete suite.",
+    "Direct BEGIN-to-last-fire timestamps corrected the legacy frontend state counter's one-edge boundary difference.",
+    "W1 reduces logical W capacity but changed synthetic99 cold cycles only from211670 to211630; no significant throughput/energy/area victory inferred.",
+    "Independent gate red probes found aliased numeric evidence, CPU metadata/compile-profile mismatches, empty package proof and unlisted published code; fixes and distinct green evidence retained.",
+    "Earlier CPU Icarus negative batch timed out and is excluded; newer real Verilator false-success/missing-final-write controls were required.",
+    "Historical D3 manifests captured tool versions only. Explicit post-run attestation retains this limit; final fresh selected regression captures actual tool hashes before and after.",
+    "CPU task marker excludes boot and the3 global M/N/count header reads; layer/shift/address descriptors and all X/W/bias follow the marker. This real measured prototype boundary is disclosed and is not formal contest timing.",
+    "A real W2 CPU red run rejected future OPEN before START; the authorized thin C variant moves START after tile0 COMMIT and retains one-Y-per-poll fair drain.",
+    "CPU evidence gate falsely accepted coherently relabelled nonzero/timeout tool commands; the repaired gate requires all ordinary commands exit0 and exact actual functional-failure exits for the two declared small negative controls. Fresh CPU-small passed the repaired gate."
+  ],
+  "mutation_testing": {
+    "selected_core_actual_rtl_classes": 6,
+    "adapter_actual_rtl_classes": 3,
+    "W1_actual_rtl_classes": 8,
+    "W2_actual_rtl_classes": 10,
+    "note": "Counts are distinct classes per mechanism, not multiplied by PM/latency repetitions. Software metadata/gate probes and false-success C controls are counted separately."
+  },
+  "reviews": {
+    "rtl_round1": "work/revd_offline_20261017/review_rtl_round1.json",
+    "verification_round2": "work/revd_offline_20261017/review_verification_round2.json",
+    "package": "PENDING_ACTUAL_FINAL_ZIP",
+    "W1": "work/revd_offline_20261017/review_tiled_round2.json",
+    "W2": "work/revd_offline_20261017/review_w2_round2.json",
+    "W2_soc": "work/revd_offline_20261017/review_soc_w2_round1.json"
+  },
+  "package": null,
+  "current_source_sha256": {
+    "config/prototype-numeric.json": "5620b6d1c1a999f7110e18adda2dd1bbe4f7b89b95d9fd37f928f08d7a6a048c",
+    "config/revd_opt/ctx4_full_pm2.json": "95becd5ea073a463a33ce205317c6df68960ae5fd02f227221f07033b28751a0",
+    "config/revd_opt/ctx4_full_pm4.json": "5d0af5d15590df072c780c4f0c3ff51e008b19b259eb81ca108462df33609810",
+    "config/revd_opt/tiled_w1_y1.json": "60cee548196cc7bb03a72ca17c037274fe38042cce7a9a6b8a951dd88ee8d40e",
+    "config/revd_opt/tiled_w2_y1.json": "8bfa358b69f899d12d8ead39bf60709d37fbb50f1c0a86af8dfcb701a922c33e",
+    "dv/revd_opt/core_runner.py": "1792cc10385fef5181d2030d48115044b016d25b1197ef5aadba81b537b821d3",
+    "dv/revd_opt/core_tb.sv": "c9c79c2bbcc9033e8aeca865910ef629469d4d2a2e2975098e5f260004dc258b",
+    "dv/revd_opt/gate_negatives.py": "c077c655e63b44dd36f0f2b5658b011e99f4147337e14ffceca0666496b2da9e",
+    "dv/revd_opt/numeric_checks.py": "bd1594a4b8a6d953e7e29a87ac8010770b67b3d21e7859a4c88cbbe2b2c6f4dd",
+    "dv/revd_opt/package_manifest_checks.py": "4ce0bd503f9adb253f8856202ff2a3c9439ba79e4c7773d8ff6a1c1d54fd2fb1",
+    "dv/revd_opt/protocol.py": "9c41fff80cd6976c154acff3d185aecc512129ae76072ff8f5d176f88bc0e591",
+    "dv/revd_opt/soc_adapter_tb.sv": "f2a8fc57a21f22ab0b20b1230cffed66ea9a55134c118324873d4caeb6253578",
+    "dv/revd_opt/soc_bus_contract_tb.sv": "937c21e32410041cc374f4633f273abd71ed58d0afc100daff685769b14bd359",
+    "dv/revd_opt/soc_bus_contract_tb_w2.sv": "634a8f31bdca80710208348a2f541932aad8a5c10cd4c9c25936580b7abb1124",
+    "dv/revd_opt/soc_completion_tb.sv": "a0d094e70bd3383566e8ad0a168e799d05413f66ae83680437a93612b1950885",
+    "dv/revd_opt/soc_completion_tb_w2.sv": "7095fe45e09ef0dc2f5a18b3b5fdb078da8f5261f2d89061a68299ab33d7d4bf",
+    "dv/revd_opt/soc_cpu_tb.sv": "3cd5ae4d9b0051c3cbec27cc94d16290ec872f4a09c68f5561a86e1dcda8f5af",
+    "dv/revd_opt/soc_cpu_tb_w2.sv": "81c517b807fb8861b719327006329656f97f46d876026b39a55b97d4bd91b5ed",
+    "dv/revd_opt/soc_flags_tb.sv": "c3bdef003c12d432921bd887e3f1c6c4c8887b6799bc4060a840deeac9066994",
+    "dv/revd_opt/soc_red_stub.c": "e8d5efc9be60cd5c16a1eaab05fed93837bf30b2b9f3a9126da82bf3d33a847b",
+    "dv/revd_opt/soc_w2_zero_return.c": "50bc812e5085adbae7e94129541296c5959f9f4b985efaf394e7dc6e686db926",
+    "dv/revd_opt/tiled_compare.py": "3680edbf46f56d6a662c65085860c639cb8ea87299b67dcdda3ffd23ad95220b",
+    "dv/revd_opt/tiled_core_tb.sv": "e10bca67ab668626630750d85291f15beacae0063653b7eef8c418b945b5fcdf",
+    "dv/revd_opt/tiled_gate_negatives.py": "6a85b5e5a935220fd55efdfbf221f9f9101a6e83a843da36480cd3d975004b81",
+    "dv/revd_opt/tiled_handoff.py": "b1e9ec5fa3071e3fbd82c7b485a9c6200c303beaeba389d004eaf2f4982d2768",
+    "dv/revd_opt/tiled_numeric.py": "773830293aa4138021788563a30d3d940795cc454f5c9f812a8fd4f1782eaa52",
+    "dv/revd_opt/tiled_protocol.py": "54b157f34d8fcdf9fb94f52b8a0b2a50f84ee5bf00cf43f15e5582c27fd39661",
+    "dv/revd_opt/tiled_runner.py": "778f8648406f023f971cd58a411d5c034b514263e28ebf8733f4dc42c41fa302",
+    "dv/revd_opt/tiled_suite_gate_probe.py": "e8fd08b750f3933281ad0359c393df71178879c7e963c404e92db5b1240c1f1e",
+    "dv/revd_opt/tiled_tool_gate_probe.py": "a5abf38e2e613d9341f2b0f4465429c35558c7eb475c7edbe1f8131cb5b745ec",
+    "dv/revd_opt/tiled_tool_path_probe.py": "a483df4cdc8b5c392ae108adf46e197fa3542e70495d262e72c254c196ebfe15",
+    "dv/revd_opt/tiled_w2_core_tb.sv": "62dd847b84117ed2768eb920f58162d24c09969a2014dc4925aedbcfb9a4dac5",
+    "dv/revd_opt/tiled_w2_gate_negatives.py": "ffaa074d224bd93e12b31e319307555bf54cd524f8c80e7cc420469496bedb6d",
+    "dv/revd_opt/tiled_w2_handoff.py": "ecc3d330b932870fb6999bda6bccf7de3aca8ef14e918f8e7d856541e28a03ec",
+    "dv/revd_opt/tiled_w2_numeric.py": "abf9274d09ab101ce016cb0e39fd8e6dbdc6c1b4ec280c156fb50c8423f9c070",
+    "dv/revd_opt/tiled_w2_protocol.py": "b5bd08466936a366b55209992baff7d690e81b65b9de5c0c0ee7d36180854bcf",
+    "dv/revd_opt/tiled_w2_runner.py": "75dd333087a570c1457618bb549a18499a88d92a4fb1ca7a8f8e961767c36443",
+    "numeric/fixedpoint.py": "96ef466523177154a01cb126f3c40926c03752c0cf536feb3ea4491398031e87",
+    "rtl/revd/banked_sp16.sv": "64e43e4db91677966c5eafb44e61d38e2640b01f3154ace19e2163ec8453ea36",
+    "rtl/revd/quant_epilogue.sv": "f2590a7a36d8fcc99e286189d06b1ebb6853af540d3e8acacfbafbad08078911",
+    "rtl/revd_opt/core_stream_frontend_opt.sv": "af7bec5fb9a276e614348c80fd6adaa6e7153709b51b9b372eb0080ef9ba1bb1",
+    "rtl/revd_opt/core_stream_tiled_opt.sv": "06701da3667ddb5c61e711bcb5687397259477cb168f2502cff6ffbb28a101a7",
+    "rtl/revd_opt/core_stream_tiled_w2_opt.sv": "3bb7bdf0d6393b67180e3f71f03dc287b793bcf346ab7e5e06e6d643831fd084",
+    "scripts/package_revd_candidate.py": "0510cd13c787b56af3ce16a18b61d4bd72dfec5dcd57a79ddc5789f13e62f4e1",
+    "scripts/revd_offline_closure.py": "463ac8fe04a24eb97fa113d071fbed41aaadf1551465686ab0caf4eb05b899d6",
+    "scripts/revd_offline_common.py": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+    "scripts/revd_offline_compare.py": "348cc0cedb7ca7aec3d0a5309ab5652fa1529be10ecce7f8495cfcce70cfdc41",
+    "scripts/revd_offline_convert.py": "0f995446871f1d4e10578364bfb523defbf98af576a234c01e9be02d99c8c1ac",
+    "scripts/revd_offline_crosscheck.py": "48c4f44d96db40fe6bc26445081ffb10347755a021bd38bf649d5d94df2838c3",
+    "scripts/revd_offline_final_regression.py": "e156c1a2026bafc8b130908553fc7e6f77260049466a3c4743d8e479bd0dfd11",
+    "scripts/revd_offline_gate.py": "390856df047fe6c82a92a40913a012fe37b53e97107dbaa3b8cc75c1e8e490a6",
+    "scripts/revd_offline_generic_ledger.py": "534dd154c6a466f20443b3a332e2a2e9226220eeefd6dd798079085cb15e6d3d",
+    "scripts/revd_offline_manifest_probe.py": "ff4d80c5598a5a422507fb15bf22f22415e8d69059bff040392950b087375f9c",
+    "scripts/revd_offline_numeric_attestation.py": "f4e955000c06d7729e23dacac88b813aad4ff48f72372ed107c61221b951c6fb",
+    "scripts/revd_offline_package_check.py": "f1b47c96c46916d3e69f7194361579b824ff1b88c231934b8ce4fffc213ebf8e",
+    "scripts/revd_offline_precision.py": "62d24cb73abc3f41685ea77f6422c18d1d071dd582c190e8bcd492875f8639e6",
+    "scripts/revd_offline_reproduce.py": "928dcba6bc354b76c1125d42935e08e5bd3bc4635eed7447d52fd36a3e115723",
+    "scripts/revd_offline_soc_baseline.py": "30aba5815db408c2bbbfca18d8023c081e25d6e1b2dbed9322676e8eea147bbe",
+    "scripts/revd_offline_soc_bindings.py": "7f8b910cfd555bba00cf304af383db55f0a0b1ccc193a941abc3145400b88974",
+    "scripts/revd_offline_soc_compare.py": "7de0c6314d5375dfd114388b75dba2b9bd1f855fec0a2bc43b8f6198db3b726d",
+    "scripts/revd_offline_soc_deps.py": "c43e0dbbe8d3eeeeaead48fce57cae110af724015f17dbee3925280da2450735",
+    "scripts/revd_offline_soc_edges.py": "f72771e6eb7304a5061b1ab0e3620e50d086c14a2d61501e849eb2b98ea0f315",
+    "scripts/revd_offline_soc_flags.py": "6860898a275c39f3fcc89e1e9653a45b6946cf9ae023d9036e8939ed442fd9e4",
+    "scripts/revd_offline_soc_handoff.py": "562d06aae1b013d68665dee8a970969961f542ea1d4878a7e0ee27f09ce7cd31",
+    "scripts/revd_offline_soc_layers.py": "d423ac4106bdee2700f653ee65da53fb125d156982968c45d104f0f089171359",
+    "scripts/revd_offline_soc_mutations.py": "6ec5e1a8e1242ab0d1f2d27d343f1c8c45634f5d4c5f28b83420425f515dd03b",
+    "scripts/revd_offline_soc_negative.py": "da53f4db13c0254e75cde4029a1e9ab286cf605bc99f8f07ad2f5f83a5af64e7",
+    "scripts/revd_offline_soc_pm_compare.py": "39f01304df6f7077f67448073df47a6a808fc722ac2c6e71e8f2da40b318a34e",
+    "scripts/revd_offline_soc_run.py": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+    "scripts/revd_offline_soc_suite.py": "1567079e5f11cd7add7066e8d92f4242d2e3b7be0be47e0158ae97e73e26e2a4",
+    "scripts/revd_offline_soc_w2_compare.py": "47d4fa70d80a334f242ee8d92edc9895940ba5388b724b71771a481e52762f5a",
+    "scripts/revd_offline_soc_w2_controls.py": "5451b961ceb10708b13e07c4ede5c73ed1ecf98b32aaab77611b5181616366a3",
+    "scripts/revd_offline_soc_w2_edges.py": "4250b37d124ce24060363b84ceb53f547acacc36357a4f08296fd9b8391c09bf",
+    "scripts/revd_offline_soc_w2_run.py": "3aa942ad0ee1d03802b5d7d2c9c3bf78663051c647e003f06cc97288afcdb326",
+    "scripts/revd_offline_summary.py": "97eefe3fb8343d287f9a8a475f8ba0009a61dbbb1be33eb499950c093c72ac2b",
+    "scripts/revd_offline_synth.py": "2ab20182a62bada5ca7a081c3d0fe32425cdb65d3d5fccbeecf70bf0292b32e2",
+    "scripts/revd_offline_tiled_gate.py": "b3e5d99bfa1a9029fe3199e46efcbb240c088487761e60569e48190333ed7c6a",
+    "scripts/revd_offline_tiled_synth.py": "c8cabd274df160ccf9e83edb6ff1bc93040946a8d1c32eaeb40c7d59823a5dbe",
+    "scripts/revd_offline_tiled_w2_gate.py": "6b3a1bd1c4d535d973670b93598cf5b7e0ac31c003c6fe8dad2f04d813f03055",
+    "scripts/revd_offline_validation.py": "0a74837d71fe2a0139e12570bfecdae8caa1f378686317ff34583d95437ee087",
+    "scripts/run_revd_offline.sh": "e80283b2c294dfb6af5a9b17c552b5a4d370e7454974f733d98b63de8a8a7c83",
+    "soc/revd_opt/revd_opt_icb.sv": "bc35bf1d86056c963532b61a1e49d583b94638573ad91009af75268ab8729839",
+    "soc/revd_opt/revd_opt_icb_w2.sv": "080cff5057c8aa9ef61447279b3a6812d939df40f86262c272866a84e97a7997",
+    "sw/revd_opt/main.c": "1ebaadcfbad18b6b5a8f212eff543af7c29395d69b8220f34a18af15a5a5ed94",
+    "sw/revd_opt/main_w2.c": "7e863dca6602e1826e9c83a63699a114c78f150abb800778cc03f21f3db5f292",
+    "sw/revd_opt/revd_opt_driver.c": "d452118c21570cf4edc7ff23f9ea7c35eab6d2475fe84b3478661217ca0a35c0",
+    "sw/revd_opt/revd_opt_driver.h": "d8f7174b584d330618666d72e695ad900d8e0f8000f36cb42f5e3dbdb7faadce",
+    "sw/revd_opt/revd_opt_driver_w2.c": "304df45dfe325051db23794c5d3055f0551f141796327b7daa80bfc81050b01c",
+    "sw/revd_opt/revd_opt_driver_w2.h": "499caccc87ecf5e56fbf01f4b84bf6e692ebfc006da657c3f52f0ea796452f03"
+  },
+  "evidence": {
+    "selected_full36": {
+      "path": "reports/revd_offline/core/ctx4-selected-final36-20261017T073654Z_195af115/summary.json",
+      "sha256": "d238acbe68c3121b4f05fcc57e27049f4738a48fc85b2a57b66ff58a3c5a6bbe",
+      "bytes": 9195
+    },
+    "pm2_full36": {
+      "path": "reports/revd_offline/core/pm2-toolbound-20261017T075744Z_38842fbf/summary.json",
+      "sha256": "fc30772a64467fc77022a856d04fb869953f5ba9656fe89cfdec6031835e943a",
+      "bytes": 8907
+    },
+    "protocol": {
+      "path": "reports/revd_offline/protocol/20261017T075137Z_e82dc60d/summary.json",
+      "sha256": "9960c88776eb4fc90101c0ec3c0dc55e2e6eba77a65487b10e71b5873cc6d2af",
+      "bytes": 6168
+    },
+    "numeric": {
+      "path": "reports/revd_offline/numeric/20261017T075226Z_3801f3a0/summary.json",
+      "sha256": "4de82d5345731e3897e748a43f7b164a3c6faed7da44cafb7c1f6f7e062e0b59",
+      "bytes": 11525
+    },
+    "frontend_comparison": {
+      "path": "reports/revd_offline/comparison/20261017T075500Z_c85818af/summary.json",
+      "sha256": "1c66add516787848453e365f0193e2d3b0f4f769ac8e82ed32ebc60ade292159",
+      "bytes": 10775
+    },
+    "cpu_comparison": {
+      "path": "reports/revd_offline/soc/comparison-20261017T064142Z_6f7686d3/result.json",
+      "sha256": "c2f973a651441c08fab4ef29d5dead3e6b9f22a97b1cbbc30b5894072ce2ca51",
+      "bytes": 2168
+    },
+    "cpu_first_two": {
+      "path": "reports/revd_offline/soc/soc-full-pm4-20261017T062100Z/result.json",
+      "sha256": "f748503b34ee45b5d18fc77d59b1258650e59c30921e32f2e1ddabf16510d32a",
+      "bytes": 51664
+    },
+    "cpu_fake_done_negatives": {
+      "path": "reports/revd_offline/soc/cpu-negative-20261017T064658Z_8fcbbd89/result.json",
+      "sha256": "59b8626ffe8bcafc9fd9702b48fd573a1eea71c64514d5203b6fe13bbf4cede5",
+      "bytes": 76294
+    },
+    "adapter_mutations": {
+      "path": "reports/revd_offline/soc/adapter-mutations-20261017T062633Z_0bc11c0a/result.json",
+      "sha256": "fe13d2c85db941268fa8046e2591d6614ecd8b7a8378a9591d3424a217c07ad2",
+      "bytes": 14187
+    },
+    "cross_simulator_repeat": {
+      "path": "reports/revd_offline/crosscheck/20261017T070407Z_11b4dece/summary.json",
+      "sha256": "e4714dc27ab55c628b9336758117274a61d45998c07eac26aea66353efdb1607",
+      "bytes": 3789
+    },
+    "precision": {
+      "path": "reports/revd_offline/precision/20261017T075900Z_584f7775/summary.json",
+      "sha256": "251298e8556113d9cd1b109f42b42444b246009389bf32c45c5b76a10fdc4cd8",
+      "bytes": 18068
+    },
+    "conversion": {
+      "path": "reports/revd_offline/conversion/20261017T075905Z_b7ae6fda/summary.json",
+      "sha256": "7fe23a1f221dc86a705b22ae58eca8cffd4a548de5e72f5d264cb0d47c70b003",
+      "bytes": 75597
+    },
+    "generic_structure": {
+      "path": "reports/revd_offline/generic_synthesis/20261017T064850Z_ed0b64bc/summary.json",
+      "sha256": "9304b2ea9e5af9d0b1863529330c2b84f655e5bcc334ee50ee2103ab60105065",
+      "bytes": 3538
+    },
+    "generic_memory_ledger": {
+      "path": "reports/revd_offline/generic_synthesis_ledger/20261017T065408Z_005bfbed/summary.json",
+      "sha256": "ee21e6f8d347a71e9c8191c2bf860d12a52336db495c55370793915af1b6c647",
+      "bytes": 10416
+    },
+    "tool_postrun_attestation": {
+      "path": "work/revd_offline_20261017/tool_attestation_postrun.json",
+      "sha256": "c0022c4c68de459348c543a22766e180691c40481a8b1fcbff5afce09658cd8b",
+      "bytes": 991
+    },
+    "verification_review": {
+      "path": "work/revd_offline_20261017/review_verification_round2.json",
+      "sha256": "656f0de8c5c68b68c1a620635f886c4fc18556fc01c4876f1ec73ff98a21f090",
+      "bytes": 14073
+    },
+    "source_inventory": {
+      "path": "work/revd_offline_20261017/source_readback.json",
+      "sha256": "38dd5262898803ed828c77a6106c8387d24cc8c1b90d8b950c4b642652e7f278",
+      "bytes": 2579
+    },
+    "technology_inventory": {
+      "path": "work/revd_offline_20261017/technology_inventory.json",
+      "sha256": "377dc0355a2c44511d98314c0a3945287b4cdf78b2c287f4ee5f5b7d3e89a944",
+      "bytes": 15010
+    },
+    "cpu_twelve": {
+      "path": "reports/revd_offline/soc/suite-20261017T074534Z_56788626/result.json",
+      "sha256": "a55e5db0fce69d97941b5bece890959590f05f3c0506bbb122601540ac94e41a",
+      "bytes": 5963
+    },
+    "tiled_generic_structure": {
+      "path": "reports/revd_offline/tiled_generic_synthesis/20261017T075426Z_b525055c/summary.json",
+      "sha256": "363ed104f427631f4e1d8c273900efa099be55d1afaa2847ff42fdf9edfb1494",
+      "bytes": 15275
+    },
+    "macro_combinations": {
+      "path": "reports/revd_offline/macro_combination_candidates.json",
+      "sha256": "579d6337ae1e101032d0ea7a1b3c9e4a59a66ea24c3f1ae5a5fcaa6c92be2e21",
+      "bytes": 5252
+    },
+    "final_selected_regression": {
+      "path": "reports/revd_offline/final_regression/20261017T073654Z_195af115/result.json",
+      "sha256": "da4f87948543b0f2b128c0af910b71ab25e084de675c464c6f1da97a1090b548",
+      "bytes": 41450
+    },
+    "protocol_numeric_tool_binding": {
+      "path": "reports/revd_offline/tool_bound_validation/20261017T075134Z_b251c9c2/result.json",
+      "sha256": "362260ea3681005005d3a272fceb6705618b3826855c94d69b858a7c9b367f05",
+      "bytes": 20798
+    },
+    "cpu_flag_edges": {
+      "path": "reports/revd_offline/soc/directed-edges-20261017T074550Z_710fe80e/result.json",
+      "sha256": "629d88ddbaa77e4d0345c757a2d49106eaf457b0352824fb12e1721238cc8300",
+      "bytes": 68034
+    },
+    "comparison_tool_binding": {
+      "path": "reports/revd_offline/tool_bound_validation/20261017T075459Z_1ea38524/result.json",
+      "sha256": "801f14e44452b23ba726478ba31737ec0d97e38b1552993bf0d3138d0478fed9",
+      "bytes": 11588
+    },
+    "precision_conversion_tool_binding": {
+      "path": "reports/revd_offline/numeric_attestation/20261017T075830Z_36795451/result.json",
+      "sha256": "9436788e5044f64b8f2c287d4623b2e5ec4f1169caeae5293676b0b720595b30",
+      "bytes": 6495
+    },
+    "W1_handoff": {
+      "path": "reports/revd_offline/tiled/w1-handoff-20261017T075119Z_c61a7242/handoff.json",
+      "sha256": "053bb35cd781003bb7ff1d6565cc28bf2a82a3b9677872b598c1d285e8f6975b",
+      "bytes": 49948
+    },
+    "W2_handoff": {
+      "path": "reports/revd_offline/tiled/w2-handoff-20261017T075137Z_5e5d3bbd/handoff.json",
+      "sha256": "7771ae5551f7b5ca643155f98c370e845051aaf4acbd2b74ea48a113e4398f7a",
+      "bytes": 48198
+    },
+    "W1_W2_comparison": {
+      "path": "reports/revd_offline/tiled/w1-w2-compare-final-001/comparison.json",
+      "sha256": "9c6aaa89e08dc281a701aca05dc4c78aab813143898df7654ff6dd667354b05e",
+      "bytes": 9609
+    },
+    "architecture_report": {
+      "path": "reports/revd_offline/CANDIDATE_REPORT.md",
+      "sha256": "60e5d261ff294dda4021453f145674760121088822fbb60e1791b76f930e0afe",
+      "bytes": 6334
+    },
+    "pm2_tool_binding": {
+      "path": "reports/revd_offline/tool_bound_validation/20261017T075744Z_38842fbf/result.json",
+      "sha256": "15a798237f4aa22cdf3f146c70314e1db051a7a306c082fd4dd54d856f4153ae",
+      "bytes": 44695
+    },
+    "cpu_pm2": {
+      "path": "reports/revd_offline/soc/soc-full-pm2-20261017T074930Z/result.json",
+      "sha256": "a290219eab7565bb09efe14f80de7be60e97c61790af0f9fca99eae7b62802fb",
+      "bytes": 51638
+    },
+    "cpu_pm_comparison": {
+      "path": "reports/revd_offline/soc/pm-compare-20261017T080146Z_6b04725c/result.json",
+      "sha256": "9fa44cdc003cb107d9818df67febe81d1e07c401fc1a9008a4c05360b7259e37",
+      "bytes": 1744
+    },
+    "cpu_current_small": {
+      "path": "reports/revd_offline/soc/soc-current-small-20261017T081500Z/result.json",
+      "sha256": "1391a0ab80279a14738777a911593dc581c147301fa6622e92e12893409778cf",
+      "bytes": 62018
+    },
+    "cpu_current_small_gate": {
+      "path": "work/revd_offline_20261017/cpu_current_small_gate_0817.json",
+      "sha256": "7afef3f3b404aeb18d556e13de75c3097332a557f7b975bbc02fab7355e6b9c0",
+      "bytes": 949
+    },
+    "W1_full36": {
+      "path": "reports/revd_offline/tiled/w1-full36-pm4-l1-001/summary.json",
+      "sha256": "a2844fe2de1c0eff2516d3a4342a9054d75e8e8c8393b981314df376527a810c",
+      "bytes": 8381
+    },
+    "W2_full36": {
+      "path": "reports/revd_offline/tiled/w2-full36-pm4-l1-final-001/summary.json",
+      "sha256": "ea2bca334c25bc989c7ae469f1879769f2a6c26e750c3fe12c0affb3e3ae1c4e",
+      "bytes": 8600
+    },
+    "W1_review": {
+      "path": "work/revd_offline_20261017/review_tiled_round2.json",
+      "sha256": "69dffd30add93b637c061b16f1aec1b8ab147cfb3ca7cd6554eb16562c935179",
+      "bytes": 10376
+    },
+    "W2_review": {
+      "path": "work/revd_offline_20261017/review_w2_round2.json",
+      "sha256": "e76a5b0b3ac74914c9bc9ed6f4e9879e35ff6dd5e829d2e3e62ecdd350f9f6c5",
+      "bytes": 15593
+    },
+    "W2_soc_review": {
+      "path": "work/revd_offline_20261017/review_soc_w2_round1.json",
+      "sha256": "85bae5551023027f64749ec111e3308c0d82099499aaec8506b87c8b17b534a8",
+      "bytes": 10469
+    },
+    "W2_cpu_small": {
+      "path": "reports/revd_offline/soc/soc-w2-small-20261017T080450Z/result.json",
+      "sha256": "9a9e7fdb98d17323478bdf065f27a8086b44ca5b30e7b341cd50c8b2ef4bd607",
+      "bytes": 74960
+    },
+    "W2_cpu_full": {
+      "path": "reports/revd_offline/soc/soc-w2-full-20261017T080700Z/result.json",
+      "sha256": "d9b861dbdc5f905afadc2c5e3cb687ca1a18269db19f8ef9d66fca0cd5604cff",
+      "bytes": 49935
+    },
+    "W2_cpu_edges": {
+      "path": "reports/revd_offline/soc/soc-w2-edges-20261017T081514Z_ed425203/result.json",
+      "sha256": "9190e2198ba781edda6fd24359177a183e9a37b2ee6a954c1bf348b6e58a0035",
+      "bytes": 38688
+    },
+    "W2_cpu_comparison": {
+      "path": "reports/revd_offline/soc/w2-comparison-20261017T081511Z_d6770d5e/result.json",
+      "sha256": "80a9d652080e6b96206148954cb44e91fa8010122c34785e9c5e1542efc519a3",
+      "bytes": 2279
+    }
+  },
+  "fixed_numeric_contract": "signed16 X/W; exact 64-product signed48 accumulation; signed49 bias add -> sat48 -> ties-to-even RNE shift0..47 -> sat32; separate raw-overflow/output-saturated flags.",
+  "window_conventions": {
+    "frontend": "last_output_fire_cycle - first_BEGIN_accept_cycle",
+    "real_cpu": "last_shared_write_response_cycle - cold_marker_cycle + 1; includes task layer/shift/address descriptors, all X/W/bias loading and CPU/ICB stalls; excludes boot and three global M/N/task-count header reads, host SRAM image installation and audio preprocessing; prototype boundary, not official contest timing"
+  },
+  "guardrails": [
+    "No official600 or selected12 substitution.",
+    "No physical area/power/energy/STA inference from generic cells, memory bits, CE or simulation clocks.",
+    "PM2/PM4 and W1/W2 remain Pareto options while physical costs are unknown.",
+    "L1/L2 is a memory-latency sensitivity comparison, not an architecture-version speedup.",
+    "No Git mutation or remote publication."
+  ],
+  "summary_builder_sha256": "97eefe3fb8343d287f9a8a475f8ba0009a61dbbb1be33eb499950c093c72ac2b"
+}

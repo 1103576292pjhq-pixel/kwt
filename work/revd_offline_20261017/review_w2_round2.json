@@ -1,0 +1,419 @@
+{
+  "schema_version": 1,
+  "review_round": 2,
+  "status": "RECOMMEND_LOCAL_CORE_ACCEPTANCE_WITH_LIMITS",
+  "reviewer": "independent non-author RTL/DV submission_inventory",
+  "created_utc": "2026-10-17T07:45:32.722512+00:00",
+  "hardware_defects_confirmed": 0,
+  "source_and_input_sha256": [
+    {
+      "path": "scripts/revd_offline_tiled_w2_gate.py",
+      "sha256": "405711c27e5f99dcd868550b6be687c25883b89b82859c37698cbac023a41695",
+      "bytes": 23713
+    },
+    {
+      "path": "dv/revd_opt/gate_negatives.py",
+      "sha256": "c077c655e63b44dd36f0f2b5658b011e99f4147337e14ffceca0666496b2da9e",
+      "bytes": 20042
+    },
+    {
+      "path": "rtl/revd_opt/core_stream_tiled_w2_opt.sv",
+      "sha256": "3bb7bdf0d6393b67180e3f71f03dc287b793bcf346ab7e5e06e6d643831fd084",
+      "bytes": 16386
+    },
+    {
+      "path": "dv/revd_opt/tiled_w2_core_tb.sv",
+      "sha256": "62dd847b84117ed2768eb920f58162d24c09969a2014dc4925aedbcfb9a4dac5",
+      "bytes": 14451
+    },
+    {
+      "path": "dv/revd_opt/tiled_w2_runner.py",
+      "sha256": "75dd333087a570c1457618bb549a18499a88d92a4fb1ca7a8f8e961767c36443",
+      "bytes": 11404
+    },
+    {
+      "path": "dv/revd_opt/tiled_w2_protocol.py",
+      "sha256": "b5bd08466936a366b55209992baff7d690e81b65b9de5c0c0ee7d36180854bcf",
+      "bytes": 6398
+    },
+    {
+      "path": "config/revd_opt/tiled_w2_y1.json",
+      "sha256": "8bfa358b69f899d12d8ead39bf60709d37fbb50f1c0a86af8dfcb701a922c33e",
+      "bytes": 1695
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-protocol-pm4-final-002/summary.json",
+      "sha256": "9a5cb5725d0e90b57f71c9fb90b78f42baf67efdcf5f0a45c2aed72bda0a703b",
+      "bytes": 8502
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-protocol-pm4-final-002/summary.json",
+      "sha256": "9a5cb5725d0e90b57f71c9fb90b78f42baf67efdcf5f0a45c2aed72bda0a703b",
+      "bytes": 8502
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-full36-pm4-l1-final-001/summary.json",
+      "sha256": "ea2bca334c25bc989c7ae469f1879769f2a6c26e750c3fe12c0affb3e3ae1c4e",
+      "bytes": 8600
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-numeric-001/summary.json",
+      "sha256": "c9877c96956390fa1f5a97f7f65099a34088893bf6d45bbac8e05fccfe052836",
+      "bytes": 7504
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-production-pm4-l2-final-002/summary.json",
+      "sha256": "3eb84e10bbaae10a73de18d0ede7774d9bb142ff23842eb8154d2c250769d238",
+      "bytes": 435
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-repeat-pm4-l1-final-001/summary.json",
+      "sha256": "2cb5e85268ab014863d72887771dde357608bddcc497e34ac5fed63af15ff2ea",
+      "bytes": 469
+    }
+  ],
+  "changed_during_probe": [
+    "scripts/revd_offline_tiled_w2_gate.py"
+  ],
+  "test_count": 31,
+  "positive_count": 6,
+  "software_negative_count": 25,
+  "actual_RTL_mutation_classes": 10,
+  "evidence": {
+    "path": "reports/revd_offline/w2_review/w2-independent-20261017T073915Z/summary.json",
+    "sha256": "ae6f19b350836a18739d494e5b5f5b3050db24e613e5d0cdf53d94c80893bec9"
+  },
+  "test_execution": {
+    "path": "reports/revd_offline/w2_review/w2-independent-20261017T073915Z/execution.json",
+    "sha256": "80a76fdc8be3a9a7670d011acc7c5d5cfbf695fefc47f186606363e2b9f5c42f"
+  },
+  "source_review": "Two sets of4 independent256x16 SP banks; active read/load write separation; returned/product owner tags. Last bias retired before conservative last-tile-Y release; same-edge COMMIT(next slot)/last-Y(old slot) use distinct state entries. Deferred third OPEN does not block compute/output; reset/fault/nextBEGIN barrier remains. No confirmed hardware defect from this review.",
+  "resolved_round1_findings": {
+    "W2_full36_repeat_numeric": "Independent current frozen hardware artifacts passed full36/912384, repeat, productionL1/L2,48shifts/4608 outputs.",
+    "same_edge_commit_last_Y": "BothL1/L2 direct COMMIT_LAST_Y trace plus hit counter1; deleting trace is rejected.",
+    "processing_write_metric": "Now separately captures actual RAM read/write same-cycle, issue+write, retirement+write, and processing-phase writes; coherent removal of actual overlap is rejected.",
+    "negative_RAW_index": "Strict independent W2 gate rejectsnegative raw index; inherited runner issue is not used as finalsignoff."
+  },
+  "findings": [
+    {
+      "id": "W2-R2-01",
+      "severity": "MEDIUM",
+      "issue": "Tool name iverilog may claim /usr/bin/true with its actual SHA, and gate accepts because declared path/hash is not tied to executable named by exact compile argv.",
+      "state": "FIXED_OR_CLOSED_IN_STABLE_FINAL_GATE_INDEPENDENT_GREEN",
+      "negative": "iverilog_tool_name_aliased_to_true_binary"
+    },
+    {
+      "id": "W2-R2-02",
+      "severity": "REVIEW_STATE",
+      "issue": "Author changed gate during pure-read probe to add suite-role checks. This batch preserves results but does not sign the final gate version.",
+      "state": "FIXED_OR_CLOSED_IN_STABLE_FINAL_GATE_INDEPENDENT_GREEN"
+    }
+  ],
+  "observed_production_evidence": {
+    "w2-production-pm4-l1-final-002": {
+      "summary": {
+        "path": "reports/revd_offline/tiled/w2-production-pm4-l1-final-002/summary.json",
+        "sha256": "6feaac971a660ed3c96f158de2e738538d684ff28548057d272a0ed54ed4efe3"
+      },
+      "run_manifest": {
+        "path": "reports/revd_offline/tiled/w2-production-pm4-l1-final-002/synthetic99/run_manifest.json",
+        "sha256": "3ada0e6242544fb58728de6be40ef8103490a2f74c701c220a0a52e72edd5974"
+      },
+      "windows": [
+        [
+          27,
+          5,
+          9089,
+          192457,
+          192452,
+          183368
+        ]
+      ],
+      "actual_W2_counters": [
+        [
+          27,
+          15360,
+          2,
+          9360,
+          9360,
+          9360,
+          0
+        ]
+      ],
+      "bank_count": 8
+    },
+    "w2-production-pm4-l2-final-002": {
+      "summary": {
+        "path": "reports/revd_offline/tiled/w2-production-pm4-l2-final-002/summary.json",
+        "sha256": "3eb84e10bbaae10a73de18d0ede7774d9bb142ff23842eb8154d2c250769d238"
+      },
+      "run_manifest": {
+        "path": "reports/revd_offline/tiled/w2-production-pm4-l2-final-002/synthetic99/run_manifest.json",
+        "sha256": "cb03fa80a543dd2f64eaa75755abdd544dd36a567705b39d15664b3958a2d8b2"
+      },
+      "windows": [
+        [
+          27,
+          5,
+          9089,
+          192753,
+          192748,
+          183664
+        ]
+      ],
+      "actual_W2_counters": [
+        [
+          27,
+          15360,
+          2,
+          9360,
+          9360,
+          9360,
+          0
+        ]
+      ],
+      "bank_count": 8
+    },
+    "w2-repeat-pm4-l1-final-001": {
+      "summary": {
+        "path": "reports/revd_offline/tiled/w2-repeat-pm4-l1-final-001/summary.json",
+        "sha256": "2cb5e85268ab014863d72887771dde357608bddcc497e34ac5fed63af15ff2ea"
+      },
+      "run_manifest": {
+        "path": "reports/revd_offline/tiled/w2-repeat-pm4-l1-final-001/eight_750e3e75_nohash_0_layer_01/run_manifest.json",
+        "sha256": "f469c0cc2e39eaf5688f61444e963a699fad358a681b233ec75df56d875cbb40"
+      },
+      "windows": [
+        [
+          27,
+          5,
+          9089,
+          192457,
+          192452,
+          183368
+        ]
+      ],
+      "actual_W2_counters": [
+        [
+          27,
+          15360,
+          2,
+          9360,
+          9360,
+          9360,
+          0
+        ]
+      ],
+      "bank_count": 8
+    }
+  },
+  "same_edge_evidence": [
+    {
+      "name": "commit_last_Y_l1",
+      "manifest": {
+        "path": "reports/revd_offline/tiled/w2-protocol-pm4-final-002/commit_last_Y_l1/run_manifest.json",
+        "sha256": "a4b953a9603c552d255de3c55c44c554cb75984aaca1d0a078fbb7788e4e9c87"
+      },
+      "trace": [
+        "COMMIT_LAST_Y 27 1 0 143"
+      ],
+      "W2_counters": [
+        [
+          27,
+          1024,
+          2,
+          208,
+          208,
+          208,
+          1
+        ]
+      ]
+    },
+    {
+      "name": "commit_last_Y_l2",
+      "manifest": {
+        "path": "reports/revd_offline/tiled/w2-protocol-pm4-final-002/commit_last_Y_l2/run_manifest.json",
+        "sha256": "4576ff91649e86b37cc4356b6443b54c8de51713928a47de6532c19873aa1eb6"
+      },
+      "trace": [
+        "COMMIT_LAST_Y 27 1 0 143"
+      ],
+      "W2_counters": [
+        [
+          27,
+          1024,
+          2,
+          208,
+          208,
+          208,
+          1
+        ]
+      ]
+    }
+  ],
+  "memory_accounting": {
+    "logical_W_bytes": 4096,
+    "two_slots": 2,
+    "physical_SP_banks": 8,
+    "logical_depth_each": 256,
+    "bits_each": 16,
+    "bias_register_bytes": 192,
+    "PM4_Y_data_bytes": 256,
+    "PM4_Y_flags_bytes": 16,
+    "designated_depth256_macro_supported": false,
+    "macro_composition_candidate": "16 separate16x128 SP macros via depth cascading; mapping/timing/area NOT_RUN.",
+    "official_area_mm2": null,
+    "official_energy_J": null
+  },
+  "scope_limits": [
+    "PM4 W2 core evidence only; W2 SoC NOT_RUN. D3full-W CPU cannot sign W2.",
+    "L1/L2 are latency sensitivity; no formal PPA/contestscore or global winner.",
+    "Gate metadata changes do not imply changed hardware or require re-simulation of alreadybound unchanged RTL; final current-gate pure-read recheck still required."
+  ],
+  "review_scope_passed": true,
+  "parent_accepted": false,
+  "official_contest_acceptance": false,
+  "recommendation": "RECOMMEND_LOCAL_CORE_ACCEPTANCE_WITH_LIMITS",
+  "updated_utc": "2026-10-17T08:07:43.865031+00:00",
+  "final_current_core_gate_passed": true,
+  "current_final_evidence": {
+    "path": "reports/revd_offline/tiled_final_review/w2-accepted-20261017T075817Z/summary.json",
+    "sha256": "e316511bcf4a7c59888b52e9b1ed1d954700ac2d46fa3a624dae6cb4ef02defc"
+  },
+  "current_final_execution": {
+    "path": "reports/revd_offline/tiled_final_review/w2-accepted-20261017T075817Z/execution.json",
+    "sha256": "cc4a3136bddc331543bbc0ebf26e242d56af3c7e4cdb3660b51d55cdd8ca5e5e"
+  },
+  "current_final_gate_sha256": "6b3a1bd1c4d535d973670b93598cf5b7e0ac31c003c6fe8dad2f04d813f03055",
+  "current_final_test_count": 38,
+  "current_final_positive_count": 10,
+  "current_final_software_negative_count": 28,
+  "current_final_source_and_input_sha256": [
+    {
+      "path": "scripts/revd_offline_tiled_w2_gate.py",
+      "sha256": "6b3a1bd1c4d535d973670b93598cf5b7e0ac31c003c6fe8dad2f04d813f03055",
+      "bytes": 25645
+    },
+    {
+      "path": "dv/revd_opt/gate_negatives.py",
+      "sha256": "c077c655e63b44dd36f0f2b5658b011e99f4147337e14ffceca0666496b2da9e",
+      "bytes": 20042
+    },
+    {
+      "path": "rtl/revd_opt/core_stream_tiled_w2_opt.sv",
+      "sha256": "3bb7bdf0d6393b67180e3f71f03dc287b793bcf346ab7e5e06e6d643831fd084",
+      "bytes": 16386
+    },
+    {
+      "path": "dv/revd_opt/tiled_w2_core_tb.sv",
+      "sha256": "62dd847b84117ed2768eb920f58162d24c09969a2014dc4925aedbcfb9a4dac5",
+      "bytes": 14451
+    },
+    {
+      "path": "dv/revd_opt/tiled_w2_runner.py",
+      "sha256": "75dd333087a570c1457618bb549a18499a88d92a4fb1ca7a8f8e961767c36443",
+      "bytes": 11404
+    },
+    {
+      "path": "dv/revd_opt/tiled_w2_protocol.py",
+      "sha256": "b5bd08466936a366b55209992baff7d690e81b65b9de5c0c0ee7d36180854bcf",
+      "bytes": 6398
+    },
+    {
+      "path": "config/revd_opt/tiled_w2_y1.json",
+      "sha256": "8bfa358b69f899d12d8ead39bf60709d37fbb50f1c0a86af8dfcb701a922c33e",
+      "bytes": 1695
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-protocol-pm4-final-002/summary.json",
+      "sha256": "9a5cb5725d0e90b57f71c9fb90b78f42baf67efdcf5f0a45c2aed72bda0a703b",
+      "bytes": 8502
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-protocol-pm4-final-002/summary.json",
+      "sha256": "9a5cb5725d0e90b57f71c9fb90b78f42baf67efdcf5f0a45c2aed72bda0a703b",
+      "bytes": 8502
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-full36-pm4-l1-final-001/summary.json",
+      "sha256": "ea2bca334c25bc989c7ae469f1879769f2a6c26e750c3fe12c0affb3e3ae1c4e",
+      "bytes": 8600
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-numeric-001/summary.json",
+      "sha256": "c9877c96956390fa1f5a97f7f65099a34088893bf6d45bbac8e05fccfe052836",
+      "bytes": 7504
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-production-pm4-l2-final-002/summary.json",
+      "sha256": "3eb84e10bbaae10a73de18d0ede7774d9bb142ff23842eb8154d2c250769d238",
+      "bytes": 435
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-repeat-pm4-l1-final-001/summary.json",
+      "sha256": "2cb5e85268ab014863d72887771dde357608bddcc497e34ac5fed63af15ff2ea",
+      "bytes": 469
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-protocol-pm2-final-002/summary.json",
+      "sha256": "d9717a0f6088f9ead288e8f6da35a6cdefa7dc7daa88207684bdf299597c254f",
+      "bytes": 8502
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-small-pm2-l1-final-001/summary.json",
+      "sha256": "fe6afee35b2274e60b543d8b5653a12f79dd8b93496336f08fc0ef0f26db52c8",
+      "bytes": 769
+    },
+    {
+      "path": "reports/revd_offline/tiled/w2-small-pm2-l2-final-001/summary.json",
+      "sha256": "75603f6a61dea9254fa3887477fbdd6984ae4ab4da05cfc3eeddbc190ace8a83",
+      "bytes": 769
+    }
+  ],
+  "current_source_changed_during_probe": [],
+  "author_handoff": {
+    "path": "reports/revd_offline/tiled/w2-handoff-20261017T075137Z_5e5d3bbd/handoff.json",
+    "sha256": "7771ae5551f7b5ca643155f98c370e845051aaf4acbd2b74ea48a113e4398f7a"
+  },
+  "accepted_core_scope": {
+    "PM4_full36": 36,
+    "PM4_full36_outputs": 912384,
+    "PM4_production_latency": [
+      1,
+      2
+    ],
+    "PM4_independent_full_repeat": true,
+    "public_all48_shifts": true,
+    "PM2_small_latency": [
+      1,
+      2
+    ],
+    "protocol_PMs": [
+      2,
+      4
+    ],
+    "protocol_tests_per_PM": 44,
+    "actual_RTL_mutation_classes_per_PM": 10,
+    "PM2_full36": "NOT_RUN_FOR_THIS_TILED_PROFILE"
+  },
+  "fixed_final_gate_issues": [
+    "Executable path/SHA/version now equal actual current which/resolve binary for iverilog/vvp; true binary alias independently rejected.",
+    "Exact production/small/repeat/full36 roles and synthetic/frozen array identities; actual small role positive plus production/repeat/unknown relabel negatives all exercised."
+  ],
+  "tool_false_accept_red_to_green": {
+    "red": {
+      "path": "reports/revd_offline/w2_review/w2-independent-20261017T073915Z/summary.json",
+      "sha256": "ae6f19b350836a18739d494e5b5f5b3050db24e613e5d0cdf53d94c80893bec9"
+    },
+    "green": {
+      "path": "reports/revd_offline/tiled_final_review/w2-accepted-20261017T075817Z/summary.json",
+      "sha256": "e316511bcf4a7c59888b52e9b1ed1d954700ac2d46fa3a624dae6cb4ef02defc"
+    }
+  },
+  "acceptance_limits": [
+    "This accepts current-source local core evidence only. CPU/ICB for this tiled profile is separately reviewed; full-W D3 CPU evidence is not reused.",
+    "Only actually completed configurations are accepted. PM2 small/protocol evidence is not PM2 full36.",
+    "Logical256-depth RAM requires specified128-depth composition; no official macro mapping/150MHz/area/energy/contestscore acceptance.",
+    "Parent and organizer acceptance remain false."
+  ]
+}

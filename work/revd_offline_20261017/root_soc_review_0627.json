@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "reviewer": "offline_architecture_priority",
+  "review_kind": "Independent read-only SoC/ICB/driver source review; no simulation performed by this reviewer",
+  "status": "PROVISIONAL_NO_BLOCKING_SOURCE_FINDING",
+  "provisional": true,
+  "observed_utc": "2026-10-17T06:29:52.771820+00:00",
+  "verdict_scope": "Source-level design supports public-E203 full-W RevD_opt integration. Current full RTL/CPU execution is RUNNING; this review does not approve execution results, final submission, official platform, or physical PPA.",
+  "findings": [],
+  "checks": [
+    {
+      "id": "SOC-IDX-001",
+      "status": "SOURCE_REVIEW_OK",
+      "observation": "Driver reads out_y_index and task ID from a held result, rejects out-of-range/duplicate index, writes destination[index] and flag_destination[index], validates last exactly at index M*N-1, then fences and POPs. Adapter cannot advance result except explicit legal POP.",
+      "evidence": [
+        "soc/revd_opt/revd_opt_icb.sv",
+        "sw/revd_opt/revd_opt_driver.c"
+      ]
+    },
+    {
+      "id": "SOC-CAP-002",
+      "status": "SOURCE_REVIEW_OK",
+      "observation": "One ICB response slot and one captured event slot. icb_cmd_ready depends only on response ownership, never on a W/core slot. Full/fault COMMIT returns immediate bus error. Driver drains available result before checking capacity, and has one producer, so polling capacity then staging/commit cannot lose capacity to another producer in this model.",
+      "evidence": [
+        "soc/revd_opt/revd_opt_icb.sv",
+        "sw/revd_opt/revd_opt_driver.c",
+        "dv/revd_opt/soc_adapter_tb.sv",
+        "dv/revd_opt/soc_bus_contract_tb.sv"
+      ]
+    },
+    {
+      "id": "SOC-DONE-003",
+      "status": "SOURCE_REVIEW_OK_WITH_SCOPE",
+      "observation": "MMIO done is explicitly core completion sticky, not system completion. CPU writes Y and flags before POP and uses fence; the testbench counts actual shared write responses. Per-task phase completion requires all indexed writes/flags, a completed response window and accelerator done. Final system_done is a testbench observation asserted only on final CPU mailbox write response, with all output/flag response counts and final shared SRAM checked. It is not an exposed synthesizable SoC hardware status port.",
+      "evidence": [
+        "sw/revd_opt/revd_opt_driver.c",
+        "dv/revd_opt/soc_cpu_tb.sv",
+        "soc/e203_common/icb_shared_ram.sv"
+      ]
+    },
+    {
+      "id": "SOC-COLD-004",
+      "status": "SOURCE_REVIEW_OK_PENDING_EXECUTION",
+      "observation": "Runner takes frozen vector case0 layer1 and case1 layer2, distinct W and bias hashes. Each has separate input/output region within 512KiB, unique task ID, per-run load, poisoned destinations and reset driver seen bitmap. Phase write precedes task descriptor/input loading, final window ends at last actual Y/flag response. This demonstrates two cold engineering tasks if execution passes, not twelve tasks or official600.",
+      "selected_cases": [
+        {
+          "case_id": "eight_750e3e75_nohash_0/layer_01",
+          "layer": 1,
+          "shift": 5,
+          "w_sha256": "dbe936717b81c8b0806fe737c5ec3d27f240fdfbf98ca0964e8ad9052b90041f",
+          "bias_sha256": "5cd166dac556e280ce2d79f886a935a9b40191eeb9394892c2267763d7a655a3"
+        },
+        {
+          "case_id": "eight_750e3e75_nohash_0/layer_02",
+          "layer": 2,
+          "shift": 5,
+          "w_sha256": "406f1b1c947b15d9ca4c252ecb1bc9808846fac0a7d823d22cb8557adfdbddf9",
+          "bias_sha256": "63fee08ca6b987c482919b9c5c10407202002a7c3cc2fc9fadf1eef320f168fa"
+        }
+      ],
+      "max_used_byte_offset_hex": "0x762ff",
+      "shared_limit_hex": "0x7ffff"
+    },
+    {
+      "id": "SOC-COVERAGE-005",
+      "status": "SOURCE_REVIEW_OK",
+      "observation": "TB tracks every Y/flag index separately and checks real CPU command data, write masks, no duplicate/missing indices, matched response counts, starts/pops, instruction activity and final shared image. Expected arrays are TB-only; CPU-visible shared fixture contains raw X/W/b and poisoned destinations. Python post-check independently parses actual output tuples.",
+      "evidence": [
+        "dv/revd_opt/soc_cpu_tb.sv",
+        "scripts/revd_offline_soc_run.py"
+      ]
+    },
+    {
+      "id": "SOC-BOUNDARY-006",
+      "status": "SOURCE_TESTS_PRESENT_PENDING_FRESH_EVIDENCE",
+      "observation": "Adapter tests exercise last-result hold, queued BEGIN/full COMMIT and reset. Completion TB separates MMIO capture/core acceptance/retirement; queued-invalid after final ingress barrier belongs after old task completion, fault takes precedence over sticky old done. Separate bus TB tests response stability/backpressure/reset, unknown/misaligned/partial accesses. Actual compiled mutation and CPU omission scripts exist, but source presence is not test execution.",
+      "evidence": [
+        "dv/revd_opt/soc_adapter_tb.sv",
+        "dv/revd_opt/soc_completion_tb.sv",
+        "dv/revd_opt/soc_bus_contract_tb.sv",
+        "scripts/revd_offline_soc_mutations.py",
+        "scripts/revd_offline_soc_negative.py"
+      ]
+    }
+  ],
+  "nonblocking_limitations": [
+    {
+      "id": "SOC-SCOPE-FULL-W",
+      "priority": 1,
+      "observation": "The adapter instantiates core_stream_frontend_opt full-W. Driver preloads all W tiles and only then emits START. This is legal for full-W and must not be advertised as D4 tiled CPU integration. A future tiled adapter/driver must preload tile0, START, then feed subsequent OPEN/load/COMMIT while draining results; otherwise a future OPEN may head-of-line block START.",
+      "action": "Keep current full-W CPU claim narrow; require independent tiled-SoC scope/tests before switching."
+    },
+    {
+      "id": "SOC-TRUSTED-DESCRIPTORS",
+      "priority": 2,
+      "observation": "Driver assumes trusted descriptor offsets/alignment and signed48 bias payload. It does not validate all byte ranges against512KiB or prevent overlap; current runner constructs valid nonoverlapping descriptors and binds source arrays.",
+      "action": "For this bounded trusted-fixture trial this is not a blocker. For a reusable external submission API, add argument-range/alignment/overlap/error tests or document trusted descriptor preconditions."
+    },
+    {
+      "id": "SOC-PHYSICAL",
+      "priority": 1,
+      "observation": "Public E203 shell and behavior shared RAM are reused. Simulator timescale and functional pass cannot establish official platform equivalence, macro mapping,150MHz,2.25mm2,energy score.",
+      "action": "Keep official/physical fields NOT_RUN until actual supplied-platform/library evidence exists."
+    }
+  ],
+  "acceptance_conditions": [
+    "Wait for current CPU full --tasks2 actual simulator/runner exit0 and explicit source_unchanged true; inspect actual output tuples and final CPU write responses, not a stale PASS label.",
+    "Compare bound source hashes in full and independent repeat to the final candidate hashes below (and current core_opt identity owned by core reviewer); if any bound source changes, rerun affected checks.",
+    "Run same frozen full-W driver/adapter/testbench with accepted D2 alias for matched cold CPU comparison, and report both CPU and core/frontend cycle changes separately.",
+    "Require fresh small cross-simulator/latency checks plus adapter bus/completion and real RTL mutation controls; CPU zero-return/skip-last must fail intended coverage without expected values in firmware.",
+    "Retain D2 fallback and failed/stale evidence; this provisional source review cannot independently close the final root acceptance gate."
+  ],
+  "observed_active_full_run": {
+    "path": "reports\\revd_offline\\soc\\soc-full-pm4-20261017T062100Z\\result.json",
+    "status": "RUNNING",
+    "run_id": "soc-full-pm4-20261017T062100Z",
+    "source_hash_match_current": {}
+  },
+  "source_identity": {
+    "soc/revd_opt/revd_opt_icb.sv": {
+      "sha256": "bc35bf1d86056c963532b61a1e49d583b94638573ad91009af75268ab8729839",
+      "bytes": 4117,
+      "mtime_utc": "2026-10-17T06:14:59.725705+00:00"
+    },
+    "sw/revd_opt/revd_opt_driver.c": {
+      "sha256": "d452118c21570cf4edc7ff23f9ea7c35eab6d2475fe84b3478661217ca0a35c0",
+      "bytes": 3319,
+      "mtime_utc": "2026-10-17T06:15:34.645355+00:00"
+    },
+    "sw/revd_opt/revd_opt_driver.h": {
+      "sha256": "d8f7174b584d330618666d72e695ad900d8e0f8000f36cb42f5e3dbdb7faadce",
+      "bytes": 370,
+      "mtime_utc": "2026-10-17T06:15:34.636893+00:00"
+    },
+    "sw/revd_opt/main.c": {
+      "sha256": "1ebaadcfbad18b6b5a8f212eff543af7c29395d69b8220f34a18af15a5a5ed94",
+      "bytes": 573,
+      "mtime_utc": "2026-10-17T06:15:34.646636+00:00"
+    },
+    "dv/revd_opt/soc_cpu_tb.sv": {
+      "sha256": "3cd5ae4d9b0051c3cbec27cc94d16290ec872f4a09c68f5561a86e1dcda8f5af",
+      "bytes": 9361,
+      "mtime_utc": "2026-10-17T06:16:38.456267+00:00"
+    },
+    "dv/revd_opt/soc_adapter_tb.sv": {
+      "sha256": "f2a8fc57a21f22ab0b20b1230cffed66ea9a55134c118324873d4caeb6253578",
+      "bytes": 2971,
+      "mtime_utc": "2026-10-17T06:14:59.725705+00:00"
+    },
+    "dv/revd_opt/soc_completion_tb.sv": {
+      "sha256": "a0d094e70bd3383566e8ad0a168e799d05413f66ae83680437a93612b1950885",
+      "bytes": 3639,
+      "mtime_utc": "2026-10-17T06:25:29.970267+00:00"
+    },
+    "dv/revd_opt/soc_bus_contract_tb.sv": {
+      "sha256": "937c21e32410041cc374f4633f273abd71ed58d0afc100daff685769b14bd359",
+      "bytes": 2282,
+      "mtime_utc": "2026-10-17T06:26:32.075821+00:00"
+    },
+    "scripts/revd_offline_soc_run.py": {
+      "sha256": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+      "bytes": 13202,
+      "mtime_utc": "2026-10-17T06:20:27.075603+00:00"
+    },
+    "scripts/revd_offline_soc_baseline.py": {
+      "sha256": "30aba5815db408c2bbbfca18d8023c081e25d6e1b2dbed9322676e8eea147bbe",
+      "bytes": 2209,
+      "mtime_utc": "2026-10-17T06:21:56.616140+00:00"
+    },
+    "scripts/revd_offline_soc_mutations.py": {
+      "sha256": "6ec5e1a8e1242ab0d1f2d27d343f1c8c45634f5d4c5f28b83420425f515dd03b",
+      "bytes": 2969,
+      "mtime_utc": "2026-10-17T06:25:42.497983+00:00"
+    },
+    "scripts/revd_offline_soc_negative.py": {
+      "sha256": "52b2714ceb8faccfc90618e53d6815dfd4a5791717aaf10585311d42c82bcdad",
+      "bytes": 4735,
+      "mtime_utc": "2026-10-17T06:27:41.159355+00:00"
+    },
+    "soc/e203_common/e203_cpu_shell.sv": {
+      "sha256": "cf8700d2a6fd7f11655913df2346469b99d90888160d98cae4ddb91d400b970a",
+      "bytes": 4054,
+      "mtime_utc": "2026-10-15T10:51:41.880283+00:00"
+    },
+    "soc/e203_common/icb_shared_ram.sv": {
+      "sha256": "5b211cb4f7f7747c71efaa069194cb5edd246ddb7a2e9280a546d12d0ef054b9",
+      "bytes": 1562,
+      "mtime_utc": "2026-10-15T10:58:53.498010+00:00"
+    }
+  },
+  "line_references": {
+    "soc/revd_opt/revd_opt_icb.sv": [
+      {
+        "line": 33,
+        "text": "wire pop=fire&&write_ok&&icb_cmd_addr[7:0]==8'h2c&&out_valid;"
+      },
+      {
+        "line": 34,
+        "text": "assign icb_cmd_ready=!icb_rsp_valid;"
+      },
+      {
+        "line": 52,
+        "text": "if(core_done)done<=1;"
+      },
+      {
+        "line": 53,
+        "text": "if(event_valid&&core_ready)begin"
+      },
+      {
+        "line": 62,
+        "text": "8'h00:icb_rsp_rdata<={28'b0,fault,done,out_valid,!event_valid};"
+      },
+      {
+        "line": 83,
+        "text": "8'h18:begin"
+      }
+    ],
+    "sw/revd_opt/revd_opt_driver.c": [
+      {
+        "line": 10,
+        "text": "static int drain(uint32_t status)"
+      },
+      {
+        "line": 19,
+        "text": "destination[index]=(int32_t)value;"
+      },
+      {
+        "line": 20,
+        "text": "flag_destination[index]=(uint8_t)flags;"
+      },
+      {
+        "line": 21,
+        "text": "__asm__ volatile(\"fence iorw,iorw\" ::: \"memory\");"
+      },
+      {
+        "line": 22,
+        "text": "wr(0x2c,1);"
+      },
+      {
+        "line": 27,
+        "text": "static int emit(uint32_t op,uint32_t layer,uint32_t shift,uint32_t tile,uint32_t index,int64_t value)"
+      },
+      {
+        "line": 40,
+        "text": "__asm__ volatile(\"fence iorw,iorw\" ::: \"memory\");"
+      },
+      {
+        "line": 59,
+        "text": "for(uint32_t tile=0;tile<n/16u;tile++){"
+      },
+      {
+        "line": 68,
+        "text": "EMIT(6,0,0,0);"
+      },
+      {
+        "line": 72,
+        "text": "if(status&4u){if(result_count!=expected_count)return -17;break;}"
+      },
+      {
+        "line": 74,
+        "text": "__asm__ volatile(\"fence iorw,iorw\" ::: \"memory\");"
+      }
+    ],
+    "dv/revd_opt/soc_cpu_tb.sv": [
+      {
+        "line": 83,
+        "text": "if(pending_kind!=0||pending_terminal)$fatal(1,\"multiple outstanding shared transaction\");"
+      },
+      {
+        "line": 90,
+        "text": "if(task_outputs[t]!=M*N||task_flags[t]!=M*N||last_response[t]<cold_start[t]||!accelerator.done)"
+      },
+      {
+        "line": 93,
+        "text": "$display(\"E203_REVD_TASK task=%0d cold_start=%0d last_write_response=%0d cold_cycles=%0d core_cycles=%0d frontend_cycles=%0d effective_macs=%0d issue_count=%0d retire_count=%0d\",t,cold_start[t],last_response[t],last_response[t]-cold_start[t]+1,accelerator.core.core_cycles,accelerator.core.frontend_cycles,accelerator.core.effective_macs,accelerator.core.issue_count,accelerator.core.retire_count);"
+      },
+      {
+        "line": 100,
+        "text": "if(sysmem_icb_cmd_wmask!==4'hf||y_seen[t*M*N+index])$fatal(1,\"duplicate/index/output mask\");"
+      },
+      {
+        "line": 102,
+        "text": "y_seen[t*M*N+index]<=1;output_writes<=output_writes+1;task_outputs[t]<=task_outputs[t]+1;"
+      },
+      {
+        "line": 109,
+        "text": "if(sysmem_icb_cmd_wmask!==(4'b0001<<lane)||f_seen[t*M*N+index])$fatal(1,\"duplicate/flag mask\");"
+      },
+      {
+        "line": 111,
+        "text": "f_seen[t*M*N+index]<=1;flag_writes<=flag_writes+1;task_flags[t]<=task_flags[t]+1;"
+      },
+      {
+        "line": 121,
+        "text": "if(pending_kind!=0)begin"
+      },
+      {
+        "line": 127,
+        "text": "if(pending_terminal)begin"
+      },
+      {
+        "line": 130,
+        "text": "if(!terminal_seen||finished_tasks!=TASKS||output_writes!=TASKS*M*N||flag_writes!=TASKS*M*N||response_outputs!=output_writes||response_flags!=flag_writes||pops!=output_writes||starts!=TASKS||instructions<100)"
+      },
+      {
+        "line": 134,
+        "text": "if(ram.mem['h4000+t*'h10000+j]!==expected[t*M*N+j])$fatal(1,\"final shared data mismatch\");"
+      }
+    ],
+    "scripts/revd_offline_soc_run.py": [
+      {
+        "line": 63,
+        "text": "case=manifest['cases'][t];arrays={}"
+      },
+      {
+        "line": 72,
+        "text": "f[-1,-1]|=4"
+      },
+      {
+        "line": 73,
+        "text": "bank=t*0x40000;xo=0x1000+bank;wo=0x5000+bank;bo=0xd000+bank"
+      },
+      {
+        "line": 144,
+        "text": "lines=(folder/filename).read_text().splitlines();wanted=info[key];seen=set()"
+      },
+      {
+        "line": 150,
+        "text": "if flat in seen or value!=wanted[flat]:raise RuntimeError('duplicate or wrong actual data '+filename)"
+      },
+      {
+        "line": 191,
+        "text": "report['source_unchanged']=inventory()==frozen"
+      },
+      {
+        "line": 192,
+        "text": "if not report['source_unchanged']:raise RuntimeError('bound sources changed during run; evidence is stale and cannot accept current RTL')"
+      }
+    ]
+  }
+}

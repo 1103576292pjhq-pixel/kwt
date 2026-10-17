@@ -1,0 +1,240 @@
+{
+  "status": "PROVISIONAL_BYTES_PASS_GATE_HARDENING_REQUIRED",
+  "created_at_utc": "2026-10-17T06:54:42.693298+00:00",
+  "provisional": true,
+  "scope": "Read-only follow-up for ROOT-0627-SOC-VERILATOR-BINARY and ROOT-0627-CPU-INDEPENDENT-GATE while persistent implementation is active. No large RTL simulation rerun; no source/Git/runner/environment changes.",
+  "previous_review": "work/revd_offline_20261017/root_gate_review_0627.json",
+  "closure_assessment": [
+    {
+      "original_ids": [
+        "ROOT-0627-SOC-VERILATOR-BINARY",
+        "ROOT-CPU-BINARY-UNBOUND-001"
+      ],
+      "current_specific_reports": "CLOSED_BY_AUX_BINDINGS_PLUS_THIS_INDEPENDENT_BYTE_AUDIT",
+      "remaining_scope": "Gate hardening remains: generic check_cpu does not require or verify binary-binding.json for offset0, and merely hashes current executable for its output. This does not invalidate the two concrete full2 record audits here."
+    },
+    {
+      "original_ids": [
+        "ROOT-0627-CPU-INDEPENDENT-GATE",
+        "ROOT-CPU-INDEPENDENT-GATE-001"
+      ],
+      "current_specific_reports": "SUBSTANTIALLY_CLOSED_FOR_TWO_FULL2_REPORT_BYTES",
+      "evidence": "New check_cpu exists and recomputes every Y/flag using the frozen numeric model. This reviewer independently reconfirmed CPU full2 and D2 full2 outputs, source/artifact identities, ELF/bin/hex, actual512KiB input+poison image, and fresh genuine-zero-return/omitted-final-write negatives. Remaining reusable-gate issue is combined below."
+    }
+  ],
+  "findings": [
+    {
+      "id": "ROOT-CPU-GATE-IDENTITY-HARDENING-001",
+      "severity": "HIGH_FOR_FINAL_ACCEPTANCE_GATE",
+      "state": "OPEN_PROVISIONAL",
+      "classification": "Source evidence + pure-read dynamic negative proof",
+      "file": "scripts/revd_offline_gate.py",
+      "function": "check_cpu",
+      "problem": "The independent checker validates real CPU numerical output but does not consume the aux executable/firmware binding and does not bind profile PM/READ_LATENCY/M/N/TASKS to exact -G/-P compile settings. File existence/current hashing is not comparison to a previously frozen expected executable identity.",
+      "dynamic_proof": {
+        "method": "In a fresh WSL Python process import current gate; wrap read_json only in memory for the immutable candidate full2 result and change profile pm4→pm2 and latency1→latency2. Do not write or modify any evidence file. Run g.check_cpu against the same actual PM4/LAT1 binary/receipts.",
+        "exit_code": 0,
+        "stdout": {
+          "pure_in_memory_negative_no_files_modified": true,
+          "result": {
+            "outcome": "PASS",
+            "mutated_profile": {
+              "pm": 2,
+              "latency": 2
+            },
+            "actual_compiled_profile": {
+              "pm": 4,
+              "latency": 1
+            }
+          }
+        },
+        "interpretation": "Current gate falsely accepts changed configuration labels. Actual CPU bittrue operation and observed windows remain valid for its real compiled PM4/LAT1 configuration."
+      },
+      "close_when": "Require and verify auxiliary binding against original report hash/current executable hash/firmware hash and command-log identity; compare all declared compile parameters to actual compile argv and top/candidate source selection; verify actual CPU fixture reconstruction and ELF→bin→loadedhex closure in the reusable checker or final root gate. Add explicit missing/altered binary-binding, firmware, fixture and PM/latency alias negatives. No need to rerun unchanged full2 arithmetic merely to acknowledge this existing byte audit."
+    }
+  ],
+  "independent_specific_record_audits": [
+    {
+      "report": "reports/revd_offline/soc/soc-full-pm4-20261017T062100Z/result.json",
+      "report_sha256": "f748503b34ee45b5d18fc77d59b1258650e59c30921e32f2e1ddabf16510d32a",
+      "status": "INDEPENDENT_BYTES_AND_NUMERIC_PASS",
+      "source_count": 155,
+      "source_current_mismatches": [],
+      "artifact_count": 32,
+      "artifact_mismatches": [],
+      "binary_binding": {
+        "binding_sha256": "b2c7ab71c564e43ef3937988ece1425141c3947b071fa92ddf3559a5aa34cf8b",
+        "report_match": true,
+        "binary_match": true,
+        "firmware_bin_match": true
+      },
+      "independent_ELF_program_and_allocated_section_load_reconstruction_equal_firmware_bin": true,
+      "actual_cpu_firmware_hex_equal_bin": true,
+      "independent_frozen_X_Wpacked_bias_descriptors_full_512KiB_and_poison_reconstruction_equal_actual_cpu_shared_hex": true,
+      "numeric_reference": "numeric.fixedpoint.ffn1_reference using frozen Xq/Wq/bq layer1/2 and each output shift; not submitted Y expectation alone",
+      "independently_compared_y_records": 50688,
+      "independently_compared_flag_records": 50688,
+      "bit_mismatches": 0,
+      "duplicate_or_missing_indices": 0,
+      "real_cpu_exit_code": 0,
+      "cold_task_metrics": [
+        {
+          "task": 0,
+          "cold_start": 8420,
+          "last_write_response": 5716419,
+          "cold_cycles": 5708000,
+          "core_cycles": 2994172,
+          "frontend_cycles": 5703828,
+          "effective_macs": 1622016,
+          "issue_count": 102400,
+          "retire_count": 102400
+        },
+        {
+          "task": 1,
+          "cold_start": 5716502,
+          "last_write_response": 11424499,
+          "cold_cycles": 5707998,
+          "core_cycles": 2994172,
+          "frontend_cycles": 5703828,
+          "effective_macs": 1622016,
+          "issue_count": 102400,
+          "retire_count": 102400
+        }
+      ]
+    },
+    {
+      "report": "reports/revd_offline/soc/soc-d2-20261017T063010Z/result.json",
+      "report_sha256": "c41f503ea6dc78a799fb6bb33fbb146ce6a3f750bae899ec2568bd2c7f14f7ca",
+      "status": "INDEPENDENT_BYTES_AND_NUMERIC_PASS",
+      "source_count": 157,
+      "source_current_mismatches": [],
+      "artifact_count": 33,
+      "artifact_mismatches": [],
+      "binary_binding": {
+        "binding_sha256": "08ceaecaf99dcf0698c3273d88fdf66d230aefdb0e3602193cc44c5d4e8cc010",
+        "report_match": true,
+        "binary_match": true,
+        "firmware_bin_match": true
+      },
+      "independent_ELF_program_and_allocated_section_load_reconstruction_equal_firmware_bin": true,
+      "actual_cpu_firmware_hex_equal_bin": true,
+      "independent_frozen_X_Wpacked_bias_descriptors_full_512KiB_and_poison_reconstruction_equal_actual_cpu_shared_hex": true,
+      "numeric_reference": "numeric.fixedpoint.ffn1_reference using frozen Xq/Wq/bq layer1/2 and each output shift; not submitted Y expectation alone",
+      "independently_compared_y_records": 50688,
+      "independently_compared_flag_records": 50688,
+      "bit_mismatches": 0,
+      "duplicate_or_missing_indices": 0,
+      "real_cpu_exit_code": 0,
+      "cold_task_metrics": [
+        {
+          "task": 0,
+          "cold_start": 8420,
+          "last_write_response": 5918842,
+          "cold_cycles": 5910423,
+          "core_cycles": 3196595,
+          "frontend_cycles": 5906251,
+          "effective_macs": 1622016,
+          "issue_count": 102400,
+          "retire_count": 102400
+        },
+        {
+          "task": 1,
+          "cold_start": 5918925,
+          "last_write_response": 11829345,
+          "cold_cycles": 5910421,
+          "core_cycles": 3196595,
+          "frontend_cycles": 5906251,
+          "effective_macs": 1622016,
+          "issue_count": 102400,
+          "retire_count": 102400
+        }
+      ]
+    }
+  ],
+  "fresh_fake_CPU_and_omitted_write_controls": {
+    "report": "reports/revd_offline/soc/cpu-negative-20261017T064658Z_8fcbbd89/result.json",
+    "sha256": "59b8626ffe8bcafc9fd9702b48fd573a1eea71c64514d5203b6fe13bbf4cede5",
+    "status": "PASS",
+    "finished_utc": "2026-10-17T06:48:18.384818+00:00",
+    "simulator": "verilator",
+    "negative_script_current_sha_match": true,
+    "source_current_mismatches": [],
+    "checks": [
+      {
+        "name": "normal_cpu_verilator",
+        "status": "PASS",
+        "exit_code": 0,
+        "started_utc": "2026-10-17T06:47:57.190253+00:00",
+        "finished_utc": "2026-10-17T06:48:05.261011+00:00",
+        "run_identity": "20261017-060807-650",
+        "log_sha256_matches": true,
+        "command_receipt_matches": true,
+        "required_message": null,
+        "required_message_present": true,
+        "CPU_EXIT_FAILURE_present": false,
+        "report_expected_zero_return": null
+      },
+      {
+        "name": "zero_return_no_work",
+        "status": "EXPECTED_FAIL",
+        "exit_code": -6,
+        "started_utc": "2026-10-17T06:48:05.983912+00:00",
+        "finished_utc": "2026-10-17T06:48:07.413465+00:00",
+        "run_identity": "20261017-060807-650",
+        "log_sha256_matches": true,
+        "command_receipt_matches": true,
+        "required_message": "CPU coverage incomplete outputs=0 flags=0",
+        "required_message_present": true,
+        "CPU_EXIT_FAILURE_present": false,
+        "report_expected_zero_return": 0
+      },
+      {
+        "name": "zero_return_missing_final_shared_write",
+        "status": "EXPECTED_FAIL",
+        "exit_code": -6,
+        "started_utc": "2026-10-17T06:48:08.310534+00:00",
+        "finished_utc": "2026-10-17T06:48:16.814166+00:00",
+        "run_identity": "20261017-060807-650",
+        "log_sha256_matches": true,
+        "command_receipt_matches": true,
+        "required_message": "CPU coverage incomplete outputs=47 flags=47",
+        "required_message_present": true,
+        "CPU_EXIT_FAILURE_present": false,
+        "report_expected_zero_return": 0
+      }
+    ],
+    "zero_main_is_literal_success_without_work": true,
+    "skip_last_driver_exact_expected_mutation": true,
+    "no_production_RTL_or_TB_mutation": true,
+    "passed_negative_controls": 2
+  },
+  "historical_failed_negative_preserved": {
+    "report": "reports/revd_offline/soc/cpu-negative-20261017T064059Z_f8528eca/result.json",
+    "status": "FAIL",
+    "reason": "Icarus skipped-final-write subrun exited0 with only a progress log, not the intended coverage assertion; not counted as a successful negative. New Verilator run is separate fresh evidence and catches both intended defects."
+  },
+  "include_closure": "Prior recursive include result remains complete: current config.v/e203_defines.v/i2c_master_defines.v all in .v manifest. No current header omission finding.",
+  "not_accepted_here": [
+    "No final offline whole-batch acceptance",
+    "No unobserved future layer03..12 CPU result",
+    "No official platform or PPA acceptance",
+    "No package clean-extraction acceptance"
+  ],
+  "source_sha256": {
+    "scripts/revd_offline_soc_run.py": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+    "scripts/revd_offline_soc_bindings.py": "7f8b910cfd555bba00cf304af383db55f0a0b1ccc193a941abc3145400b88974",
+    "scripts/revd_offline_soc_suite.py": "82f842b1175713464ccf1b6d9bd976227ec6d50333c92c5d423956fbf22da211",
+    "scripts/revd_offline_soc_negative.py": "da53f4db13c0254e75cde4029a1e9ab286cf605bc99f8f07ad2f5f83a5af64e7",
+    "scripts/revd_offline_gate.py": "47b7b0320bc5ba9b952a9eaa3957c8da00d103df47fdc8509db7fcfa58e1d27f",
+    "scripts/revd_offline_common.py": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+    "scripts/revd_offline_soc_baseline.py": "30aba5815db408c2bbbfca18d8023c081e25d6e1b2dbed9322676e8eea147bbe",
+    "dv/revd_opt/soc_cpu_tb.sv": "3cd5ae4d9b0051c3cbec27cc94d16290ec872f4a09c68f5561a86e1dcda8f5af",
+    "rtl/revd_opt/core_stream_frontend_opt.sv": "af7bec5fb9a276e614348c80fd6adaa6e7153709b51b9b372eb0080ef9ba1bb1",
+    "soc/revd_opt/revd_opt_icb.sv": "bc35bf1d86056c963532b61a1e49d583b94638573ad91009af75268ab8729839",
+    "sw/revd_opt/main.c": "1ebaadcfbad18b6b5a8f212eff543af7c29395d69b8220f34a18af15a5a5ed94",
+    "sw/revd_opt/revd_opt_driver.c": "d452118c21570cf4edc7ff23f9ea7c35eab6d2475fe84b3478661217ca0a35c0",
+    "sw/revd_opt/revd_opt_driver.h": "d8f7174b584d330618666d72e695ad900d8e0f8000f36cb42f5e3dbdb7faadce"
+  },
+  "sole_written_file": "D:\\github\\kwt\\work\\revd_offline_20261017\\root_gate_recheck_0647.json",
+  "no_source_git_runner_environment_changes": true
+}

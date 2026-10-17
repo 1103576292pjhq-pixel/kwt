@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "reviewer": "offline_architecture_priority",
+  "review_kind": "Independent read-only package closure/profile source and staged-byte audit; no reproduction or simulation launched by this reviewer",
+  "status": "PROVISIONAL_CLOSURE_PLAUSIBLE_AWAITING_PORTABLE_CPU",
+  "provisional": true,
+  "observed_utc": "2026-10-17T06:51:10.588680+00:00",
+  "stage": "work\\revd_offline_20261017\\package_build\\20261017T063917Z_d9c6bec3\\kwt_revd_v2_candidate_20261017",
+  "package_manifest_sha256": "004d583b749bd985b7c2a332e6910ae2a4f7624dc948fced6fec1b4785eee5e6",
+  "package_json_sha256": "b16a0278c2550ef1df54ff973d43cd660466843098ea825d847a104e643db896",
+  "manifest_members": 3463,
+  "manifest_actual_extras": [],
+  "selected_profile": "D3_CTX4_FULL_PM4_X4_Y1",
+  "profile_evidence": [
+    {
+      "kind": "core36",
+      "summary_status": "PASS",
+      "case_count": 36,
+      "profiles": [
+        [
+          4,
+          4,
+          1,
+          "tagged_CTX4_pipeline",
+          "full_W",
+          "Y1",
+          "X4"
+        ]
+      ],
+      "bound_source_mismatch_count": 0,
+      "mismatches": []
+    },
+    {
+      "kind": "historical_cpu",
+      "status": "PASS",
+      "profile": {
+        "stage": "full",
+        "sim": "verilator",
+        "tasks": 2,
+        "pm": 4,
+        "latency": 1,
+        "run_id": "soc-full-pm4-20261017T062100Z"
+      },
+      "case_count": 2,
+      "source_mismatches": [
+        "config/e203-source-manifest.json"
+      ],
+      "interpretation": "Only derived config/e203-source-manifest.json differs by intentional regular-file minimal closure. Original full inventory preserved. Fresh extracted CPU compile/run still required."
+    }
+  ],
+  "findings": [
+    {
+      "id": "PKG-CPU-GATE-001",
+      "priority": 1,
+      "state": "OPEN_UNTIL_ACTUAL_EXTRACTED_CPU_PASS",
+      "file": "scripts/package_revd_candidate.py",
+      "observation": "publish() only requires manifest/smoke/numeric; cpu-small is optional in package checker despite P1 CPU dependencies and history being included. Package replaces the CPU source inventory by a derived137-file inventory, so the historical CPU PASS does not establish extracted dependency closure.",
+      "required_closure": "Use package_check --cpu or a separately bound fresh extracted cpu-small actual success before root accepts portability of CPU evidence. Require its package MANIFEST SHA equal the published candidate bytes. Gate could additionally require cpu-small for profiles declaring CPU evidence."
+    }
+  ],
+  "checks": [
+    {
+      "id": "RELATIVE_SOURCE_ROOT",
+      "status": "SOURCE_REVIEW_OK",
+      "observation": "Reproduction entry and imported helpers derive ROOT from their own __file__, import package ROOT explicitly, and use package-relative RTL/TB/data. checker launches with -I -B, cwd=extracted package and empty PYTHONPATH. Core fresh build command and gate require compiled source paths under this ROOT.",
+      "hardcoded_runtime_absolute_hits": []
+    },
+    {
+      "id": "EXPLICIT_INTERPRETER",
+      "status": "BOUND_EXTERNAL_TOOL_NOT_HIDDEN_SOURCE_DEPENDENCY",
+      "observation": "The live check explicitly selects an installed C-drive Python/NumPy toolchain through sys.executable, and child processes reuse it. No host venv path is embedded in staged entry/helper source. An external Python/NumPy/compiler installation remains an acknowledged runtime prerequisite; -I does not make these standard/site dependencies self-contained."
+    },
+    {
+      "id": "DATA_CLOSURE",
+      "status": "SOURCE_AND_MANIFEST_LIST_REVIEW_OK",
+      "observation": "Stage includes frozen36 integer vectors, floating baseline source arrays, pinned124 keyword-transformer source inventory, numeric fixedpoint/artifacts, d0 validated loader and generate_prototype_vectors required by exact code-hash checks. full36 and convert paths do not rely on original workspace data."
+    },
+    {
+      "id": "CPU_CLOSURE",
+      "status": "STATIC_CLOSURE_OK_PENDING_ACTUAL_CPU",
+      "observation": "Stage includes shell/shared RAM/start/link/timescale, new driver/TBs/runner,137 byte-bound E203 RTL/include/license regular files and derived package inventory. No symlink entry remains. verify_upstream and compile_cpu use package ROOT; no SDK/toolchain binary is silently assumed to be inside the archive.",
+      "cpu_manifest_regular_files": 137,
+      "cpu_manifest_symlinks": 0
+    },
+    {
+      "id": "PROFILE_BINDING",
+      "status": "STAGED_ENGINEERING_EVIDENCE_SAME_PROFILE",
+      "observation": "All36 archived selected core receipts are PM4/PN4/L1 tagged_CTX4/full_W/Y1/X4 and all bound source bytes match stage. Selected profile string is D3_CTX4_FULL_PM4_X4_Y1; no D4 result is being substituted. Config and CPU full-W sources match selected stage. This does not establish that staged review documents or optional comparisons are final root-accepted."
+    },
+    {
+      "id": "FORMAL_BOUNDARY",
+      "status": "HONEST_LOCAL_CANDIDATE_BOUNDARY",
+      "observation": "No SDC/lib/mapped-netlist/SPEF/SAIF formal result files in stage. PACKAGE sets parent_accepted=false, official_contest_acceptance=false, formal_score=null and lists official platform/library/STA/area/power/600/12-task gaps. README explicitly requires these before formal submission and contains no placeholder passing result."
+    },
+    {
+      "id": "FRESH_REPRODUCTION",
+      "status": "PENDING",
+      "observation": "At observation the roundtrip result file is not complete; only actual per-suite receipts can close it. Static source review is not a portability PASS. Fresh manifest/smoke/numeric and CPU must succeed on exactly the stage MANIFEST bytes."
+    }
+  ],
+  "nonblocking_notes": [
+    "Archived command logs retain original absolute paths for provenance; do not run their recorded argv to reproduce. New advertised entry builds from package-relative sources.",
+    "The stage contains package_revd_candidate.py but not the original work recipe, package plan, or package-check orchestrator. Reproducing computation is supported by revd_offline_reproduce.py; rebuilding this same outer archive from inside itself is not an advertised self-hosted operation. Do not advertise outer repackaging as portable without those dependencies.",
+    "The stage builder source differs from current workspace builder at observation, while runtime RTL/core_runner/SoC/driver/reproduce sources matched. Builder-only changes do not invalidate already staged runtime arithmetic, but final candidate must be rebuilt/rechecked if final package membership, metadata, or reproduction source changes.",
+    "manifest_check verifies listed members and byte hashes but does not reject arbitrary extras; current audited stage had no extras beyond MANIFEST.json. Publication should retain an exact membership/ZIP-manifest comparison, especially after any post-build writes."
+  ],
+  "publication_conditions": [
+    "Complete actual isolated extracted manifest/smoke/numeric and cpu-small with zero exit codes and new output receipts; check command inputs/sources live under extracted root.",
+    "Require exact checked MANIFEST SHA when publish copies stage and makes final ZIP; independently verify ZIP members/hashes after publication. No edited package should reuse pre-edit proof.",
+    "Before parent acceptance, inspect exact selected same-profile source/evidence hashes and unresolved mandatory/formal gaps; do not elevate this local candidate to complete contest submission.",
+    "Keep no-Git/no-official-PPA claims and protect accepted D2; do not insert mock SDC/netlist/physical measurements."
+  ],
+  "roundtrip_observations": [
+    {
+      "directory": "work\\revd_offline_20261017\\package_checks\\20261017T064055Z_73eabb40",
+      "result_present": false,
+      "process_receipts": [
+        {
+          "path": "work\\revd_offline_20261017\\package_checks\\20261017T064055Z_73eabb40\\manifest.log.command.json",
+          "argv": [
+            "/mnt/c/Users/11035/Desktop/ic/kwt—1/.venv-dv/bin/python",
+            "-I",
+            "-B",
+            "/mnt/d/github/kwt/work/revd_offline_20261017/package_checks/20261017T064055Z_73eabb40/extracted/kwt_revd_v2_candidate_20261017/scripts/revd_offline_reproduce.py",
+            "--suite",
+            "manifest"
+          ],
+          "cwd": "/mnt/d/github/kwt/work/revd_offline_20261017/package_checks/20261017T064055Z_73eabb40/extracted/kwt_revd_v2_candidate_20261017",
+          "started_utc": "2026-10-17T06:46:40.691589+00:00",
+          "exit_code": null,
+          "pid": 4420
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "scripts/package_revd_candidate.py": "27eb56077a776bd67f5168ad41de60d20dc9696b6dad319599f3b1ea8b9f92db",
+    "scripts/revd_offline_package_check.py": "5074226bea164dbdf91b75ee6c367c765543f3b62d8dea176c1e3902fdb46bd2",
+    "scripts/revd_offline_reproduce.py": "d9012d156576a47e19c8b2a2fb00e1d1eec716902346458d50c8a90b58ebf129",
+    "scripts/revd_offline_common.py": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+    "scripts/revd_offline_soc_run.py": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+    "scripts/revd_offline_gate.py": "47b7b0320bc5ba9b952a9eaa3957c8da00d103df47fdc8509db7fcfa58e1d27f",
+    "dv/revd_opt/core_runner.py": "1792cc10385fef5181d2030d48115044b016d25b1197ef5aadba81b537b821d3",
+    "dv/revd_opt/numeric_checks.py": "bd1594a4b8a6d953e7e29a87ac8010770b67b3d21e7859a4c88cbbe2b2c6f4dd",
+    "dv/revd/d0_inputs.py": "c95751b6f019af3402f273eeb7bd92ced9cdfefcfb66ef0f52a68fb8398282ab",
+    "numeric/artifacts.py": "fa367d9c149885e46ec469b534579437e9baac54bb2828ff76593abc8f269175",
+    "work\\revd_offline_20261017\\package_plan_preflight.json": "86780f5ad0e66115cf3df8cf14d097d93702c499612366e9a58bddfe0ca371b5"
+  },
+  "stage_runtime_sha256": {
+    "scripts/revd_offline_reproduce.py": "d9012d156576a47e19c8b2a2fb00e1d1eec716902346458d50c8a90b58ebf129",
+    "scripts/revd_offline_common.py": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+    "scripts/revd_offline_soc_run.py": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+    "scripts/run_revd_offline.sh": "e80283b2c294dfb6af5a9b17c552b5a4d370e7454974f733d98b63de8a8a7c83",
+    "dv/revd_opt/core_runner.py": "1792cc10385fef5181d2030d48115044b016d25b1197ef5aadba81b537b821d3",
+    "dv/revd_opt/numeric_checks.py": "bd1594a4b8a6d953e7e29a87ac8010770b67b3d21e7859a4c88cbbe2b2c6f4dd",
+    "dv/revd/d0_inputs.py": "c95751b6f019af3402f273eeb7bd92ced9cdfefcfb66ef0f52a68fb8398282ab",
+    "numeric/artifacts.py": "fa367d9c149885e46ec469b534579437e9baac54bb2828ff76593abc8f269175"
+  },
+  "stage_cpu_manifest_sha256": "37c56bc82073a1e2534e20e0b0bbeb4d99319a06ff9f362e8c6a638fbce3a233"
+}

@@ -1,0 +1,25 @@
+{
+  "role": "critic_preflight_review",
+  "review_date": "2026-10-17 Asia/Shanghai",
+  "conclusion": "APPROVE_FOR_TRIAL",
+  "release_id": "MASTER_RELEASE-KWT-REVD-D0D2-20261017-001",
+  "scope": "仅放行已批准 D0-D2 试执行；此审查不证明新 RTL 已通过。",
+  "reviewed_task_sha256": "edf7e3df474d9e63da3ebc1edd7917459063015f71cec895bd1eeaae900333d3",
+  "blocking_findings": [],
+  "checks": [
+    {"id":"SCOPE", "status":"PASS", "evidence":"TRIAL_TASK.md:7-15；MASTER_RELEASE.json。明确仅 INT16 FFN1 D0-D2，禁止 Git 写操作、D3+/SoC/PPA/完整编码器；不要求教学文档。"},
+    {"id":"SOURCE_READY", "status":"PASS", "evidence":"现场核验 v2/HEAD=3d9d0fc77457b8869cbf525d826dafb114f2a8e1，golden Git blob=116dfb84c51a6847cb10678c9e5a7230fb796598；docs/revd 与原包58个文件逐一SHA256相同、无缺失或多余文件；冻结清单含192项。"},
+    {"id":"W_REPACK", "status":"PASS", "evidence":"TRIAL_TASK.md:41-42。明确 n*64+k→k*16+j、全部16384 W/256 bias逐值与0/15/16/255列；独立错误转置/缺数/dtype/shape负测，禁止TB私有RAM预填及共用候选地址函数。"},
+    {"id":"RAW_AND_PUBLIC_RESULTS", "status":"PASS", "evidence":"TRIAL_TASK.md:29,35,51,61。raw48只在D1公开单元接口或明确命名的被动退休trace核对；D2核对公开Y/overflow/saturated/task/index/last、25344唯一输出和1622016有效MAC。"},
+    {"id":"REAL_RTL_AND_REPEAT", "status":"PASS", "evidence":"TRIAL_TASK.md:23-24,50-67。真实编译仿真、功能RED/GREEN、短例/生产矩阵/原36工程案例、独立新进程重编译复跑、1/2拍RAM、复位/连续任务/有限背压及负测；失败、超时、未知、少输出、SKIP不得通过。"},
+    {"id":"INPUT_AND_RESULT_FRESHNESS", "status":"PASS", "evidence":"TRIAL_TASK.md:39-44,62-67,85。每次新run_id绑定当前含未跟踪源码、配置、工具、输入及输出证据。numeric.artifacts.py:63-84,208-255与work/numeric_handoff.json提供完整源/配置/数组SHA、shape/dtype/finite和3×12覆盖校验入口，不能只读旧PASS。"},
+    {"id":"CONTEST_MAPPING", "status":"PASS", "evidence":"直接提取核对原PDF物理8、11-14页；15页PDF及已有提取稿SHA均匹配来源manifest。任务1/2、12层参数、整数模型逐位一致映射正确；36工程案例不替代官方600样本或正式12次性能任务。"},
+    {"id":"ACCEPTANCE_BOUNDARY", "status":"PASS", "evidence":"TRIAL_TASK.md:71-85；requirements.json。NRMSE不得容忍RTL差异，独立核周期不得冒充正式冷启动/SoC指标，行为150MHz不得冒充STA；仅READY_FOR_REVIEW并保留parent_accepted=false。"}
+  ],
+  "resolved_preflight_gap": "初读时docs/revd尚未落地；最终现场逐文件校验58/58相等，任务所需PLAN/INTERFACE/VERIFICATION/IMPLEMENTATION_TICKETS/compare_v0路径已存在。",
+  "residual_boundaries": [
+    "D0/D1/D2的真实通过仍须由执行证据和根控独立验收证明；本审查未运行实现或重仿真、未启动runner。",
+    "官方600样本、正式12次性能任务、E203/总线写回、指定宏库、综合前后功能、STA/面积/功耗/能耗保持NOT_RUN。",
+    "后续P1单核CPU源汇互锁风险已有冻结要求；它不阻塞当前独立全缓存核心，也不在本批实现。"
+  ]
+}

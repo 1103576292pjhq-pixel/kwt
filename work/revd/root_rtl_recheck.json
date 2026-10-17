@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-17T05:47:09.095153+00:00",
+  "reviewer": "root_independent_rtl_recheck",
+  "verdict": "CLOSED_FOR_D0_D2",
+  "finding_aliases": [
+    "ROOT-FINAL-FIRE-001",
+    "RTL-P1-DONE-PENDING-COMMAND"
+  ],
+  "parent_acceptance": false,
+  "history_preserved": "work/revd/root_rtl_review.json",
+  "source_sha256": {
+    "rtl/revd/core_stream_frontend.sv": "6a73df6c4012e0cc5d2962dd49ab2afb470fec9ffd26775f0d3c8654ed5daa79",
+    "dv/revd/core_tb.sv": "f69785d753c9dbaaceedc44bd46f6a6e7ff854d42c115f2e591d877e88dcb6a8",
+    "dv/revd/d2_protocol.py": "6a3b8bf0f8ad28b45e775313ac0eba1b6df00f861cd23be02599a42e37363289",
+    "work/revd/repair_summary.json": "b7ed4e05eeee20426bf02b9786bdd9434704acfa559d07885a558c95b7f65b4a",
+    "work/revd/repair_red_green.json": "4828c94c938bcfa41eee0c88e0f0c62e58cf0d6faff4f9df6afa22bf25a5d022",
+    "work/revd/evidence.json": "a22bf24e0f278a615205b8952dbc618badd4455a8770424628934599a953001d"
+  },
+  "scope": "Independent read-only recheck of terminal input acceptance, pending-event retirement and next-BEGIN ownership only; no implementation edits or simulation reruns",
+  "findings": [],
+  "closure_reasoning": [
+    {
+      "file": "rtl/revd/core_stream_frontend.sv",
+      "line": 42,
+      "point": "The whole final published record closes in_ready, including out_ready=0. Therefore no new input can enter q_* on the final output handshake, removing the original same-edge hole."
+    },
+    {
+      "file": "rtl/revd/core_stream_frontend.sv",
+      "line": 149,
+      "point": "An event accepted before the final record still retires normally. Every such event is illegal in DRAIN; retire_event&&!command_ok suppresses the normal completion transition and sets sticky fault. The published final payload remains held/drained by the existing fault path."
+    },
+    {
+      "file": "rtl/revd/core_stream_frontend.sv",
+      "line": 42,
+      "point": "in_ready is also low while core_done is visible. A legal BEGIN held stable at the final record cannot handshake until both the old output and done pulse have cleared. It then enters IDLE ownership, retires BEGIN, and the following X load remains ordered."
+    },
+    {
+      "file": "dv/revd/core_tb.sv",
+      "line": 140,
+      "point": "The new passive done assertion rejects q_valid or input_accepts!=event_retires. Directed scenarios explicitly distinguish offered-but-unaccepted terminal input from truly accepted earlier illegal events, and verify held next-BEGIN resumption."
+    }
+  ],
+  "evidence_review": {
+    "protocol": "reports/revd/d2/protocol/20261017-133353-25da49/summary.json",
+    "protocol_sha256": "097739bb0d4e5846205df5aa9442de3901229d61c332d13ca128669b0e1267c4",
+    "boundary_cases": [
+      {
+        "name": "last_fire_invalid_l1",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/last_fire_invalid_l1/run_manifest.json",
+        "manifest_sha256": "08988bf2841879c801ba4c64b4fb1d36b1744345aebc94b12f97ce7835514c2e",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 0 0 0 0 1 1 1 0 0 0",
+          "SUMMARY 6543 2406 160 1"
+        ]
+      },
+      {
+        "name": "pending_last_fire_l1",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/pending_last_fire_l1/run_manifest.json",
+        "manifest_sha256": "2f461fcd15f368eb57599da87cc4d9234eae5c4655242474d4ddff908a220325",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 1 0 1 1 1 0 1 0 0 0",
+          "BOUNDARY 1 1 0 0 0 1 1 0 1 0",
+          "SUMMARY 6551 2407 160 0"
+        ]
+      },
+      {
+        "name": "pending_last_blocked_l1",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/pending_last_blocked_l1/run_manifest.json",
+        "manifest_sha256": "ab049f1792d6ee58dab6436073a5f616ff421fd16ca2477cd99e14173ce1989d",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 2 0 1 1 1 0 0 0 0 0",
+          "BOUNDARY 2 1 0 0 1 1 0 0 1 0",
+          "SUMMARY 6559 2407 160 0"
+        ]
+      },
+      {
+        "name": "next_begin_boundary_l1",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/next_begin_boundary_l1/run_manifest.json",
+        "manifest_sha256": "61cd2a03a5e469b99e88fe51be54a7d3c7d0d0308cb5c15cf8a95da7d9c85f0b",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 3 0 0 0 1 1 1 0 0 0",
+          "BOUNDARY 3 2 1 1 0 1 1 0 0 0",
+          "SUMMARY 13073 4812 320 2"
+        ]
+      },
+      {
+        "name": "last_fire_invalid_l2",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/last_fire_invalid_l2/run_manifest.json",
+        "manifest_sha256": "b8648e6cb6414ccf3f238c860ab32e48a622bf61323443b76dfb9d5858ef2b85",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 0 0 0 0 1 1 1 0 0 0",
+          "SUMMARY 7567 2406 160 1"
+        ]
+      },
+      {
+        "name": "pending_last_fire_l2",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/pending_last_fire_l2/run_manifest.json",
+        "manifest_sha256": "a0f151b83dde4213c15b38fef72a7b7d5a76cb85142b616129cf5e05beaa8cfa",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 1 0 1 1 1 0 1 0 0 0",
+          "BOUNDARY 1 1 0 0 0 1 1 0 1 0",
+          "SUMMARY 7575 2407 160 0"
+        ]
+      },
+      {
+        "name": "pending_last_blocked_l2",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/pending_last_blocked_l2/run_manifest.json",
+        "manifest_sha256": "98cc27539d711a21fec64902bc51b2d288ce23b694d7ca90465b909653bb24e8",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 2 0 1 1 1 0 0 0 0 0",
+          "BOUNDARY 2 1 0 0 1 1 0 0 1 0",
+          "SUMMARY 7583 2407 160 0"
+        ]
+      },
+      {
+        "name": "next_begin_boundary_l2",
+        "manifest": "reports/revd/d2/protocol/20261017-133353-25da49/next_begin_boundary_l2/run_manifest.json",
+        "manifest_sha256": "24aba17d5cce3163ef4d374388650fe1d77a0f7a42c90302c2bbf9614a611724",
+        "status": "PASS",
+        "command_exits": [
+          0,
+          0
+        ],
+        "source_mismatch": [],
+        "boundary_records": [
+          "BOUNDARY 3 0 0 0 1 1 1 0 0 0",
+          "BOUNDARY 3 2 1 1 0 1 1 0 0 0",
+          "SUMMARY 15121 4812 320 2"
+        ]
+      }
+    ],
+    "fresh_red": "reports/revd/d2/protocol/20261017-133117-d66978/summary.json",
+    "fresh_red_observation": "Read actual LAT1/LAT2 simulation logs: both report DONE_WITH_PENDING_INPUT under old unrestricted ingress.",
+    "completion_mutation": "reports/revd/d2/mutation/repair2-completion-20261017-01/receipt.json",
+    "completion_mutation_observation": "Actual altered RTL compile exits0 and simulation exits1 at DONE_WITH_PENDING_INPUT; its receipt binds the current good RTL and current TB hashes."
+  },
+  "ownership_boundary": "Only in_valid&&in_ready creates an accepted event. The terminal/done fence makes a held input a post-completion event; an unaccepted offer is not an old-task command. Producers must honor stable ready-valid and next-task BEGIN ordering.",
+  "limits": [
+    "No new tests were executed by this reviewer; this recheck validates the source logic and existing actual logs/manifests, while the root owns independent execution and final acceptance.",
+    "Other arithmetic modules were not changed by the repair and are outside this focused recheck.",
+    "Official SoC/600-sample/performance/PPA acceptance remains outside D0-D2."
+  ]
+}

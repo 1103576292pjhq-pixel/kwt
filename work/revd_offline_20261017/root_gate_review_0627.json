@@ -1,0 +1,158 @@
+{
+  "status": "PROVISIONAL_CHANGES_REQUIRED_FOR_FINAL_ACCEPTANCE",
+  "created_at_utc": "2026-10-17T06:31:08.519464+00:00",
+  "scope": "Independent read-only inspection of developing CPU/source/evidence gate and matched cold timing. No heavy tests or implementation changes.",
+  "provisional": true,
+  "reason_provisional": "Persistent implementation lane is active. This review applies only to the source SHA snapshot below; findings need recheck after lane finishes. It is not a root acceptance.",
+  "findings": [
+    {
+      "id": "ROOT-CPU-BINARY-UNBOUND-001",
+      "severity": "HIGH_FOR_FINAL_ACCEPTANCE",
+      "state": "OPEN_PROVISIONAL",
+      "classification": "Evidence",
+      "file": "scripts/revd_offline_soc_run.py",
+      "functions": [
+        "compile_cpu",
+        "simulate",
+        "main artifact inventory"
+      ],
+      "evidence": [
+        "Verilator binary executes from obj/Vsoc_cpu_tb.",
+        "artifacts_sha256 excludes every path with obj in its parts.",
+        "Result has no separate simulator_binary_sha256."
+      ],
+      "reproduced_by_read_only_inventory": {
+        "result": "reports\\revd_offline\\soc\\soc-small-v-20261017T061810Z\\result.json",
+        "result_sha256": "06503ff7e8fb046af644065167e1c0531709c8244e6b11c9500e783ba30e1db2",
+        "actual_binary": "reports\\revd_offline\\soc\\soc-small-v-20261017T061810Z\\obj\\Vsoc_cpu_tb",
+        "actual_binary_sha256": "706448c6cf7f3b6e66d5d76e3deeff88eb986f41b5b96b712374773aaf981108",
+        "binary_digest_present_anywhere_in_result": false,
+        "obj_entries_in_artifact_inventory": []
+      },
+      "impact": "A later consumer cannot prove that the exact bound Verilator executable is the one that produced CPU PASS; binary substitution/stale reuse escapes artifact hashes.",
+      "close_when": "Record and independently verify actual simulator binary path/SHA for Icarus and Verilator, bind real compile argv/source+include identities and exact run argv to it, then revalidate fresh current CPU result. Do not retroactively call old evidence fully bound without an explicit independent audit."
+    },
+    {
+      "id": "ROOT-CPU-INDEPENDENT-GATE-001",
+      "severity": "HIGH_FOR_FINAL_ACCEPTANCE",
+      "state": "OPEN_PROVISIONAL",
+      "classification": "Evidence + inference",
+      "file": "scripts/revd_offline_gate.py",
+      "functions": [
+        "main"
+      ],
+      "evidence": [
+        "CLI kinds currently are case/suite/protocol/numeric only.",
+        "CPU runner self-parses logs and output files; no CPU evidence validator exists in this inspected gate.",
+        "Full CPU two-task result was still RUNNING during inspection; no final aggregate decision is assumed."
+      ],
+      "impact": "A final offline readiness flag could rely only on runner-produced CPU PASS without independently rechecking firmware/fixture/compile binary/headers/commands/output values/task windows/current-source identity.",
+      "close_when": "Final gate or root-owned independent checker must recompute both tasks expectations from frozen case identities; check all real CPU Y/flags/indexes, poisoned-final-RAM verification execution, nonzero/zero-return negatives, response counts, cold windows, binary/firmware/current-source/tool hashes, exact compile/run argv and command receipts, with negative missing/altered-artifact tests. This may be done by a new checker; it need not be added to the current CLI."
+    },
+    {
+      "id": "ROOT-INCLUDE-CLOSURE-001",
+      "severity": "HARDENING_ONLY_CURRENT_CLOSURE_IS_COMPLETE",
+      "state": "NOT_A_CURRENT_BLOCKER",
+      "classification": "Evidence; corrects earlier extension-based inference",
+      "file": "scripts/revd_offline_soc_run.py",
+      "functions": [
+        "inventory",
+        "verify_upstream"
+      ],
+      "evidence": "inventory uses UP.rglob('*.v'); direct recursive literal-include resolution of current UP .v sources plus soc_cpu_tb resolves exactly config.v, e203_defines.v and i2c_master_defines.v, all already present in that inventory. Current UP has no .vh/.vi and no unresolved literal include.",
+      "current_include_paths": [
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/config.v",
+        "vendor/e203_hbirdv2-upstream/rtl/e203/core/e203_defines.v",
+        "vendor/e203_hbirdv2-upstream/rtl/e203/perips/apb_i2c/i2c_master_defines.v"
+      ],
+      "missing_from_current_inventory": [],
+      "unresolved": [],
+      "correction": "Do not report the current implementation as missing actual include files. Earlier concern based solely on .vh/.vi omission was an inference disproved by inspecting the current tree.",
+      "future_hardening": "For packaging/future include additions use actual preprocessor dependency closure or explicit include manifests and verify upstream both before/after. Include symlink targets/content/source manifest in binding; current config.v symlink bytes are already hashed by inventory."
+    }
+  ],
+  "positive_findings": [
+    {
+      "id": "CPU-REAL-CORE",
+      "classification": "Evidence",
+      "paths": [
+        "dv/revd_opt/soc_cpu_tb.sv",
+        "soc/e203_common/e203_cpu_shell.sv",
+        "sw/revd_opt/main.c",
+        "sw/revd_opt/revd_opt_driver.c"
+      ],
+      "result": "soc_cpu_tb instantiates actual e203_cpu_shell, shared RAM and candidate ICB adapter. Testbench writes firmware/initial public shared fixture only; expected arrays are TB-only. Driver emits loads from shared SRAM, repacks W and drains candidate outputs; no neural dot-product/BFM answer substitution found."
+    },
+    {
+      "id": "CPU-FULL-SHARED-CHECK",
+      "classification": "Evidence",
+      "path": "dv/revd_opt/soc_cpu_tb.sv",
+      "result": "Every accepted CPU shared Y/flags store is checked for correct mask/index/value and duplicate identity; output and flag response counts are tracked. Successful mailbox response additionally checks each destination word/byte in shared RAM against TB-only expected arrays. Destinations in generated fixture are poisoned with 0xa5. This is stronger than counts/checksum alone."
+    },
+    {
+      "id": "CPU-COLD-WINDOW",
+      "classification": "Evidence",
+      "paths": [
+        "sw/revd_opt/main.c",
+        "sw/revd_opt/revd_opt_driver.c",
+        "dv/revd_opt/soc_cpu_tb.sv"
+      ],
+      "result": "CPU phase store occurs before revd_opt_run reads/moves X/W/b or emits BEGIN. Cold start is actual shared phase-write command acceptance; end is last output/flag shared response handshake, inclusive difference+1. It includes driver setup, all input/parameter CPU loading, MMIO, compute, result drain/writeback. Host fixture preparation and initial config reads are outside; label as local CPU window, not official platform timing."
+    },
+    {
+      "id": "CORE-FIRST-BEGIN-TO-LAST-FIRE",
+      "classification": "Evidence",
+      "paths": [
+        "dv/revd_opt/core_tb.sv",
+        "dv/revd_opt/core_runner.py",
+        "scripts/revd_offline_compare.py",
+        "scripts/revd_offline_gate.py"
+      ],
+      "result": "WINDOW begin is actual in_valid&&in_ready&&opBEGIN; end is actual out_valid&&out_ready&&out_last. Measured frontend elapsed=end-begin, core elapsed=end-STARTretire. Gate reconciles elapsed with live counters; comparison uses matched synthetic arrays, shift8, source-gap pattern, sink seed, PM4 and corresponding LAT1/LAT2. Core comparison is explicitly scoped proxy, not CPU/contest throughput. Timestamp correction already known by root is not duplicated as a new finding."
+    },
+    {
+      "id": "NO-CURRENT-OUTPUT-OVERWRITE",
+      "classification": "Evidence",
+      "paths": [
+        "scripts/revd_offline_soc_run.py",
+        "dv/revd_opt/core_runner.py",
+        "scripts/revd_offline_compare.py"
+      ],
+      "result": "New run directories use mkdir(exist_ok=False), logs/results live under reports/revd_offline. Baseline alias is written under separate work subdir with transform record. No invocation of fixed old e203-ffn1 report path found."
+    }
+  ],
+  "budget_check": {
+    "status": "PASS_FOR_INSPECTED_COMMANDS",
+    "resource_limit_seconds": 900,
+    "actual_receipts_read": 45,
+    "maximum_declared_timeout_seconds": 880.0,
+    "violations": [],
+    "common_bound": "limit=min(requested_timeout,899,remaining_original_UTC_budget-15); refuse when<1",
+    "cpu_simulation_requested_timeout_seconds": 880,
+    "cpu_compile_requested_timeout_seconds": 600,
+    "original_hard_stop_utc": "2026-10-17T09:45:00Z",
+    "restart_must_not_extend": true,
+    "timeout_teardown": "Linux creates a new session and SIGKILLs own child process group, waits at most10s; original15s deadline reserve includes teardown. No global process kill."
+  },
+  "not_tested_here": [
+    "No new RTL simulation/compile",
+    "No mutated CPU evidence-gate execution",
+    "No full2 CPU acceptance while active",
+    "No packaging fresh-extraction test"
+  ],
+  "source_sha256": {
+    "scripts/revd_offline_soc_run.py": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+    "scripts/revd_offline_gate.py": "343fb2d40ee81ba522e89f01ed7505e7b47a254c973b0dc26f6988a91a3d4a26",
+    "scripts/revd_offline_soc_baseline.py": "30aba5815db408c2bbbfca18d8023c081e25d6e1b2dbed9322676e8eea147bbe",
+    "scripts/revd_offline_compare.py": "348cc0cedb7ca7aec3d0a5309ab5652fa1529be10ecce7f8495cfcce70cfdc41",
+    "scripts/revd_offline_common.py": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+    "dv/revd_opt/soc_cpu_tb.sv": "3cd5ae4d9b0051c3cbec27cc94d16290ec872f4a09c68f5561a86e1dcda8f5af",
+    "dv/revd_opt/core_tb.sv": "c9c79c2bbcc9033e8aeca865910ef629469d4d2a2e2975098e5f260004dc258b",
+    "dv/revd_opt/core_runner.py": "1792cc10385fef5181d2030d48115044b016d25b1197ef5aadba81b537b821d3",
+    "soc/revd_opt/revd_opt_icb.sv": "bc35bf1d86056c963532b61a1e49d583b94638573ad91009af75268ab8729839",
+    "sw/revd_opt/revd_opt_driver.c": "d452118c21570cf4edc7ff23f9ea7c35eab6d2475fe84b3478661217ca0a35c0",
+    "sw/revd_opt/main.c": "1ebaadcfbad18b6b5a8f212eff543af7c29395d69b8220f34a18af15a5a5ed94",
+    "work/revd_offline_20261017/budget.json": "32ac75e30aa156b4bd89bf852430b08c383167c28240ebe7a46bdb704c88d69a"
+  },
+  "no_implementation_git_environment_runner_changes": true
+}

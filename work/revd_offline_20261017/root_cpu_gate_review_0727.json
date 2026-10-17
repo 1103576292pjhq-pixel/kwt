@@ -1,0 +1,189 @@
+{
+  "status": "PROVISIONAL_PARTIALLY_CLOSED_OFFSET0_BINARY_BINDING_STILL_OPEN",
+  "created_at_utc": "2026-10-17T07:30:29.139801+00:00",
+  "provisional": true,
+  "reviewed_issue": "ROOT-CPU-GATE-IDENTITY-HARDENING-001",
+  "scope": "New read-only gate review while main CLI remains active. No RTL simulation, runner, Git, production source or other conversation changes. Only this review JSON is written.",
+  "what_is_fixed": [
+    {
+      "item": "PM/LAT/M/N/TASKS compile identity",
+      "evidence": "check_cpu now requires declared -G parameters for Verilator or -Psoc_cpu_tb parameters for Icarus for all M,N,TASKS,PM,READ_LATENCY. Four fresh memory-only alias probes now reject (PM,latency,tasks,stage geometry)."
+    },
+    {
+      "item": "Exact CPU source inventory",
+      "evidence": "check_cpu now reconstructs normal IMPLEMENTATION plus UP .v dependency inventory; nonzero case_offset additionally requires layers wrapper."
+    },
+    {
+      "item": "Nonzero offset pair binding",
+      "evidence": "check_cpu requires pair metadata equal actual pair-binding.json; case indices/ids, original frozen manifest, wrapper SHA, actual binary path/SHA, firmware.bin SHA, normal runner SHA, full stage/tasks scope and unmodified-normal-source declaration. This is code inspection; no new long CPU test was started."
+    }
+  ],
+  "remaining_findings": [
+    {
+      "id": "ROOT-CPU-GATE-IDENTITY-HARDENING-001",
+      "severity": "HIGH_FOR_FINAL_ACCEPTANCE_GATE",
+      "state": "PARTIALLY_CLOSED_OFFSET0_STILL_OPEN",
+      "classification": "Current-source evidence and fresh pure-read dynamic proof",
+      "file": "scripts/revd_offline_gate.py",
+      "function": "check_cpu",
+      "condition": "profile.case_offset defaults0; original layers1/2 candidate full2 run",
+      "problem": "Offset0 does not read or require binary-binding.json. check_cpu hashes the current executable only while returning result, without comparing it to a frozen expected executable hash. Existing aux binder validates the concrete original report outside the checker but is not automatically consumed. Nonzero offset pair validation does not fix offset0.",
+      "proof": "Hide binary-binding.json through memory-only read_json interception: ACCEPT. Return a changed actual executable SHA of64zero digits through memory-only sha interception: ACCEPT and CPU checker reports that changed digest as success. Normal source/logs/receipt/fixtures remain untouched.",
+      "close_when": "For offset0, require and verify aux binding status, original report path+hash, actual executable path+hash, firmware binary hash, CPU command-record hash and log hash, binding implementation identity as appropriate; consume it in the final reusable gate. Add missing-binding and changed-binary negative checks at this source SHA."
+    },
+    {
+      "id": "CPU-FIRMWARE-FIXTURE-CLOSURE-REPLAY",
+      "severity": "FINAL_GATE_HARDENING",
+      "state": "SPECIFIC_RECORD_BYTES_PREVIOUSLY_PASSED_REUSABLE_GATE_NOT_COMPLETE",
+      "classification": "Current-source evidence; previous byte-audit retained",
+      "problem": "Generic CPU checker still does not reconstruct actual ELF loaded sections→firmware.bin→loadedCPUhex, nor actual512KiB shared fixture X/Wpacked/bias/descriptors/poison from frozen arrays. It validates artifact bytes against report SHA and recomputes outputs, but does not encode those semantic input closures.",
+      "practical_boundary": "This is not a failure of current CPU arithmetic or the concrete full2 evidence: the independent0647 audit already proved these exact closures; all relevant production/source/report hashes remain unchanged and fresh positive CPU checker revalidated artifact hashes/output numbers.",
+      "close_when": "Final root acceptance explicitly reuses the unchanged0647 semantic byte audit, or add same closures to the reusable gate with changed-firmware/fixture negative controls."
+    }
+  ],
+  "fresh_memory_probe_execution": {
+    "run_type": "fresh WSL Python process with -B; import gate and intercept read_json/sha only in memory",
+    "exit_code": 0,
+    "gate_sha256": "941373408bbc0096a3c8178f19907f9f4601e2a26504abde36760900d4ed8143",
+    "files_modified": false,
+    "rtl_simulations_started": 0,
+    "probes": [
+      {
+        "name": "positive",
+        "actual": "ACCEPT",
+        "expected": "ACCEPT",
+        "reported_binary_sha256": "8b9d82e24c9c516ae0d0864df9cba7ef066f8b7204732b06143ff7a4f0e91863"
+      },
+      {
+        "name": "profile_pm_alias",
+        "actual": "REJECT",
+        "expected": "REJECT",
+        "error": "CPU compiled parameter mismatch PM"
+      },
+      {
+        "name": "profile_latency_alias",
+        "actual": "REJECT",
+        "expected": "REJECT",
+        "error": "CPU compiled parameter mismatch READ_LATENCY"
+      },
+      {
+        "name": "profile_tasks_alias",
+        "actual": "REJECT",
+        "expected": "REJECT",
+        "error": "CPU compiled parameter mismatch TASKS"
+      },
+      {
+        "name": "profile_geometry_alias",
+        "actual": "REJECT",
+        "expected": "REJECT",
+        "error": "CPU compiled parameter mismatch M"
+      },
+      {
+        "name": "hide_offset0_binary_binding",
+        "actual": "ACCEPT",
+        "expected": "REJECT",
+        "reported_binary_sha256": "8b9d82e24c9c516ae0d0864df9cba7ef066f8b7204732b06143ff7a4f0e91863"
+      },
+      {
+        "name": "changed_actual_binary_digest",
+        "actual": "ACCEPT",
+        "expected": "REJECT",
+        "reported_binary_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    ]
+  },
+  "specific_record_reuse": {
+    "previous_review": "work/revd_offline_20261017/root_gate_recheck_0647.json",
+    "previous_review_sha256": "732722c517dfde4a61d97a2fd292d58383e1ca958e7416521fb25af3b7e53038",
+    "previous_source_changes": [
+      "scripts/revd_offline_gate.py"
+    ],
+    "candidate_report": "reports/revd_offline/soc/soc-full-pm4-20261017T062100Z/result.json",
+    "candidate_report_sha256": "f748503b34ee45b5d18fc77d59b1258650e59c30921e32f2e1ddabf16510d32a",
+    "candidate_source_current_mismatches": [],
+    "binary_binding_original_report_still_matches": true,
+    "binary_binding_actual_executable_still_matches": true,
+    "fresh_positive_gate_passed": true,
+    "fresh_positive_outputs_recomputed": 50688,
+    "flags_recomputed": 50688,
+    "previous_ELF_bin_hex_full_shared_image_semantic_audit_reused": true
+  },
+  "actual_fake_cpu_missing_write_negatives": {
+    "report": "reports/revd_offline/soc/cpu-negative-20261017T064658Z_8fcbbd89/result.json",
+    "report_sha256": "59b8626ffe8bcafc9fd9702b48fd573a1eea71c64514d5203b6fe13bbf4cede5",
+    "status": "PASS",
+    "finished_utc": "2026-10-17T06:48:18.384818+00:00",
+    "normal_source_current_mismatches": [],
+    "negative_script_current_match": true,
+    "tests": [
+      {
+        "name": "normal_cpu_verilator",
+        "status": "PASS",
+        "real_exit_code": 0,
+        "required_message": null
+      },
+      {
+        "name": "zero_return_no_work",
+        "status": "EXPECTED_FAIL",
+        "real_exit_code": -6,
+        "required_message": "CPU coverage incomplete outputs=0 flags=0"
+      },
+      {
+        "name": "zero_return_missing_final_shared_write",
+        "status": "EXPECTED_FAIL",
+        "real_exit_code": -6,
+        "required_message": "CPU coverage incomplete outputs=47 flags=47"
+      }
+    ],
+    "interpretation": "Fresh genuine CPU success-return/no-work and omitted-final-write negatives remain valid for unchanged production source; these functional controls do not replace new software gate identity negatives."
+  },
+  "software_gate_regression_evidence": {
+    "summaries": [
+      {
+        "path": "reports/revd_offline/gate_negatives/independent-gate-all-001/summary.json",
+        "status": "PASS",
+        "finished_utc": "2026-10-17T06:38:23.954421+00:00",
+        "negative_count": 29,
+        "tested_gate_sha256": "d763b93c80b3e862d2f8175ddd7cd859e6bc77055ccc11e6ee3d2605e39542f1",
+        "matches_current_gate": false
+      },
+      {
+        "path": "reports/revd_offline/gate_negatives/independent-gate-full36-001/summary.json",
+        "status": "PASS",
+        "finished_utc": "2026-10-17T06:33:35.402532+00:00",
+        "negative_count": 17,
+        "tested_gate_sha256": "d763b93c80b3e862d2f8175ddd7cd859e6bc77055ccc11e6ee3d2605e39542f1",
+        "matches_current_gate": false
+      },
+      {
+        "path": "reports/revd_offline/gate_negatives/independent-gate-protocol-001/summary.json",
+        "status": "PASS",
+        "finished_utc": "2026-10-17T06:29:41.798284+00:00",
+        "negative_count": 14,
+        "tested_gate_sha256": "728e94b57ec87c70f6a9ad99508f10c7239ac496bde42ca6c25b3ceba4ba2aed",
+        "matches_current_gate": false
+      }
+    ],
+    "current_source_regression_complete": false,
+    "reason": "All existing summary records bind older gate SHA. Their PASS cannot certify current compile/pair fixes or unresolved offset0 auxiliary binding."
+  },
+  "no_full_cpu_or_rtl_resimulation": true,
+  "no_final_batch_or_formal_contest_acceptance": true,
+  "source_sha256": {
+    "scripts/revd_offline_gate.py": "941373408bbc0096a3c8178f19907f9f4601e2a26504abde36760900d4ed8143",
+    "scripts/revd_offline_soc_run.py": "f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d",
+    "scripts/revd_offline_soc_bindings.py": "7f8b910cfd555bba00cf304af383db55f0a0b1ccc193a941abc3145400b88974",
+    "scripts/revd_offline_soc_layers.py": "d423ac4106bdee2700f653ee65da53fb125d156982968c45d104f0f089171359",
+    "scripts/revd_offline_soc_suite.py": "82f842b1175713464ccf1b6d9bd976227ec6d50333c92c5d423956fbf22da211",
+    "scripts/revd_offline_soc_negative.py": "da53f4db13c0254e75cde4029a1e9ab286cf605bc99f8f07ad2f5f83a5af64e7",
+    "scripts/revd_offline_common.py": "3a640a06ebe3d1dc58e942f613847f81e3116f487cdad34ba4568c49e2f38957",
+    "dv/revd_opt/gate_negatives.py": "c077c655e63b44dd36f0f2b5658b011e99f4147337e14ffceca0666496b2da9e",
+    "dv/revd_opt/soc_cpu_tb.sv": "3cd5ae4d9b0051c3cbec27cc94d16290ec872f4a09c68f5561a86e1dcda8f5af",
+    "rtl/revd_opt/core_stream_frontend_opt.sv": "af7bec5fb9a276e614348c80fd6adaa6e7153709b51b9b372eb0080ef9ba1bb1",
+    "soc/revd_opt/revd_opt_icb.sv": "bc35bf1d86056c963532b61a1e49d583b94638573ad91009af75268ab8729839",
+    "sw/revd_opt/main.c": "1ebaadcfbad18b6b5a8f212eff543af7c29395d69b8220f34a18af15a5a5ed94",
+    "sw/revd_opt/revd_opt_driver.c": "d452118c21570cf4edc7ff23f9ea7c35eab6d2475fe84b3478661217ca0a35c0",
+    "sw/revd_opt/revd_opt_driver.h": "d8f7174b584d330618666d72e695ad900d8e0f8000f36cb42f5e3dbdb7faadce"
+  },
+  "sole_written_file": "D:\\github\\kwt\\work\\revd_offline_20261017\\root_cpu_gate_review_0727.json"
+}

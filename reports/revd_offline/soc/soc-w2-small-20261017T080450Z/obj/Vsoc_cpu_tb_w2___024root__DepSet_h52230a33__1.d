@@ -1,0 +1,3 @@
+Vsoc_cpu_tb_w2___024root__DepSet_h52230a33__1.o: \
+ Vsoc_cpu_tb_w2___024root__DepSet_h52230a33__1.cpp Vsoc_cpu_tb_w2__pch.h \
+ Vsoc_cpu_tb_w2___024root.h

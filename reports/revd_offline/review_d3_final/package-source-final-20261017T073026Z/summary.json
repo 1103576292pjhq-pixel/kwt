@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "pid": 1890,
+  "finished_utc": "2026-10-17T07:30:41.244077+00:00",
+  "source_sha256": {
+    "scripts/package_revd_candidate.py": "556878e6515160f06d9fa49e443c77e75499ca4094decfc5d207f6b58dbf85b3",
+    "scripts/revd_offline_reproduce.py": "f6af51e0a0865a5f2a91b41f48860d44f8b9a59fd81162134d39da0eeae31da0",
+    "scripts/revd_offline_package_check.py": "f1b47c96c46916d3e69f7194361579b824ff1b88c231934b8ce4fffc213ebf8e",
+    "scripts/revd_offline_final_regression.py": "e156c1a2026bafc8b130908553fc7e6f77260049466a3c4743d8e479bd0dfd11"
+  },
+  "changed_sources": [],
+  "tests": [
+    {
+      "name": "empty_command_proof",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "exactly one actual portable reproduction command required"
+    },
+    {
+      "name": "unmanifested_code_after_proof",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "unlisted package member scripts/unlisted.py"
+    },
+    {
+      "name": "nominal",
+      "expected": "ACCEPT",
+      "actual": "ACCEPT",
+      "passed": true,
+      "result": {
+        "status": "PASS",
+        "members": 1,
+        "manifest_sha256": "ecb7c31493d2efe84f53cb2c018f542816005bd2b9efe39d387b469a5451d414"
+      }
+    },
+    {
+      "name": "semantic_alias",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "unsafe/aliased package member aliases/../valid.txt"
+    },
+    {
+      "name": "casefold_alias",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "unsafe/aliased package member VALID.txt"
+    },
+    {
+      "name": "backslash",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "unsafe/aliased package member aliases\\..\\valid.txt"
+    },
+    {
+      "name": "parent_escape",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "unsafe/aliased package member ../valid.txt"
+    },
+    {
+      "name": "unlisted_code",
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "passed": true,
+      "error": "unlisted package member extra.py"
+    }
+  ],
+  "count": 8,
+  "scope": "Independent isolated current-source publish/manifest red-to-green probes; actual final stage positive proof pending.",
+  "parent_accepted": false,
+  "official_contest_acceptance": false
+}

@@ -1,0 +1,3 @@
+Vsoc_cpu_tb_sirv_gnrl_icb2apb__D20__DepSet_h0dbc9ce6__0__Slow.o: \
+ Vsoc_cpu_tb_sirv_gnrl_icb2apb__D20__DepSet_h0dbc9ce6__0__Slow.cpp \
+ Vsoc_cpu_tb__pch.h Vsoc_cpu_tb_sirv_gnrl_icb2apb__D20.h
