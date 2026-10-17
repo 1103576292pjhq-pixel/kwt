@@ -27,7 +27,7 @@ def main():
     soc.read_json=pair_view
     soc.IMPLEMENTATION.append('scripts/revd_offline_soc_layers.py')
     sys.argv=[sys.argv[0],'--stage','full','--tasks','2','--pm','4','--latency','1','--run-id',rid]
-    soc.main()
+    soc.main(defer_binary_binding=True)
     out=ROOT/'reports/revd_offline/soc'/rid
     report=read_json(out/'result.json')
     expected=[case['case_id'] for case in selected]
@@ -45,4 +45,6 @@ def main():
     report['pair_binding']=binding
     report['artifacts_sha256']['pair-binding.json']=sha(out/'pair-binding.json')
     put(out/'result.json',report)
+    from revd_offline_soc_bindings import bind
+    bind(out/'result.json')
 if __name__=='__main__':main()

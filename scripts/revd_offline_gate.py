@@ -307,11 +307,16 @@ def check_cpu(path,current=True):
     path=Path(path);out=path.parent;r=read_json(path)
     require(r['status']=='PASS' and r.get('source_unchanged') is True,'CPU run not fresh PASS')
     profile=r['profile'];require(profile['stage'] in ('small','full') and profile['tasks'] in (1,2),'CPU scope identity')
+    require(profile['sim'] in ('verilator','icarus'),'CPU simulator identity')
     require(profile['pm'] in (2,4) and profile['latency'] in (1,2),'CPU geometry')
     sources=r['source_sha256']
     from scripts import revd_offline_soc_run as normal_cpu
     expected_sources=set(normal_cpu.IMPLEMENTATION)|{str(p.relative_to(ROOT)) for p in normal_cpu.UP.rglob('*.v')}
     if profile.get('case_offset',0):expected_sources.add('scripts/revd_offline_soc_layers.py')
+    # Only the explicitly historical path may read the audited pre-binder
+    # runner's original inventory. Current evidence binds every dependency.
+    if not current and sources.get('scripts/revd_offline_soc_run.py')=='f17b5f42fbed00d7babbc128c3b424c4e6a307ebd79861a93c5e0a6d0868413d':
+        expected_sources.discard('scripts/revd_offline_soc_bindings.py')
     require(set(sources)==expected_sources,'CPU exact source inventory including selection wrapper')
     for p in ('soc/revd_opt/revd_opt_icb.sv','soc/e203_common/e203_cpu_shell.sv','soc/e203_common/icb_shared_ram.sv',
               'sw/revd_opt/main.c','sw/revd_opt/revd_opt_driver.c','sw/revd_opt/revd_opt_driver.h','dv/revd_opt/soc_cpu_tb.sv'):
@@ -343,6 +348,7 @@ def check_cpu(path,current=True):
     cpu=r['results']['cpu'];cmd=cpu['command'];require(cpu['status']=='PASS' and cmd['exit_code']==0,'CPU simulation real exit')
     require(cmd in r['commands'],'CPU run detached from actual subprocess inventory')
     binary=out/('obj/Vsoc_cpu_tb' if profile['sim']=='verilator' else 'cpu.vvp')
+    if current:require(r.get('compiled_simulator_sha256')==sha(binary),'CPU compiled simulator binding mismatch')
     expected_argv=([str(binary)] if profile['sim']=='verilator' else ['vvp',str(binary)])
     if profile['stage']=='small':
         for key,(reason,folder,firmware,message) in negative_specs.items():
@@ -407,6 +413,28 @@ def check_cpu(path,current=True):
         require(binding.get('actual_simulator_executable_sha256')==sha(binary),'CPU pair binary binding')
         require(binding.get('firmware_binary_sha256')==sha(out/'revd-driver.bin'),'CPU pair firmware binary binding')
         require(binding.get('normal_soc_runner_sha256')==sha(ROOT/'scripts/revd_offline_soc_run.py'),'CPU pair normal runner source binding')
+    else:
+        binding_path=out/'binary-binding.json'
+        require(binding_path.is_file(),'CPU offset0 binary binding missing')
+        binding=read_json(binding_path)
+        require(binding.get('status')=='VERIFIED' and binding.get('historical_report_modified') is False,'CPU offset0 binary binding identity')
+        require(path.resolve().is_relative_to(ROOT.resolve()) and path==path.resolve()
+                and binding.get('original_report')==path.relative_to(ROOT).as_posix()
+                and binding.get('original_report_sha256')==sha(path),'CPU offset0 original report binding mismatch')
+        require(binary.resolve().is_relative_to(ROOT.resolve())
+                and binding.get('actual_executable')==binary.relative_to(ROOT).as_posix()
+                and binding.get('actual_executable_sha256')==sha(binary),'CPU offset0 expected executable binding mismatch')
+        require(binding.get('firmware_binary_sha256')==sha(out/'revd-driver.bin'),'CPU offset0 firmware binding mismatch')
+        require(binding.get('cpu_command_record_sha256')==sha(out/'cpu.log.command.json'),'CPU offset0 command binding mismatch')
+        require(cmd['log']==(out/'cpu.log').relative_to(ROOT).as_posix()
+                and binding.get('cpu_log_sha256')==sha(out/'cpu.log')==cmd['log_sha256'],'CPU offset0 log binding mismatch')
+        creator=sha(ROOT/'scripts/revd_offline_soc_bindings.py')
+        # Audited immutable historical receipts were written by the old helper.
+        legacy_creator='7f8b910cfd555bba00cf304af383db55f0a0b1ccc193a941abc3145400b88974'
+        require(binding.get('binding_script_sha256') in (creator,legacy_creator),'CPU offset0 binding creator source mismatch')
+        require(not current or binding['binding_script_sha256']==creator,'CPU offset0 legacy binding requires explicit historical validation')
+        if binding['binding_script_sha256']==creator:
+            require(r.get('compiled_simulator_sha256')==binding['actual_executable_sha256'],'CPU offset0 compiled simulator binding mismatch')
     require(len(r['cases'])==profile['tasks'],'CPU frozen task coverage')
     for t,c in enumerate(r['cases']):
         case=frozen['cases'][offset+t];require(c['case_id']==case['case_id'] and c['layer']==case['layer'] and c['shift']==case['config']['output_shift'],'CPU frozen case/layer identity')
@@ -426,8 +454,12 @@ def check_cpu(path,current=True):
             fields=line.split();require(len(fields)==3 and bool(re.fullmatch(r'[0-9a-fA-F]+',fields[2])),'CPU unknown public memory value')
             key=(int(fields[0]),int(fields[1]));require(key in wanted and key not in seen,'CPU output index duplicate/invalid');seen.add(key)
             require(int(fields[2],16)==wanted[key][field],'CPU shared-SRAM value/flag mismatch')
-    return {'status':'PASS','tasks':profile['tasks'],'outputs':len(wanted),'scope':'public E203 cold load-to-final-shared-write-response; organizer platform untested',
+    result={'status':'PASS','tasks':profile['tasks'],'outputs':len(wanted),'scope':'public E203 cold load-to-final-shared-write-response; organizer platform untested',
             'cpu_binary_sha256':sha(binary),'cold_task_metrics':task_metrics,'source_manifest_sha256':sha(path)}
+    if not offset:
+        result.update(binary_binding=binding_path.relative_to(ROOT).as_posix(),binary_binding_sha256=sha(binding_path))
+    if not current:result.update(historical_evidence_reuse=True,current_source_validated=False)
+    return result
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('kind',choices=['case','suite','protocol','numeric','cpu']);ap.add_argument('path');ap.add_argument('--out');ap.add_argument('--minimum-cases',type=int,default=1);ap.add_argument('--pm',type=int,choices=[2,4]);a=ap.parse_args()

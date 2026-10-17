@@ -27,11 +27,13 @@ def main():
     soc.IMPLEMENTATION[0]=str(alias.relative_to(ROOT))
     soc.IMPLEMENTATION.extend(['rtl/revd/core_stream_frontend.sv','scripts/revd_offline_soc_baseline.py'])
     sys.argv=[sys.argv[0],'--stage',args.stage,'--tasks',str(args.tasks),'--sim','verilator','--pm','4','--latency','1','--run-id',rid]
-    soc.main()
+    soc.main(defer_binary_binding=True)
     out=ROOT/'reports/revd_offline/soc'/rid
     put(out/'baseline-transformation.json',transform)
     report=read_json(out/'result.json');report['baseline_reference']=transform
     report['profile']['core']='accepted_D2_micro_namespace_alias'
     report['artifacts_sha256']['baseline-transformation.json']=sha(out/'baseline-transformation.json')
     put(out/'result.json',report)
+    from revd_offline_soc_bindings import bind
+    bind(out/'result.json')
 if __name__=='__main__':main()

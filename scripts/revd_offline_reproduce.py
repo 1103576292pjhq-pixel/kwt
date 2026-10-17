@@ -78,8 +78,13 @@ def main():
                 actual=evidence.pop()
                 from scripts.revd_offline_gate import check_numeric,check_suite,check_cpu
                 gate=check_numeric(actual) if phase=='numeric' else check_suite(actual,36,4) if phase=='full36' else check_cpu(actual)
-                result['phase_results'].append({'phase':phase,'command':c,'gate':gate,
-                    'evidence':str(actual.relative_to(ROOT)),'evidence_sha256':sha(actual)})
+                proof={'phase':phase,'command':c,'gate':gate,
+                    'evidence':str(actual.relative_to(ROOT)),'evidence_sha256':sha(actual)}
+                if phase=='cpu-small':
+                    # The producing runner must create this receipt; this
+                    # read-only consumer never signs a missing binding itself.
+                    proof.update(binary_binding=gate['binary_binding'],binary_binding_sha256=gate['binary_binding_sha256'])
+                result['phase_results'].append(proof)
             if phase!='manifest':result['completed_phases'].append(phase)
         final=manifest_check()
         if final!=initial:raise ValueError('package changed while reproducing')

@@ -70,7 +70,7 @@ def main():
     rid='directed-edges-'+run_id();soc.fixture=edge_fixture
     soc.IMPLEMENTATION.extend(['numeric/__init__.py','numeric/fixedpoint.py','scripts/revd_offline_soc_edges.py'])
     sys.argv=[sys.argv[0],'--stage','small','--tasks','2','--sim','verilator','--run-id',rid]
-    soc.main()
+    soc.main(defer_binary_binding=True)
     out=ROOT/'reports/revd_offline/soc'/rid;folder=out/'negative-wrong-flags';folder.mkdir(exist_ok=False)
     for filename in ['shared.hex','expected.hex','expected-flags.hex']:(folder/filename).write_bytes((out/'fixture'/filename).read_bytes())
     (folder/'revd-driver.hex').write_bytes((out/'revd-driver.hex').read_bytes())
@@ -88,4 +88,6 @@ def main():
     report['commands'].extend(run.records)
     report['artifacts_sha256']={str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p.name!='result.json' and 'obj' not in p.relative_to(out).parts}
     put(out/'result.json',report);print('SOC_EDGES_REPORT',out.relative_to(ROOT),flush=True)
+    from revd_offline_soc_bindings import bind
+    bind(out/'result.json')
 if __name__=='__main__':main()

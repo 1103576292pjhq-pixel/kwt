@@ -22,7 +22,7 @@ IMPLEMENTATION=[
     'sw/revd_opt/revd_opt_driver.h','dv/revd_opt/soc_cpu_tb.sv','dv/revd_opt/soc_adapter_tb.sv',
     'dv/revd_opt/soc_red_stub.c','dv/e203_boot/timescale.v','scripts/revd_offline_soc_run.py',
     'scripts/revd_offline_common.py','config/e203-source-manifest.json',
-    'reports/prototype/vectors/manifest.json']
+    'reports/prototype/vectors/manifest.json','scripts/revd_offline_soc_bindings.py']
 
 def inventory():
     paths=[ROOT/p for p in IMPLEMENTATION]+sorted(UP.rglob('*.v'))
@@ -152,7 +152,7 @@ def simulate(run,name,binary,sim,fw,info,negative=None):
         output_hashes[filename]=sha(folder/filename)
     return {'status':'PASS','metrics':metrics,'task_metrics':task_metrics,'output_sha256':output_hashes,'command':record}
 
-def main():
+def main(defer_binary_binding=False):
     p=argparse.ArgumentParser();p.add_argument('--stage',choices=['adapter','small','full'],default='small')
     p.add_argument('--sim',choices=['icarus','verilator'],default='verilator');p.add_argument('--tasks',type=int,choices=[1,2],default=2)
     p.add_argument('--pm',type=int,choices=[2,4],default=4);p.add_argument('--latency',type=int,choices=[1,2],default=1)
@@ -180,6 +180,9 @@ def main():
             m,n=(3,16) if args.stage=='small' else (99,256)
             info=fixture(out/'fixture',m,n,args.tasks);report['cases']=info['cases'];report['input_sha256']=info['inputs']
             binary=compile_cpu(run,m,n,args.tasks,args.pm,args.latency,args.sim)
+            # Capture the compiled identity before executing this payload. The
+            # final binder checks it again rather than signing arbitrary bytes.
+            report['compiled_simulator_sha256']=sha(binary)
             fw=firmware(run,'revd-driver')
             results={}
             if args.stage=='small':
@@ -193,6 +196,9 @@ def main():
         report.update(status='PASS',finished_utc=utc(),commands=run.records)
         report['artifacts_sha256']={str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and p.name!='result.json' and 'obj' not in p.relative_to(out).parts}
         put(out/'result.json',report)
+        if args.stage!='adapter' and not defer_binary_binding:
+            from revd_offline_soc_bindings import bind
+            bind(out/'result.json')
     except Exception as exc:
         report.update(status='FAIL',error=str(exc),finished_utc=utc(),commands=run.records);put(out/'result.json',report);raise
     print('SOC_REPORT',out.relative_to(ROOT),report['status'],flush=True)
