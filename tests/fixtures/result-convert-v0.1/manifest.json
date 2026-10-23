@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "description": "signed40 accumulator (bias already included) to signed16, RNE shift16 then saturation",
+  "total_cases": 180,
+  "unique_input_count": 167,
+  "numeric_spec_path": "docs/shared/numeric-format-v0.1.json",
+  "numeric_spec_sha256": "b3e9334d4d2507298b7d0697cc9c648ececd8158ba7f7e16beb8037b382f7193",
+  "input_format": "One 40-bit two-complement hexadecimal word per line.",
+  "expected_format": "One 16-bit two-complement hexadecimal word per line.",
+  "reference_algorithm": "q,r = divmod(A,65536); increment q if r>32768 or (r==32768 and q odd); clamp q to [-32768,32767]. Python floor quotient handles negative inputs. No RTL called.",
+  "sections": [
+    {
+      "start_index": 0,
+      "count": 22,
+      "kind": "directed_boundaries",
+      "values": [
+        0,
+        32767,
+        32768,
+        32769,
+        65536,
+        98304,
+        163840,
+        -32767,
+        -32768,
+        -32769,
+        -65536,
+        -98304,
+        -163840,
+        2147450879,
+        2147450880,
+        2147450881,
+        2147483648,
+        -2147516416,
+        -2147516417,
+        -2147549184,
+        549755813887,
+        -549755813888
+      ]
+    },
+    {
+      "start_index": 22,
+      "count": 30,
+      "kind": "existing_dot64_accumulators",
+      "sources": [
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_00.json",
+          "case_id": "real_layer_00",
+          "accumulator_after_bias": -306220291
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_01.json",
+          "case_id": "real_layer_01",
+          "accumulator_after_bias": -109587141
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_02.json",
+          "case_id": "real_layer_02",
+          "accumulator_after_bias": 11763172
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_03.json",
+          "case_id": "real_layer_03",
+          "accumulator_after_bias": -201036285
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_04.json",
+          "case_id": "real_layer_04",
+          "accumulator_after_bias": -150111604
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_05.json",
+          "case_id": "real_layer_05",
+          "accumulator_after_bias": -354129609
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_06.json",
+          "case_id": "real_layer_06",
+          "accumulator_after_bias": 176127725
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_07.json",
+          "case_id": "real_layer_07",
+          "accumulator_after_bias": 67401237
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_08.json",
+          "case_id": "real_layer_08",
+          "accumulator_after_bias": 428573376
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_09.json",
+          "case_id": "real_layer_09",
+          "accumulator_after_bias": -237468780
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_10.json",
+          "case_id": "real_layer_10",
+          "accumulator_after_bias": -93215453
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/layer_11.json",
+          "case_id": "real_layer_11",
+          "accumulator_after_bias": -63536349
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "zero",
+          "accumulator_after_bias": 0
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "positive_half_even",
+          "accumulator_after_bias": 32768
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "positive_half_odd",
+          "accumulator_after_bias": 98304
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "positive_half_even_two",
+          "accumulator_after_bias": 163840
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "negative_half_even",
+          "accumulator_after_bias": -32768
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "negative_half_odd",
+          "accumulator_after_bias": -98304
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "negative_half_even_two",
+          "accumulator_after_bias": -163840
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "below_positive_half",
+          "accumulator_after_bias": 32767
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "above_positive_half",
+          "accumulator_after_bias": 32769
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "below_negative_half_magnitude",
+          "accumulator_after_bias": -32767
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "above_negative_half_magnitude",
+          "accumulator_after_bias": -32769
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "bias_max_output_saturates",
+          "accumulator_after_bias": 2147483647
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "bias_min_output_exact",
+          "accumulator_after_bias": -2147483648
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "all_minimum_positive_saturates",
+          "accumulator_after_bias": 68719476736
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "maximum_positive_saturates",
+          "accumulator_after_bias": 68715282496
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "minimum_negative_saturates",
+          "accumulator_after_bias": -68717379584
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "mixed_sign_cancellation",
+          "accumulator_after_bias": 0
+        },
+        {
+          "path": "tests/fixtures/dot64-v0.1/boundaries.json",
+          "case_id": "last_term_and_bias",
+          "accumulator_after_bias": -32768
+        }
+      ]
+    },
+    {
+      "start_index": 52,
+      "count": 128,
+      "kind": "deterministic_random",
+      "generator": "Python random.Random(seed).randrange(low, high_exclusive)",
+      "seed": 20261022,
+      "low": -4294967296,
+      "high_exclusive": 4294967296
+    }
+  ],
+  "files": [
+    {
+      "path": "input.hex",
+      "sha256": "2f6fe569eb9816c909aaeccc03bd39208465a8391b649ebedaf7f96f8049d91a",
+      "words": 180
+    },
+    {
+      "path": "expected.hex",
+      "sha256": "ed7ee2c8abe29e98bed694c1718c2fdcf2567d17609f5d40f367b5caceb1c1f9",
+      "words": 180
+    }
+  ]
+}
