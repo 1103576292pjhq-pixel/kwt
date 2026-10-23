@@ -1,3 +1,0 @@
-Vsoc_cpu_tb_sirv_gnrl_icb2apb__D20__Slow.o: \
- Vsoc_cpu_tb_sirv_gnrl_icb2apb__D20__Slow.cpp Vsoc_cpu_tb__pch.h \
- Vsoc_cpu_tb__Syms.h Vsoc_cpu_tb_sirv_gnrl_icb2apb__D20.h

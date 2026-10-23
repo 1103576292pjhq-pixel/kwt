@@ -1,0 +1,13 @@
++incdir+rtl/include
+rtl/compute/mul_array_4x4.v
+rtl/compute/acc_context_bank.v
+rtl/compute/result_convert_v07.v
+rtl/compute/dot64_tile_core.v
+rtl/memory/sram_wrapper.sv
+rtl/memory/x_buffer.sv
+rtl/memory/w_tile_buffer.sv
+rtl/control/command_frontend.sv
+rtl/control/tile_ctrl.sv
+rtl/control/matrix_ctrl.sv
+rtl/output/result_ctrl.sv
+rtl/accelerator_top.sv

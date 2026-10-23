@@ -1,3 +1,0 @@
-Vsoc_cpu_tb_w2_sirv_gnrl_axi_buffer__CB1__DepSet_hbee45603__0__Slow.o: \
- Vsoc_cpu_tb_w2_sirv_gnrl_axi_buffer__CB1__DepSet_hbee45603__0__Slow.cpp \
- Vsoc_cpu_tb_w2__pch.h Vsoc_cpu_tb_w2_sirv_gnrl_axi_buffer__CB1.h

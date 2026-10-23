@@ -1,4 +1,0 @@
-Vsoc_cpu_tb_sirv_gnrl_axi_buffer__CB1__DepSet_h986daae9__0.o: \
- Vsoc_cpu_tb_sirv_gnrl_axi_buffer__CB1__DepSet_h986daae9__0.cpp \
- Vsoc_cpu_tb__pch.h Vsoc_cpu_tb__Syms.h \
- Vsoc_cpu_tb_sirv_gnrl_axi_buffer__CB1.h

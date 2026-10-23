@@ -1,4 +1,0 @@
-Vsoc_cpu_tb_w2_sirv_gnrl_icb2apb__D20__DepSet_hbafeb42e__0__Slow.o: \
- Vsoc_cpu_tb_w2_sirv_gnrl_icb2apb__D20__DepSet_hbafeb42e__0__Slow.cpp \
- Vsoc_cpu_tb_w2__pch.h Vsoc_cpu_tb_w2__Syms.h \
- Vsoc_cpu_tb_w2_sirv_gnrl_icb2apb__D20.h

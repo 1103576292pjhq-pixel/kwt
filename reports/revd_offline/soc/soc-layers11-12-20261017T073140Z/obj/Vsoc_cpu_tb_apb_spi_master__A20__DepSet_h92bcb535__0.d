@@ -1,3 +1,0 @@
-Vsoc_cpu_tb_apb_spi_master__A20__DepSet_h92bcb535__0.o: \
- Vsoc_cpu_tb_apb_spi_master__A20__DepSet_h92bcb535__0.cpp \
- Vsoc_cpu_tb__pch.h Vsoc_cpu_tb__Syms.h Vsoc_cpu_tb_apb_spi_master__A20.h

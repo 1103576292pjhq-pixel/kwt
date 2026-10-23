@@ -1,3 +1,0 @@
-Vsoc_cpu_tb_timer_module__NB30__DepSet_h903e7ac6__0__Slow.o: \
- Vsoc_cpu_tb_timer_module__NB30__DepSet_h903e7ac6__0__Slow.cpp \
- Vsoc_cpu_tb__pch.h Vsoc_cpu_tb_timer_module__NB30.h

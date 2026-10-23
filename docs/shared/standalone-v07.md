@@ -27,9 +27,9 @@ X signed16/Q12，W signed16/Q16，bias 逻辑 signed32/Q28；逻辑累加
 signed40/Q28，以 signed48 物理容器实现。固定 RNE 右移16位、sat16，
 再将结果符号扩展到 signed32。flags 是 overflow、saturated、last 三位。
 
-团队旧 `rtl/revd_opt/core_stream_tiled_w2_opt.sv` 的可变 shift、signed48
-bias 和 sat32 数值契约不能用来驱动本入口。旧数值配置、driver、SoC 与
-历史报告保留原身份；未来接入须显式适配并重新验证，不能仅重命名替换。
+团队旧V07的可变 shift、signed48 bias 和 sat32 数值契约不能用来驱动本入口。
+旧工程仍可从团队 `main`、`v2` 或Git历史查看，本分支当前文件树只保留新版。
+未来接入须显式适配并重新验证，不能仅重命名替换。
 使用本分支下列脚本运行新入口，不沿用旧 runner 的冻结 golden 或层级探针。
 
 几何默认99×64×256，PM4/PN4/CTX4、tile16、双权重槽。外围一次一个

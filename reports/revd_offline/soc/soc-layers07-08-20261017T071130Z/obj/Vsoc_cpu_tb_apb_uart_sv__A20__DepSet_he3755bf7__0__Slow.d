@@ -1,3 +1,0 @@
-Vsoc_cpu_tb_apb_uart_sv__A20__DepSet_he3755bf7__0__Slow.o: \
- Vsoc_cpu_tb_apb_uart_sv__A20__DepSet_he3755bf7__0__Slow.cpp \
- Vsoc_cpu_tb__pch.h Vsoc_cpu_tb_apb_uart_sv__A20.h
