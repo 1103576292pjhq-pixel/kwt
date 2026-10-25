@@ -6,6 +6,11 @@
 
 **综合顶层：`accelerator_top`。源码清单：[`synth/rtl.f`](synth/rtl.f)。**
 
+2026-10-25更新：设计源码统一为Verilog-2005 `.v`，SRAM改为LVT型号
+`TS1N28HPCPL2LVTB2048X32M4MWBASO`，默认工况为`tt0p9v25c`。
+Synopsys综合加载对应的`TS1N28HPCPL2LVTB2048X32M4MWBASO_tt0p9v25c.db`，
+并设置`USE_MACRO=1`；库文件由队友本机提供。
+
 ## 队友先看这里
 
 - **综合：**[综合说明](synth/README.md)，列出文件、参数、宏、命令和正式综合所需条件。

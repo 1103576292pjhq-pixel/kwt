@@ -22,8 +22,14 @@ module tb_accelerator;
     reg signed [31:0] bv[0:LAYERS*N-1],yv[0:LAYERS*M*N-1];
     reg [3:0] fv[0:LAYERS*M*N-1];
     reg stalled=0;reg [98:0] held;
-    integer expected_index;
-    accelerator_top #(.M(M),.N(N),.READ_LATENCY(`TEST_LATENCY),.USE_MACRO(`TEST_MACRO)) dut(.*);
+    integer expected_index,z;
+    accelerator_top #(.M(M),.N(N),.READ_LATENCY(`TEST_LATENCY),.USE_MACRO(`TEST_MACRO)) dut(
+        .clk(clk),.rst_n(rst_n),.abort_i(abort_i),.in_valid(in_valid),.in_ready(in_ready),
+        .in_op(in_op),.in_layer_id(in_layer_id),.in_task_id(in_task_id),
+        .in_tile_id(in_tile_id),.in_index(in_index),.in_data(in_data),.in_shift(in_shift),
+        .out_valid(out_valid),.out_ready(out_ready),.out_task_id(out_task_id),
+        .out_y_index(out_y_index),.out_data(out_data),.out_flags(out_flags),
+        .task_done(task_done),.busy(busy),.fault(fault),.error_code(error_code));
     always @(negedge clk)begin
         // 短暂停顿与周期性长暂停，覆盖块末和tile末结果保持。
         out_ready=rst_n&&!abort_i&&!pause_outputs&&(cycle%7<4)&&(cycle%503<450);
@@ -31,7 +37,7 @@ module tb_accelerator;
     always @(posedge clk)begin
         if(!rst_n||abort_i||fault)begin cycle=0;stalled=0;end
         else begin
-            cycle++;
+            cycle=cycle+1;
             if(stalled&&(!out_valid||{out_task_id,out_y_index,out_data,out_flags}!==held))
                 $fatal(1,"output changed while stalled");
             stalled=out_valid&&!out_ready;
@@ -47,16 +53,16 @@ module tb_accelerator;
                     out_flags!==fv[layer*M*N+out_y_index][2:0])
                     $fatal(1,"numeric/tag mismatch layer=%0d index=%0d got=%0d/%b expected=%0d/%b task=%h",
                         layer,out_y_index,out_data,out_flags,yv[layer*M*N+out_y_index],fv[layer*M*N+out_y_index],out_task_id);
-                seen[out_y_index]=1;outputs++;total_outputs++;
+                seen[out_y_index]=1;outputs=outputs+1;total_outputs=total_outputs+1;
             end
             if(checking&&task_done)begin
                 if(outputs!=M*N)$fatal(1,"done before complete writeback: %0d",outputs);
-                for(integer z=0;z<M*N;z++)if(!seen[z])$fatal(1,"missing result");
-                tasks++;
+                for(z=0;z<M*N;z=z+1)if(!seen[z])$fatal(1,"missing result");
+                tasks=tasks+1;
             end
         end
     end
-    task send(input integer op,input integer tile,input integer idx,input reg signed [47:0] value);
+    task send(input integer op,input integer tile,input integer idx,input signed [47:0] value);
         begin
             @(negedge clk);in_valid=0;
             // 在k内部和加载过程随机样式插空，不依赖DUT时序。
@@ -75,20 +81,21 @@ module tb_accelerator;
         end
     endtask
     task load_first_tile;
+        integer a;
         begin
             if(!prebegun)send(0,0,0,0);
             prebegun=0;
             // 连续每拍加载X：验证没有命令队列时的相邻写入/计数更新。
             @(negedge clk);in_valid=1;in_op=1;in_tile_id=0;
-            for(integer a=0;a<M*64;a++)begin
+            for(a=0;a<M*64;a=a+1)begin
                 in_index=a;in_data=xv[layer*M*64+a];
                 @(posedge clk);while(!in_ready)@(posedge clk);
                 @(negedge clk);
             end
             in_valid=0;
             send(2,0,0,0);
-            for(integer a=0;a<1024;a++)send(3,0,a,wv[layer*64*N+(a/16)*N+a%16]);
-            for(integer a=0;a<16;a++)send(4,0,a,bv[layer*N+a]);
+            for(a=0;a<1024;a=a+1)send(3,0,a,wv[layer*64*N+(a/16)*N+a%16]);
+            for(a=0;a<16;a=a+1)send(4,0,a,bv[layer*N+a]);
             send(5,0,0,0);send(6,0,0,0);
         end
     endtask
@@ -127,14 +134,14 @@ module tb_accelerator;
         load_first_tile;repeat(10)@(negedge clk);
         rst_n=0;repeat(2)@(negedge clk);rst_n=1;repeat(2)@(negedge clk);
         if(busy||fault||out_valid)$fatal(1,"reset did not empty accelerator");
-        for(layer=0;layer<LAYERS;layer++)begin
-            outputs=0;for(i=0;i<M*N;i++)seen[i]=0;
+        for(layer=0;layer<LAYERS;layer=layer+1)begin
+            outputs=0;for(i=0;i<M*N;i=i+1)seen[i]=0;
             in_task_id=32'h1000+layer;in_layer_id=layer+1;checking=1;
             load_first_tile;
-            for(t=1;t<N/16;t++)begin
+            for(t=1;t<N/16;t=t+1)begin
                 send(2,t,0,0); // 无空槽时保持命令等待，不能提前覆盖ACTIVE槽。
-                for(k=0;k<64;k++)for(c=0;c<16;c++)send(3,t,k*16+c,wv[layer*64*N+k*N+t*16+c]);
-                for(c=0;c<16;c++)send(4,t,c,bv[layer*N+t*16+c]);
+                for(k=0;k<64;k=k+1)for(c=0;c<16;c=c+1)send(3,t,k*16+c,wv[layer*64*N+k*N+t*16+c]);
+                for(c=0;c<16;c=c+1)send(4,t,c,bv[layer*N+t*16+c]);
                 send(5,t,0,0);
             end
             wait(task_done===1);

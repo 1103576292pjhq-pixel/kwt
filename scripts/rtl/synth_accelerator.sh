@@ -8,11 +8,11 @@ if ! command -v "$yosys_bin" >/dev/null 2>&1; then
     else echo 'Yosys missing: install yosys or set YOSYS to its executable.' >&2; exit 1; fi
 fi
 lib_root=${SRAM_LIB_DIR:-/mnt/d/嵌赛芯片设计赛道/tsn28hpcpl2spsrammacros_180a_nldm/TSMCHOME/sram/Front_End/timing_power_noise/NLDM/tsn28hpcpl2spsrammacros_180a}
-lib="$lib_root/TS1N28HPCPL2SVTB2048X32M4MWBASO/TS1N28HPCPL2SVTB2048X32M4MWBASO_tt1v25c.lib"
+lib="$lib_root/TS1N28HPCPL2LVTB2048X32M4MWBASO/TS1N28HPCPL2LVTB2048X32M4MWBASO_tt0p9v25c.lib"
 [[ -f "$lib" ]] || { echo "SRAM liberty missing: $lib" >&2; exit 1; }
 cat > out/synth_accelerator.ys <<EOF
 read_liberty -lib "$lib"
-read_verilog -sv -DSYNTHESIS -Irtl/include rtl/compute/mul_array_4x4.v rtl/compute/acc_context_bank.v rtl/compute/result_convert_v07.v rtl/compute/dot64_tile_core.v rtl/memory/sram_wrapper.sv rtl/memory/x_buffer.sv rtl/memory/w_tile_buffer.sv rtl/control/command_frontend.sv rtl/control/tile_ctrl.sv rtl/control/matrix_ctrl.sv rtl/output/result_ctrl.sv rtl/accelerator_top.sv
+read_verilog -DSYNTHESIS -Irtl/include rtl/compute/mul_array_4x4.v rtl/compute/acc_context_bank.v rtl/compute/result_convert_v07.v rtl/compute/dot64_tile_core.v rtl/memory/sram_wrapper.v rtl/memory/x_buffer.v rtl/memory/w_tile_buffer.v rtl/control/command_frontend.v rtl/control/tile_ctrl.v rtl/control/matrix_ctrl.v rtl/output/result_ctrl.v rtl/accelerator_top.v
 hierarchy -check -top accelerator_top -chparam USE_MACRO 1
 synth -top accelerator_top -noabc
 check -assert
@@ -39,7 +39,7 @@ def visit(name):
         else:
             counts[kind] += 1
 visit('accelerator_top')
-macro = 'TS1N28HPCPL2SVTB2048X32M4MWBASO'
+macro = 'TS1N28HPCPL2LVTB2048X32M4MWBASO'
 assert counts[macro] == 12, counts
 assert not any('LATCH' in kind.upper() and count for kind, count in counts.items()), counts
 Path('out/synthesis_summary.json').write_text(json.dumps(dict(counts), indent=2)+'\n')

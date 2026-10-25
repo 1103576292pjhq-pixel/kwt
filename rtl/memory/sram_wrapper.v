@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // 一个逻辑16位单端口bank。READ_LATENCY按请求被时钟采样后到返回有效计数。
-// USE_MACRO=0用于快速自检；=1接本地已有的2048x32试验宏。
+// USE_MACRO=0用于快速自检；=1接本地已有的2048x32 LVT试验宏。
 module sram_wrapper #(
     parameter integer DEPTH=1600,
     parameter integer ADDR_W=$clog2(DEPTH),
@@ -22,7 +22,7 @@ module sram_wrapper #(
     assign rd_valid_o=enabled&&valid_pipe[READ_LATENCY-1];
     // reset/abort只撤销在途请求，不能通过复位循环把SRAM综合成触发器。
     always @(posedge clk) begin
-        if(!rst_n||abort_i) valid_pipe<='0;
+        if(!rst_n||abort_i) valid_pipe<={READ_LATENCY{1'b0}};
         else begin
             valid_pipe[0]<=read_en;
             for(p=1;p<READ_LATENCY;p=p+1)valid_pipe[p]<=valid_pipe[p-1];
@@ -44,7 +44,8 @@ module sram_wrapper #(
         wire [10:0] macro_addr={{(11-ADDR_W){1'b0}},addr_i};
         // CEB/WEB/BWEB均低有效。只使用低16位，高16位禁止写入。
         // 每个逻辑bank独立一颗宏，容量虽有浪费，但不会制造读写端口冲突。
-        TS1N28HPCPL2SVTB2048X32M4MWBASO ram(
+        // 宏模块名使用库中的cell名；tt0p9v25c等工况由仿真/综合脚本选择。
+        TS1N28HPCPL2LVTB2048X32M4MWBASO ram(
             .CLK(clk),.CEB(!(write_en||read_en)),.WEB(!write_en),
             .A(macro_addr),.D({16'b0,wr_data_i}),.BWEB(32'hffff0000),.Q(macro_q),
             .SLP(1'b0),.SD(1'b0),.AWT(1'b0),.BIST(1'b0),
@@ -70,7 +71,7 @@ module sram_wrapper #(
     end
     always @(posedge clk)if(enabled)begin
         if(wr_en_i&&rd_en_i)$fatal(1,"single port SRAM read/write conflict");
-        if((wr_en_i||rd_en_i)&&int'(addr_i)>=DEPTH)$fatal(1,"SRAM address out of range");
+        if((wr_en_i||rd_en_i)&&addr_i>=DEPTH)$fatal(1,"SRAM address out of range");
     end
 `endif
 endmodule

@@ -6,16 +6,19 @@
 module mul_array_4x4 (
     input wire clk,
     input wire rst_n,
-    
-    input wire abort_i,
-    input wire accept_en_i,
-    input wire in_valid_i,
-    output wire in_ready_o,
+
+    input wire abort_i,//模拟"中途放弃"
+    input wire accept_en_i,//只有下游全部接收16个输出之后才能计算下一组
+    input wire in_valid_i,//外界的输入有效
+    output wire in_ready_o,//可以接受下一组输入
+
     input wire [4*`KWT_FFN_X_WIDTH-1:0] x_i,
     input wire [4*`KWT_FFN_W_WIDTH-1:0] w_i,
-    input wire [1:0] ctx_i,
-    input wire [3:0] row_mask_i,
-    input wire block_last_i,
+
+    input wire [1:0] ctx_i,//context上下文表示4组输出的哪一组
+    input wire [3:0] row_mask_i,//掩码，99行不能被4整除最后会剩下一个三行的尾部块，4'b0111表示只有三行有效
+    input wire block_last_i,//最后一组输入的标签信号，下游必须知道结束这个信息
+
     output reg product_valid_o,
     output reg [16*`KWT_FFN_PRODUCT_WIDTH-1:0] product_o,
     output reg [1:0] ctx_o,
@@ -38,7 +41,9 @@ module mul_array_4x4 (
             if (fire) begin
                 ctx_o <= ctx_i;
                 row_mask_o <= row_mask_i;
-                block_last_o <= block_last_i;
+                block_last_o <= block_last_i;//标签数据流动
+                // [base +: width]索引部分选择：从第base位起向上取width位，
+                // 起点可为变量、宽度须为常量；切片默认无符号，故用$signed()转有符号再乘。
                 for (row=0; row<4; row=row+1)
                     for (col=0; col<4; col=col+1) begin
                         if (row_mask_i[row])

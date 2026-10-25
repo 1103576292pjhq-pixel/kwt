@@ -11,13 +11,17 @@
 - `synth/clock.sdc`：150MHz目标时钟，仅为时钟约束起点。
 - 默认正式尺寸：M=99、N=256、READ_LATENCY=1。
 - 使用本地试验宏时：USE_MACRO=1；USE_MACRO=0是行为存储验证配置。
-- 宏名：`TS1N28HPCPL2SVTB2048X32M4MWBASO`，预期12个实例。
+- 宏名：`TS1N28HPCPL2LVTB2048X32M4MWBASO`，预期12个实例。
 
 Tcl入口不自动选择工艺库，也不自动执行任一厂商工具的工艺综合。
 在工具中执行 `source synth/sources.tcl` 后，用
 `ffn_v07_sources`、`ffn_v07_include_dirs`、`ffn_v07_defines`和
 `ffn_v07_parameters`设置对应工具的读取、展开命令。
-`.v`和`.sv`均可按SystemVerilog读取，宏头文件由include目录解析。
+当前12份设计源码全部为Verilog-2005 `.v`，宏头文件由include目录解析。
+Synopsys工具加载队友本机的
+`TS1N28HPCPL2LVTB2048X32M4MWBASO_tt0p9v25c.db`；RTL实例的cell名为
+`TS1N28HPCPL2LVTB2048X32M4MWBASO`，不带工况或`.db`后缀。
+Yosys试综合读取下面对应的Liberty `.lib`，两种库格式按工具分别使用。
 
 ## 可直接运行的结构试综合
 
@@ -32,8 +36,8 @@ SRAM_LIB_DIR=/path/to/tsn28hpcpl2spsrammacros_180a \
 `SRAM_LIB_DIR`下应包含：
 
 ```text
-TS1N28HPCPL2SVTB2048X32M4MWBASO/
-  TS1N28HPCPL2SVTB2048X32M4MWBASO_tt1v25c.lib
+TS1N28HPCPL2LVTB2048X32M4MWBASO/
+  TS1N28HPCPL2LVTB2048X32M4MWBASO_tt0p9v25c.lib
 ```
 
 产物：`out/synthesis.log`、`out/accelerator_generic.v`、

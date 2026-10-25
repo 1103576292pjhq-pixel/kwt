@@ -20,7 +20,7 @@ module x_buffer #(
     reg [READ_LATENCY-1:0] request_pipe;
     integer p;
     always @(posedge clk)begin
-        if(!rst_n||abort_i)request_pipe<='0;
+        if(!rst_n||abort_i)request_pipe<={READ_LATENCY{1'b0}};
         else begin
             request_pipe[0]<=read_i;
             if(read_i)mask_pipe[0]<=row_mask_i;

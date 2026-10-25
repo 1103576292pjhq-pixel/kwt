@@ -1,19 +1,20 @@
 # 独立 FFN1 V07：团队分支入口
 
 本分支以团队 `v2` 的 `7a029a5` 为基础，导入个人工程
-`mywayjpo/kwt1-accelerator-2026` 中 `worktrees/ffn-v07-peripheral`
-的未提交工作树快照。逐文件 SHA-256 见 `standalone-v07-import.json`。
+`mywayjpo/kwt1-accelerator-2026` 中独立加速器的未提交工作树快照。
+2026-10-25已从当前开发目录`worktrees/dot64-core`同步Verilog-2005与LVT宏更新。
+逐文件 SHA-256 见 `standalone-v07-import.json`。
 导入没有修改计算或外围 RTL。该快照是独立加速器，不包含新的 CPU、ICB、寄存器或驱动适配。
 
 ## 目录与模块
 
 | 入口 | 职责 |
 | --- | --- |
-| `rtl/accelerator_top.sv` | 命令流输入、带索引和 flags 的结果流输出 |
+| `rtl/accelerator_top.v` | 命令流输入、带索引和 flags 的结果流输出 |
 | `rtl/control/` | 命令合法性、双槽所有权、矩阵供数调度 |
 | `rtl/memory/` | X 四 bank、W 双槽及偏置、同步 SRAM 封装 |
 | `rtl/compute/` | 4×4 乘法阵列、CTX4 累加、数值转换、块控制 |
-| `rtl/output/result_ctrl.sv` | 选读、偏置配对、索引、结果消费及块释放 |
+| `rtl/output/result_ctrl.v` | 选读、偏置配对、索引、结果消费及块释放 |
 | `tb/accelerator/`、`tb/dot64/` | 外围及计算核心自检 |
 | `scripts/rtl/` | 向量生成、功能仿真、参考交叉检查及试综合 |
 | `scripts/model/fixed_point.py` | RTL 对应的软件整数数值模型 |
@@ -76,7 +77,7 @@ SRAM_MODEL_DIR=/path/to/tsn28hpcpl2spsrammacros_180a \
 ```
 
 目录下应包含
-`TS1N28HPCPL2SVTB2048X32M4MWBASO/TS1N28HPCPL2SVTB2048X32M4MWBASO_tt1v25c.v`。
+`TS1N28HPCPL2LVTB2048X32M4MWBASO/TS1N28HPCPL2LVTB2048X32M4MWBASO_tt0p9v25c.v`。
 这是12颗2048×32宏的试验映射，每颗仅使用低16位，共96KiB实例容量；
 不是赛题指定16位宏的正式映射。UNIT_DELAY功能仿真会报告零时刻的
 CEB唤醒警告，不能当作上电/睡眠或工艺时序验收。

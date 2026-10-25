@@ -22,10 +22,10 @@ module tb_buffers;
         .read_i(w_read),.active_slot_i(read_slot),.ctx_i(ctx),.k_i(k),
         .read_valid_o(w_valid),.w_o(ws),.bias_col_i(b_sel),.bias_o(bias));
     function automatic signed [15:0] xv(input integer row,input integer kk);
-        xv=16'(row*173-kk*29-32000);
+        xv=row*173-kk*29-32000;
     endfunction
     function automatic signed [15:0] wv(input integer slot,input integer kk,input integer col);
-        wv=16'(slot*15001+kk*67-col*211-17000);
+        wv=slot*15001+kk*67-col*211-17000;
     endfunction
     initial begin
         repeat(2) @(negedge clk);rst_n=1;
@@ -50,7 +50,7 @@ module tb_buffers;
             for(lane=0;lane<4;lane=lane+1)begin
                 if($signed(xs[lane*16+:16])!==(mask[lane]?xv(g*4+lane,j):16'sd0))
                     $fatal(1,"X address/mask mismatch group=%0d k=%0d lane=%0d",g,j,lane);
-                checks++;
+                checks=checks+1;
             end
         end
         for(s=0;s<2;s=s+1)for(g=0;g<4;g=g+1)for(j=0;j<64;j=j+1)begin
@@ -60,14 +60,14 @@ module tb_buffers;
             for(lane=0;lane<4;lane=lane+1)begin
                 if($signed(ws[lane*16+:16])!==wv(s,j,g*4+lane))
                     $fatal(1,"W slot/bank mismatch slot=%0d ctx=%0d k=%0d",s,g,j);
-                checks++;
+                checks=checks+1;
             end
         end
         for(s=0;s<2;s=s+1)for(i=0;i<16;i=i+1)begin
             @(negedge clk);read_slot=s;b_sel=i;#1;
             if(bias!==$signed(s?(-48'sd2147483647+i):(48'sd2147483647-i)))
                 $fatal(1,"bias sign extension mismatch");
-            checks++;
+            checks=checks+1;
         end
         // 一个槽读、另一个槽写：必须没有单端口冲突，也不能串槽。
         @(negedge clk);read_slot=0;load_slot=1;ctx=0;k=0;w_read=1;

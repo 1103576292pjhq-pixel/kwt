@@ -2,14 +2,16 @@
 
 本版按照个人模块边界重新实现外围，调用已验证的四个V07局部计算模块。只包含独立加速器；没有E203、总线寄存器、驱动或双模式系统。默认矩阵为M99/K64/N256，每次任务的X独立加载。
 
+新增外围RTL和外围测试平台均使用`.v`文件及Verilog-2005语法；外围脚本使用`iverilog -g2005`，试综合读取源码也不启用SystemVerilog。
+
 ## 模块目录与阅读顺序
 
-1. `rtl/accelerator_top.sv`：查看全部连接；顶层不重复计数。
-2. `rtl/control/command_frontend.sv`：理解外部怎么装载和启动。
-3. `rtl/control/tile_ctrl.sv`：理解两个槽的所有权。
-4. `rtl/memory/x_buffer.sv`、`w_tile_buffer.sv`、`sram_wrapper.sv`：地址映射和同步读。
-5. `rtl/control/matrix_ctrl.sv`：理解一个块的256组供数。
-6. `rtl/output/result_ctrl.sv`：理解结果选读、偏置、索引、背压及释放。
+1. `rtl/accelerator_top.v`：查看全部连接；顶层不重复计数。
+2. `rtl/control/command_frontend.v`：理解外部怎么装载和启动。
+3. `rtl/control/tile_ctrl.v`：理解两个槽的所有权。
+4. `rtl/memory/x_buffer.v`、`w_tile_buffer.v`、`sram_wrapper.v`：地址映射和同步读。
+5. `rtl/control/matrix_ctrl.v`：理解一个块的256组供数。
+6. `rtl/output/result_ctrl.v`：理解结果选读、偏置、索引、背压及释放。
 7. `rtl/compute/`：现有计算模块，接口详见`dot64-v07-interface.md`。
 
 八个新增模块文件对应此前确认的八个职责。权重槽状态只在tile_ctrl中；加载数量只在frontend中；行组/k/ctx只在matrix_ctrl中；结果扫描/消费数量只在result_ctrl中。
@@ -100,7 +102,9 @@ result_ctrl按块内row、ctx、col枚举，局部列c=4*ctx+col，偏置取对�
 
 ## 现有宏的试验映射
 
-USE_MACRO=0为行为模型；=1使用本地TS1N28HPCPL2SVTB2048X32M4MWBASO。四个X逻辑bank加八个W逻辑bank，暂各用一颗物理宏的低16位，高16位写屏蔽，共12颗宏。每颗8KiB，实际实例容量共96KiB，不能把4KiB权重载荷当作实际宏容量或宏面积。
+USE_MACRO=0为行为模型；=1使用本地TS1N28HPCPL2LVTB2048X32M4MWBASO。四个X逻辑bank加八个W逻辑bank，暂各用一颗物理宏的低16位，高16位写屏蔽，共12颗宏。每颗8KiB，实际实例容量共96KiB，不能把4KiB权重载荷当作实际宏容量或宏面积。
+
+2026-10-25按队友现有库将SVT替换为LVT，已核对两者模型的端口声明相同。仿真模型和Yosys试综合Liberty默认均选择tt0p9v25c（典型工艺、0.9V、25°C）。队友使用Synopsys工具时加载对应的TS1N28HPCPL2LVTB2048X32M4MWBASO_tt0p9v25c.db，并使USE_MACRO=1；RTL中的cell名不包含工况后缀或.db扩展名。其他工况应在库配置中选择，保持同一cell名。
 
 CEB/WEB/BWEB低有效；普通写时Q保持；读请求在上升沿采样，之后Q有效。wrapper生成read_valid，支持1/2拍返回。当前宏分支不是面积优化映射，作用是先连实际库试验；赛方发布后可替换这里而不修改核心。
 
@@ -133,4 +137,10 @@ tb_buffers逐lane检查全部X、两槽W和偏置，共8480项，并检查另一
 
 ## 计算依赖来源
 
-原计算工作树的未提交新版依赖以文件SHA-256快照复制，见v07-compute-snapshot.json。四个计算文件及头文件不修改，不把旧提交480bda3误记为新版计算源码提交。本工作树之外的计算目录保持原样。
+外围先在独立工作树ffn-v07-peripheral中实现并验证，现按用户要求直接接入VS Code当前打开的dot64-core工作树。这里直接调用当前rtl/compute/的四个模块及共享头文件，没有覆盖计算源码。此前的完整十二层和实际宏验证记录保存在外围工作树的docs/reports/20261023-v07-accelerator/中。
+
+本机临时Yosys工具目前保留在相邻外围工作树，可用以下命令试综合；如果已经安装Yosys则直接使用上面的命令：
+
+```bash
+YOSYS=../ffn-v07-peripheral/work/tools/root/usr/bin/yosys bash scripts/rtl/synth_accelerator.sh
+```

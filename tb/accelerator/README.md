@@ -2,9 +2,11 @@
 
 入口：`bash scripts/rtl/run_accelerator_tests.sh`。从工作树根目录运行。
 
-`tb_buffers.sv`独立核对X的4-bank地址映射、两槽W的bank/ctx/k映射、偏置符号扩展、尾行和另一槽并发写入，共8480项lane/bias检查。
+本目录两个测试平台使用`.v`和Verilog-2005语法，与外围RTL一起通过`iverilog -g2005`编译。
 
-`tb_accelerator.sv`发送真实命令加载输入及参数，所有结果均经过实际核心计算。期望由Python精确整数点积、signed floor商余数RNE和sat16独立生成，不把RTL结果作为参考。核对data、flags、task、全局索引、重复、缺失及输出顺序。
+`tb_buffers.v`独立核对X的4-bank地址映射、两槽W的bank/ctx/k映射、偏置符号扩展、尾行和另一槽并发写入，共8480项lane/bias检查。
+
+`tb_accelerator.v`发送真实命令加载输入及参数，所有结果均经过实际核心计算。期望由Python精确整数点积、signed floor商余数RNE和sat16独立生成，不把RTL结果作为参考。核对data、flags、task、全局索引、重复、缺失及输出顺序。
 
 默认M5/N32/两层，用于快速排错；支持M1..99、N16..256且为16的倍数、层数1..12。包含连续X写入、数据间断、输出短/长背压、尾行、完成当拍下一BEGIN、非法命令、运行期故障、受阻输出故障、同步复位和abort恢复。
 
