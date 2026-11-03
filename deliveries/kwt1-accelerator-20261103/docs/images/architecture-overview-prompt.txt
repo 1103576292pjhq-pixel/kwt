@@ -1,0 +1,64 @@
+Use case: scientific-educational / infographic-diagram.
+Create ONE exceptionally clear, attractive Chinese educational architecture poster for a beginner designing an RTL accelerator. Landscape 3:2, high resolution, readable large simplified-Chinese sans-serif typography. Polished engineering infographic: light background, restrained vivid colors, gentle isometric chip/memory illustrations integrated with precise block diagram, spacious aligned panels and orthogonal arrows. Prioritize accurate readable text and unambiguous wiring over decoration. No characters/mascots, no photorealistic circuit-board clutter, no invented blocks. All labels in simplified Chinese except standard technical terms.
+
+TITLE: "KWT-1 A40 加速器架构总览".
+Subtitle: "本科 FFN1：X[99×64] × W[64×256] + bias → Y[99×256]".
+
+COMPOSITION:
+Upper system band outside the accelerator, lower dominant accelerator panel, bottom numerical-rule strip and status footer.
+Use blue solid arrows for data, orange dashed arrows for control, green blocks for memory, blue compute blocks, purple quantization and result blocks. Include a compact legend "数据流" / "控制流" / "存储".
+
+UPPER SYSTEM BAND:
+A small muted box "离线数据准备" with subtitle "音频 → 指定模型 → X / W / bias" sends inputs into a large green "共享 SRAM 512 KiB" memory box.
+Inside shared SRAM show "X / W / bias" and "Y32 / flags8（共享容器）".
+Beside it is "E203 CPU" with subtitle "驱动 · 数据搬运 · 结果写回". Connect shared SRAM and CPU with TWO directionally correct arrows: shared memory → CPU labeled "读取输入和参数"; CPU → shared memory labeled "写回 Y / flags".
+Prominent small callout "无 DMA，由 CPU 搬运".
+Below CPU a wide thin system bar labeled "32位 ICB 总线 + guard 任务管理", subtitle "BEGIN / COMPLETE / ABORT · task / epoch". CPU connects bidirectionally to this bar.
+A small faint grey side branch from this bus to "G 编码器" tagged "并列模式端点" sits OUTSIDE the undergraduate accelerator border; NOT in the FFN1 pipeline.
+Note near shared SRAM: "平台接口与物理宏待核对".
+
+DOMINANT LOWER PANEL:
+A clear enclosing border titled "本科独立加速器 · 目标 RTL 架构".
+Across its upper edge a compact orange control module "矩阵调度 / W槽控制", with orange dashed arrows to memories, compute pipeline, and result blocks. Its small state flow is "装载 → 计算 → 排空 → 量化 → 发布".
+At left the input module receives commands/data FROM the ICB bar: "输入寄存器接口" and "命令 FIFO：8项", "PAIR_NEXT：一次2个16位数".
+Input data fans out via blue arrows to X banks, W slots, and bias. Avoid an arrow suggesting bias is multiplied.
+
+MEMORY CLUSTER on accelerator left:
+"X 缓冲：4 bank" as four small memory columns, label "4 × 1600 × 16 bit".
+"W 双槽" as two distinct memory cards labeled "槽 A" and "槽 B", each containing four bank bars. Label "2槽 × 4 bank × 256 × 16 bit". Small annotation "计算当前 tile / 装载下一 tile，轮换使用".
+"bias 缓冲" label "每槽 16 × 32 bit".
+X and active W provide separate blue arrows INTO multiplication labeled "4个 X16" / "4个 W16".
+
+COMPUTE CLUSTER center:
+"16路乘法阵列（4×4）" depicted with EXACTLY sixteen little multiplier cells in a 4 by 4 grid, NOT 64 cells.
+An arrow goes to "乘积寄存：16 × 32 bit", then to a clearly distinct group "四上下文 CTX4" consisting of four stacked/labeled groups g0,g1,g2,g3. Label "64 × 40 bit 累加器", subtitle "保存当前 4行 × 16列 的和". A small schedule caption "每个 k 轮转 g0～g3；k=0～63".
+A small pipeline annotation above the arrows "同步读请求标签 → 乘积寄存 → 累加".
+Small caption "每块 256 次读请求，尾部排空后量化".
+DO NOT imply CTX4 means four times as many multipliers.
+
+QUANTIZATION CLUSTER right of compute:
+An arrow from acc and a separate clearly labeled arrow from bias buffer meet at "偏置与量化".
+Inside show exact ordered steps on separate clear lines:
+"acc40 + bias32 → 临时和41位"
+"sat40 → RNE右移16 → sat16"
+Output label "Y16 + 3位 flags".
+No 48-bit arithmetic anywhere in the diagram.
+
+RESULT CLUSTER far right:
+"双结果块" with separate two cards "结果块 A" / "结果块 B".
+Labels "每块最多64项，尾块48项" and "每项：Y16 + overflow / sat / last".
+A clear blue return route FROM result blocks UP THROUGH the ICB bar to CPU, labeled "描述符 + RESULT". An orange dashed route FROM CPU THROUGH ICB TO the result module is labeled "ACK：读完并写回后释放".
+Do not draw a direct accelerator → shared RAM transfer; all result writes pass through CPU.
+Important short explanatory callouts:
+"CPU读上一块，核心生成下一块"
+"两结果块占满时，核心等待"
+"最后发布 ≠ 全部写回；排空后 COMPLETE".
+Make data directions and independent/parallel buffers visually obvious.
+
+BOTTOM NUMERIC STRIP:
+"数值链：X16/Q12 × W16/Q16 → product32/Q28 → acc40/Q28 + bias32/Q28 → RNE >>16 → Y16/Q12"
+Below in smaller but legible type:
+"16 MAC · PM4 / PN4 / CTX4 · K64 · tile16 · 全任务400块 / 25,344项输出".
+Footer status, clear but not alarming:
+"当前：数值模型已验证｜新版RTL待实现｜正式SRAM映射与150MHz/PPA待验证".
+Keep Chinese text accurate, mathematical dimensions correct, no overlapping arrows/text, no unrelated attention/GELU pipeline inside undergraduate accelerator. Present a coherent whole-system image that can be zoomed and studied.

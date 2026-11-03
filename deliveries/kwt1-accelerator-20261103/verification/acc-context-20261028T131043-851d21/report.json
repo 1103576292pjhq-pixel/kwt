@@ -1,0 +1,151 @@
+{
+  "status": "PASS_ACCUMULATOR_COMPONENT_ONLY",
+  "spec_id": "KWT1-B-USER-A40-20261027",
+  "time": "2026-10-28T13:10:48.054988+08:00",
+  "tools": {
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+    "iverilog": "Icarus Verilog version 11.0 (stable) ()",
+    "vvp": "Icarus Verilog runtime version 11.0 (stable) ()"
+  },
+  "counts": {
+    "cycles": 3068,
+    "accepted_groups": 2626,
+    "acc_read_checks": 196224,
+    "done_pulses": 75
+  },
+  "seed": 20261028,
+  "full_k64_blocks": 10,
+  "all_ctx_mask_cases": 64,
+  "mutations_caught": 6,
+  "software_tests": 33,
+  "golden_model_anchors_checked": 4,
+  "golden_final_accumulators_checked": 640,
+  "input_trace_rows": 2560,
+  "trace_sha256": "ad20b9161015c871fbace9c7536ac9000b67bfe1feb45cc36c72ebf93fc0aecb",
+  "data_source": "hand literals; signed16 products; Icarus $random(seed=20261028)",
+  "source_sha256": {
+    "rtl/compute/acc_context_bank.v": "ee6a254006dac614656a6c1a7e3b6ebb3630d22323a0ba01ad151293c8e5384a",
+    "tb/compute/tb_acc_context_bank.v": "0ef8cec9c158f4d24d8bdca17685a6065d9cc1552a06b4e944ad7ea45894ae75",
+    "scripts/verify_acc_context.py": "69b976c8c8b8c5aa1ae59d3a16d9a271b111e0686fc0236b229648f8331e4016",
+    "rtl/include/kwt_compute_config.vh": "d4a885a1b2f5b40b3e053942ea8192a8cbe59e4ad22edf478b7b5e36b0a8d93c",
+    "model/fixed_numeric.py": "a2c64376a583364be08a3dd730d423b35437bc951184b8b384c3f2806999e6fd",
+    "model/numeric-contract.json": "0b97e1b469e0870ec4d1d20acd2572129145acee4b4e7c6250ca57db1ce646c1"
+  },
+  "commands": [
+    {
+      "name": "iverilog-version",
+      "command": "/usr/bin/iverilog -V",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "vvp-version",
+      "command": "/usr/bin/vvp -V",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "design-verilog2001",
+      "command": "/usr/bin/iverilog -g2001 -I rtl/include -s acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/design.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/rtl/compute/acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "acc-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/acc.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/rtl/compute/acc_context_bank.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "acc-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/acc.vvp' +trace=verification/acc-context-20261028T131043-851d21/acc-trace.txt",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-zero_extend-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-zero_extend.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-zero_extend.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-zero_extend-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-zero_extend.vvp' +trace=verification/acc-context-20261028T131043-851d21/mutant-zero_extend-trace.txt",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "name": "mutant-wrong_context_read-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-wrong_context_read.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-wrong_context_read.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-wrong_context_read-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-wrong_context_read.vvp' +trace=verification/acc-context-20261028T131043-851d21/mutant-wrong_context_read-trace.txt",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "name": "mutant-ignore_mask-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-ignore_mask.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-ignore_mask.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-ignore_mask-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-ignore_mask.vvp' +trace=verification/acc-context-20261028T131043-851d21/mutant-ignore_mask-trace.txt",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "name": "mutant-drop_last_group-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-drop_last_group.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-drop_last_group.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-drop_last_group-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-drop_last_group.vvp' +trace=verification/acc-context-20261028T131043-851d21/mutant-drop_last_group-trace.txt",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "name": "mutant-ignore_active-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-ignore_active.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-ignore_active.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-ignore_active-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-ignore_active.vvp' +trace=verification/acc-context-20261028T131043-851d21/mutant-ignore_active-trace.txt",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "name": "mutant-incomplete_clear-compile",
+      "command": "/usr/bin/iverilog -g2012 -I rtl/include -s tb_acc_context_bank -o '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-incomplete_clear.vvp' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-incomplete_clear.v' '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/tb/compute/tb_acc_context_bank.v'",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "name": "mutant-incomplete_clear-simulate",
+      "command": "/usr/bin/vvp '/mnt/d/嵌赛芯片设计赛道/kwt1-a40-accelerator/verification/acc-context-20261028T131043-851d21/mutant-incomplete_clear.vvp' +trace=verification/acc-context-20261028T131043-851d21/mutant-incomplete_clear-trace.txt",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "name": "software-baseline",
+      "command": "/usr/bin/python3 -B -m unittest discover -s tests -v",
+      "exit_code": 0,
+      "expected_failure": false
+    }
+  ],
+  "not_verified": [
+    "multiplier-to-accumulator connection",
+    "bias/quantization RTL",
+    "SRAM",
+    "full matrix",
+    "STA/PPA"
+  ]
+}

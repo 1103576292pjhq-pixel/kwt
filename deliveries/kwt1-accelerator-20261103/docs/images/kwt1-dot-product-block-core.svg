@@ -1,0 +1,267 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1500" viewBox="0 0 2400 1500"><title>四个RTL模块组成的单块点积计算核心</title><defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#edf6ff"/></linearGradient><filter id="shadow" x="-20%" y="-20%" width="150%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#274b70" flood-opacity=".14"/></filter><marker id="blue" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#1684c9"/></marker><marker id="orange" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#de7a24"/></marker></defs><rect width="2400" height="1500" fill="url(#bg)"/>
+<text x="1200" y="78" fill="#123958" font-size="50" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">一块点积，是怎样算出来的？</text>
+<text x="1200" y="129" fill="#53728c" font-size="27" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">4行 × 16列 · 16路乘法 · CTX4 · A40</text>
+<rect x="280" y="180" width="1830" height="1000" rx="26" fill="#f4faff" stroke="#63a6d8" stroke-width="2" filter="url(#shadow)"/>
+<text x="315" y="230" fill="#15517d" font-size="31" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">④ 单块计算顶层 · dot_product_block_core.v</text>
+<rect x="340" y="275" width="155" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="417.5" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">IDLE</text>
+<path d="M498 304 H516" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<rect x="525" y="275" width="155" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="602.5" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">CLEAR</text>
+<path d="M683 304 H701" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<rect x="710" y="275" width="155" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="787.5" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">RUN</text>
+<path d="M868 304 H886" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<rect x="895" y="275" width="155" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="972.5" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">FLUSH</text>
+<path d="M1053 304 H1071" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<rect x="1080" y="275" width="230" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="1195" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">QISSUE</text>
+<path d="M1313 304 H1331" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<rect x="1340" y="275" width="230" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="1455" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">QWAIT</text>
+<path d="M1573 304 H1591" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<rect x="1600" y="275" width="155" height="58" rx="12" fill="#fff3e6" stroke="#edb676" stroke-width="2" filter="url(#shadow)"/>
+<text x="1677.5" y="313" fill="#9a4b0e" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">DONE</text>
+<path d="M1455 338 V365 H1195 V338" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<text x="1790" y="303" fill="#9a4b0e" font-size="18" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">输入计数跟随真实握手</text>
+<text x="1790" y="333" fill="#9a4b0e" font-size="18" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">先累加并排空，再量化</text>
+<text x="1200" y="406" fill="#9a4b0e" font-size="22" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">RUN只接收有序返回数据；FLUSH等待最后乘积真正写回acc</text>
+<rect x="25" y="430" width="225" height="240" rx="18" fill="#e8f8fb" stroke="#4bafbd" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="467" fill="#087187" font-size="23" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">4个X16 / Q12</text>
+<rect x="54" y="490" width="166" height="31" rx="6" fill="#c4edf0" stroke="#5cbbc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="513" fill="#075565" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X0   16位</text>
+<rect x="54" y="530" width="166" height="31" rx="6" fill="#c4edf0" stroke="#5cbbc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="553" fill="#075565" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X1   16位</text>
+<rect x="54" y="570" width="166" height="31" rx="6" fill="#c4edf0" stroke="#5cbbc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="593" fill="#075565" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X2   16位</text>
+<rect x="54" y="610" width="166" height="31" rx="6" fill="#c4edf0" stroke="#5cbbc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="633" fill="#075565" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X3   16位</text>
+<rect x="25" y="710" width="225" height="240" rx="18" fill="#f2ecff" stroke="#a58ad5" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="747" fill="#63428c" font-size="23" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">4个W16 / Q16</text>
+<rect x="54" y="770" width="166" height="31" rx="6" fill="#e2d4f6" stroke="#ae91d0" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="793" fill="#56397c" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W0   16位</text>
+<rect x="54" y="810" width="166" height="31" rx="6" fill="#e2d4f6" stroke="#ae91d0" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="833" fill="#56397c" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W1   16位</text>
+<rect x="54" y="850" width="166" height="31" rx="6" fill="#e2d4f6" stroke="#ae91d0" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="873" fill="#56397c" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W2   16位</text>
+<rect x="54" y="890" width="166" height="31" rx="6" fill="#e2d4f6" stroke="#ae91d0" stroke-width="2" filter="url(#shadow)"/>
+<text x="137" y="913" fill="#56397c" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W3   16位</text>
+<path d="M250 550 H285 V585 H320" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<path d="M250 830 H285 V705 H320" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<text x="135" y="1000" fill="#46637b" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">两条64位打包总线</text>
+<text x="135" y="1030" fill="#46637b" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">一组是8个16位数</text>
+<text x="135" y="1060" fill="#46637b" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">in_valid / in_ready</text>
+<rect x="320" y="440" width="430" height="650" rx="18" fill="#eaf5ff" stroke="#79b6df" stroke-width="2" filter="url(#shadow)"/>
+<text x="345" y="487" fill="#15517d" font-size="30" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">① 16路乘法阵列</text>
+<text x="345" y="525" fill="#46637b" font-size="22" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">mul_array_4x4.v</text>
+<text x="425" y="574" fill="#75449e" font-size="20" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W0</text>
+<text x="505" y="574" fill="#75449e" font-size="20" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W1</text>
+<text x="585" y="574" fill="#75449e" font-size="20" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W2</text>
+<text x="665" y="574" fill="#75449e" font-size="20" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">W3</text>
+<text x="350" y="625" fill="#087187" font-size="20" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X0</text>
+<rect x="395" y="590" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="425" y="627" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="475" y="590" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="505" y="627" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="555" y="590" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="585" y="627" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="635" y="590" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="665" y="627" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<text x="350" y="695" fill="#087187" font-size="20" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X1</text>
+<rect x="395" y="660" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="425" y="697" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="475" y="660" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="505" y="697" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="555" y="660" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="585" y="697" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="635" y="660" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="665" y="697" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<text x="350" y="765" fill="#087187" font-size="20" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X2</text>
+<rect x="395" y="730" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="425" y="767" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="475" y="730" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="505" y="767" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="555" y="730" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="585" y="767" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="635" y="730" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="665" y="767" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<text x="350" y="835" fill="#087187" font-size="20" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">X3</text>
+<rect x="395" y="800" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="425" y="837" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="475" y="800" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="505" y="837" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="555" y="800" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="585" y="837" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<rect x="635" y="800" width="60" height="55" rx="9" fill="#baddf4" stroke="#5d9bc6" stroke-width="2" filter="url(#shadow)"/>
+<text x="665" y="837" fill="#174b72" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">×</text>
+<text x="535" y="925" fill="#15517d" font-size="23" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">一级乘积寄存</text>
+<rect x="355" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="377" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="399" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="421" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="443" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="465" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="487" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="509" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="531" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="553" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="575" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="597" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="619" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="641" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="663" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<rect x="685" y="945" width="18" height="43" rx="4" fill="#efc9d5" stroke="#c9889d" stroke-width="2" filter="url(#shadow)"/>
+<text x="535" y="1032" fill="#15517d" font-size="22" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">16个signed32乘积 · Q28</text>
+<path d="M750 800 H820" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<text x="783" y="758" fill="#1684c9" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">16路</text>
+<text x="783" y="840" fill="#1684c9" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">32位</text>
+<rect x="820" y="440" width="600" height="650" rx="18" fill="#eaf9f2" stroke="#77b9a0" stroke-width="2" filter="url(#shadow)"/>
+<text x="848" y="487" fill="#186d51" font-size="30" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">② 四上下文累加</text>
+<text x="848" y="525" fill="#46637b" font-size="22" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">acc_context_bank.v</text>
+<rect x="850" y="555" width="255" height="160" rx="12" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<text x="866" y="586" fill="#214734" font-size="25" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">g0</text>
+<text x="930" y="584" fill="#46637b" font-size="17" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">16个acc40</text>
+<rect x="875" y="600" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="600" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="600" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="600" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="875" y="625" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="625" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="625" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="625" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="875" y="650" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="650" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="650" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="650" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="875" y="675" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="675" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="675" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="675" width="40" height="19" rx="3" fill="#fce2eb" stroke="#d889a6" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1140" y="555" width="255" height="160" rx="12" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<text x="1156" y="586" fill="#214734" font-size="25" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">g1</text>
+<text x="1220" y="584" fill="#46637b" font-size="17" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">16个acc40</text>
+<rect x="1165" y="600" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="600" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="600" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="600" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1165" y="625" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="625" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="625" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="625" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1165" y="650" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="650" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="650" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="650" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1165" y="675" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="675" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="675" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="675" width="40" height="19" rx="3" fill="#fff0d5" stroke="#d9aa55" stroke-width="2" filter="url(#shadow)"/>
+<rect x="850" y="785" width="255" height="160" rx="12" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<text x="866" y="816" fill="#214734" font-size="25" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">g2</text>
+<text x="930" y="814" fill="#46637b" font-size="17" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">16个acc40</text>
+<rect x="875" y="830" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="830" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="830" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="830" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="875" y="855" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="855" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="855" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="855" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="875" y="880" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="880" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="880" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="880" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="875" y="905" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="925" y="905" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="975" y="905" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1025" y="905" width="40" height="19" rx="3" fill="#d8f2e3" stroke="#69af85" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1140" y="785" width="255" height="160" rx="12" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<text x="1156" y="816" fill="#214734" font-size="25" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">g3</text>
+<text x="1220" y="814" fill="#46637b" font-size="17" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">16个acc40</text>
+<rect x="1165" y="830" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="830" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="830" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="830" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1165" y="855" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="855" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="855" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="855" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1165" y="880" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="880" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="880" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="880" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1165" y="905" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1215" y="905" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1265" y="905" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<rect x="1315" y="905" width="40" height="19" rx="3" fill="#e5def9" stroke="#9d88cf" stroke-width="2" filter="url(#shadow)"/>
+<text x="1120" y="756" fill="#186d51" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">当前ctx选择一组写入，四组不互相求和</text>
+<text x="1120" y="996" fill="#186d51" font-size="22" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">旧acc + 当前乘积 → 写回当前ctx</text>
+<text x="1120" y="1036" fill="#186d51" font-size="21" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">合计64个acc40；每个输出累加64项</text>
+<path d="M1420 638 H1530" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<text x="1455" y="589" fill="#1684c9" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">选读</text>
+<text x="1455" y="618" fill="#1684c9" font-size="16" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">acc40</text>
+<rect x="1490" y="440" width="580" height="650" rx="18" fill="#fff8e9" stroke="#dfbc6b" stroke-width="2" filter="url(#shadow)"/>
+<text x="1517" y="487" fill="#966011" font-size="30" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">③ 单份偏置 / 量化</text>
+<text x="1517" y="525" fill="#46637b" font-size="22" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">result_convert.v</text>
+<rect x="1530" y="600" width="300" height="75" rx="11" fill="#dcedff" stroke="#aabfc8" stroke-width="2" filter="url(#shadow)"/>
+<text x="1680" y="647" fill="#274e61" font-size="29" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">41位相加</text>
+<path d="M1680 677 V701" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<rect x="1530" y="710" width="300" height="75" rx="11" fill="#d8f2e3" stroke="#aabfc8" stroke-width="2" filter="url(#shadow)"/>
+<text x="1680" y="757" fill="#274e61" font-size="29" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">sat40</text>
+<path d="M1680 787 V811" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<rect x="1530" y="820" width="300" height="75" rx="11" fill="#fff0b3" stroke="#aabfc8" stroke-width="2" filter="url(#shadow)"/>
+<text x="1680" y="867" fill="#274e61" font-size="29" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">RNE 右移16</text>
+<path d="M1680 897 V921" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<rect x="1530" y="930" width="300" height="75" rx="11" fill="#e7defb" stroke="#aabfc8" stroke-width="2" filter="url(#shadow)"/>
+<text x="1680" y="977" fill="#274e61" font-size="29" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">sat16</text>
+<path d="M1420 638 H1530" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<text x="1855" y="672" fill="#46637b" font-size="18" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">acc40 + bias32</text>
+<text x="1855" y="753" fill="#46637b" font-size="20" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">先sat40</text>
+<text x="1855" y="850" fill="#46637b" font-size="18" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">保留低16位</text>
+<text x="1855" y="882" fill="#46637b" font-size="17" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">正负取最近偶数</text>
+<text x="1855" y="1012" fill="#46637b" font-size="18" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">舍入后才sat16</text>
+<text x="1520" y="1053" fill="#966011" font-size="18" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">global_last → flags[2]，不直接复用block_last</text>
+<rect x="2140" y="250" width="230" height="175" rx="18" fill="#fff2e4" stroke="#e7a96a" stroke-width="2" filter="url(#shadow)"/>
+<text x="2255" y="288" fill="#9a4b0e" font-size="23" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">外围bias寄存器</text>
+<rect x="2155" y="310" width="43" height="38" rx="6" fill="#ffd6a2" stroke="#d89e59" stroke-width="2" filter="url(#shadow)"/>
+<text x="2176" y="337" fill="#9a4b0e" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">B0</text>
+<rect x="2206" y="310" width="43" height="38" rx="6" fill="#ffd6a2" stroke="#d89e59" stroke-width="2" filter="url(#shadow)"/>
+<text x="2227" y="337" fill="#9a4b0e" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">B1</text>
+<rect x="2257" y="310" width="43" height="38" rx="6" fill="#ffd6a2" stroke="#d89e59" stroke-width="2" filter="url(#shadow)"/>
+<text x="2278" y="337" fill="#9a4b0e" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">B2</text>
+<rect x="2308" y="310" width="43" height="38" rx="6" fill="#ffd6a2" stroke="#d89e59" stroke-width="2" filter="url(#shadow)"/>
+<text x="2329" y="337" fill="#9a4b0e" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">B3</text>
+<text x="2255" y="382" fill="#9a4b0e" font-size="17" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">共16列 · 每项signed32</text>
+<text x="2255" y="410" fill="#9a4b0e" font-size="15" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">组合选读，不是移位寄存器</text>
+<path d="M2110 265 H2140" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<text x="2255" y="229" fill="#9a4b0e" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">bias_addr = g×4+q</text>
+<path d="M2255 425 V557 H1950 V638 H1834" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<text x="2040" y="544" fill="#1684c9" font-size="18" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">bias32 / Q28</text>
+<rect x="2140" y="640" width="230" height="375" rx="18" fill="#eaf5ff" stroke="#79b6df" stroke-width="2" filter="url(#shadow)"/>
+<text x="2255" y="688" fill="#15517d" font-size="28" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">逐项输出</text>
+<text x="2255" y="748" fill="#15517d" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">Y16 / Q12</text>
+<text x="2255" y="786" fill="#15517d" font-size="25" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">+ flags3</text>
+<text x="2255" y="846" fill="#46637b" font-size="21" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">out_index</text>
+<text x="2255" y="880" fill="#46637b" font-size="20" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">out_block_last</text>
+<text x="2255" y="938" fill="#9a4b0e" font-size="16" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">背压：Y、flags、位置</text>
+<text x="2255" y="970" fill="#9a4b0e" font-size="23" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">一起保持</text>
+<path d="M1830 968 H2093 V750 H2136" fill="none" stroke="#1684c9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#blue)"/>
+<path d="M2255 1022 V1116 H1970" fill="none" stroke="#de7a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#orange)"/>
+<text x="2210" y="1150" fill="#9a4b0e" font-size="19" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">out_ready</text>
+<text x="1120" y="1136" fill="#15517d" font-size="20" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">数据：valid + ctx + row_mask + block_last 与乘积一起传递</text>
+<rect x="40" y="1220" width="750" height="175" rx="18" fill="#eaf5ff" stroke="#bad0df" stroke-width="2" filter="url(#shadow)"/>
+<text x="66" y="1268" fill="#173a59" font-size="31" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">1  先算完整块</text>
+<text x="66" y="1321" fill="#173a59" font-size="24" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">64个k × 4个ctx = 256组有效输入</text>
+<text x="66" y="1361" fill="#46637b" font-size="21" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">最后乘积写回后，才开始转换</text>
+<rect x="830" y="1220" width="750" height="175" rx="18" fill="#eaf9f2" stroke="#bad0df" stroke-width="2" filter="url(#shadow)"/>
+<text x="856" y="1268" fill="#173a59" font-size="31" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">2  再逐项输出</text>
+<text x="856" y="1321" fill="#173a59" font-size="24" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">普通块64项；尾行块48项</text>
+<text x="856" y="1361" fill="#46637b" font-size="21" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">QISSUE / QWAIT：通常每两拍消费一项</text>
+<rect x="1620" y="1220" width="750" height="175" rx="18" fill="#fff2e4" stroke="#bad0df" stroke-width="2" filter="url(#shadow)"/>
+<text x="1646" y="1268" fill="#173a59" font-size="31" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="700">3  下一块重复</text>
+<text x="1646" y="1321" fill="#173a59" font-size="24" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">前块量化完成后，再清零算后块</text>
+<text x="1646" y="1361" fill="#46637b" font-size="21" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">单套acc：乘加与前块量化不重叠</text>
+<text x="1200" y="1443" fill="#173a59" font-size="26" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">独立编码示例：−4096 × 96 = −393216；其余63项与bias为0 → Y = −6</text>
+<text x="1200" y="1484" fill="#6d8294" font-size="17" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" font-weight="400">依据当前RTL的功能图 · 组件已有验证证据，顶层尚未验证 · 非物理布局或频率承诺</text>
+</svg>

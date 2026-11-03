@@ -1,0 +1,16 @@
++incdir+rtl/include
+rtl/compute/mul_array_4x4.v
+rtl/compute/acc_context_bank.v
+rtl/compute/result_convert.v
+rtl/compute/dot_product_block_core.v
+rtl/memory/kwt_storage_array.v
+rtl/memory/kwt_storage_wrapper.v
+rtl/control/kwt_operand_feeder.v
+rtl/control/kwt_load_ctrl.v
+rtl/control/kwt_result_blocks.v
+rtl/control/kwt_task_ctrl.v
+rtl/interface/kwt_command_fifo.v
+rtl/interface/kwt_icb_regs.v
+rtl/interface/kwt_result_access.v
+rtl/interface/kwt_icb.v
+rtl/kwt_accelerator.v
