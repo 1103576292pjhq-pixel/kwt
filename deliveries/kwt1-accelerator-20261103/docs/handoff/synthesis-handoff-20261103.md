@@ -1,6 +1,6 @@
-# 给综合队友：独立加速器输入与交付要求
+# 给综合队友：独立加速器与完整SoC输入要求
 
-日期：2026-11-03。现在可以开始独立加速器综合；本文件是输入说明与待测要求，不是已有综合报告。
+日期：2026-11-03。两种综合都可以交给队友开始：独立块顶层`kwt_accelerator`，服务器完整SoC顶层`kwt_shared_soc_top`。本文件说明读取什么源码、配置什么库/约束和需要返回哪些报告；当前没有实际综合通过报告。
 
 ## 使用哪套源码
 
@@ -16,6 +16,27 @@
 - `integration/e203/shared_ram_dev/sim/`中的512KiB行为数组及其sim.f；它仅仿真，尚未接入SoC。
 - GitHub仓库根目录另一套工程的RTL/驱动，或历史草稿/旧ABI。
 - 独立加速器综合时不加入整个E203；整SoC综合与整SoC功耗另建明确的顶层及文件清单。
+
+## 完整SoC从哪里开始
+
+服务器根：`/storage1/2026contest/server2/s2_21usr/Desktop/e203-integration/kwt-soc`。
+
+| 部分 | 服务器输入 |
+|---|---|
+| 当前生产顶层 | `rtl/e203/soc/kwt_shared_soc_top.v`，模块`kwt_shared_soc_top` |
+| E203/子系统/总线外设 | `rtl/`中的实际集成副本；含导出hfclk/bus_rst_n的子系统修改 |
+| 加速器 | `accelerator/rtl/`中的15个.v及4个.vh；与仓库独立`rtl/`基线对应 |
+| 共享SRAM | `shared_sram_bundle_01/kwt-shared-sram-v2/rtl/`中的三个生产.v |
+| 平台CPU存储 | `rtl/e203/mem_gen/`及平台ITCM/DTCM/ROM实现、相应库；不能漏掉 |
+| 原仿真输入资料 | `verification/soc_compile_01/soc.f`及`verification/shared_sram_wiring_01/shared_sram_additions.f` |
+
+完整SoC新增64颗`RAMSP4096X16_rtl_top`；加速器内部仍为8颗1024×16和16颗128×16。结合官方封装选择综合可用的宏wrapper/实际library cell，核对实际展开数量。外部宏资料位于`/storage1/admin_public_dir/SRAM_Lib_2025/`，不随GitHub交付复制。标准单元、PVT和CPU存储库由综合脚本按平台选择。
+
+现有仿真命令包含`FPGA`、`ARM_UD_MODEL`和仿真TB，不能直接当ASIC综合脚本。队友要按平台说明选择正确编译分支、wrapper/库绑定和SDC；这是启动综合时的正常配置工作，不表示缺少一个新的加速器或总线模块。统一目标为系统150MHz，具体clock/PLL约束点按真实时钟树确定，不把TB的`#2`当作150MHz证据。
+
+生产顶层不含验证加载mux。`kwt_real_soc_top`/`kwt_suite_soc_top`为生成测试top，不能取来做完整SoC综合；同样不加入testbench、合同内存或软件黄金。
+
+当前GitHub不是服务器完整E203平台镜像：自有RTL和工具已同步，服务器实际生成顶层及原平台文件应取上述工作目录。可先在服务器运行交付中的`tools/check_server_sources.py --soc-root <上述根目录>`核对19份加速器RTL/头和3份共享RTL，再建立综合脚本。VCS缓存已清理，原`.f`/RTL/日志均保留。
 
 ## 时序需要怎么约束和核对
 
@@ -37,6 +58,6 @@
 
 独立块综合能提前发现结构、资源和时序问题，但不能替代接入E203后互连、CPU、共享SRAM和完整驱动流程的系统验证；其功耗也不能直接作为赛事整SoC功耗。
 
-当前没有正式端到端周期/吞吐量，不能用TB性能基线405.827960任务/秒或CPU合成任务8,120,871周期填报最终成绩。正式计时应覆盖输入/参数真实装载起点到完整结果写回结束，随后按实际工作负载和频率计算吞吐量/能耗。
+真实case3共享链路已通过，但6079053是测试程序总周期，包含初始化和软件检查；也不能用较早405.827960任务/秒独立TB基线填报最终系统成绩。正式计时覆盖第一笔输入/参数真实装载到最后结果写回完成，按同一窗口计算吞吐量和能耗；专用计时工具开发目前暂停。
 
 赛题不要求布局布线、物理验证或流片；综合、指定库STA及综合后功能仍需完成。

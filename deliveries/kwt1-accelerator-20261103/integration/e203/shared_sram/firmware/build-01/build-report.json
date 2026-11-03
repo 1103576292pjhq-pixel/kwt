@@ -1,0 +1,107 @@
+{
+  "status": "CROSS_COMPILED_CPU_SHARED_RAM_TEST_NOT_EXECUTED",
+  "gcc": "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-gcc",
+  "version": "riscv64-unknown-elf-gcc (gbedea461d) 13.1.1 20230713",
+  "entry": "0x80000000",
+  "test_end": "0x80000086",
+  "stack_top": "0x80001000",
+  "bss_end": "0x800002ec",
+  "binary_bytes": 736,
+  "base": "0xa0000000 DEVELOPMENT",
+  "scope": "32banks first/last64words and byte/halfword stores",
+  "image_sha256": "fff09ee483f63a145c4d9d9c9c851845432dab55682ec4a599ba5b1461ddd932",
+  "sources": {
+    "shared_ram_smoke.c": "cea33c347d8108236395a2b230b8246ad0b59736a0787afdf279497e476483ad",
+    "start.S": "d926296079bdcffd51ed63ac2e219af549ecefdf6f0274eca2750a42c14a201e",
+    "link.ld": "144ff9d9467f8db20ebb6db4024fb9045d294b38d8340085f5f6f165783ae145",
+    "build.py": "982a90abf09efaaca2c3dd4cf3f9d2764687f3999e48ae7d9eaf3549386d9b48"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-march=rv32imac_zicsr_zifencei",
+        "-mabi=ilp32",
+        "-mcmodel=medany",
+        "-msmall-data-limit=0",
+        "-mno-relax",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-pic",
+        "-fno-stack-protector",
+        "-nostdlib",
+        "-nostartfiles",
+        "-fstack-usage",
+        "-Wl,--build-id=none",
+        "-Wl,--no-relax",
+        "-T",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/link.ld",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/start.S",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/shared_ram_smoke.c",
+        "-Wl,-Map=/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.map",
+        "-o",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-nm",
+        "-n",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf"
+      ],
+      "returncode": 0,
+      "stdout": "80000000 T _start\n80000086 T test_end\n80000100 T _boot\n80000150 T trap_entry\n80000164 T main\n800002e0 B __bss_start\n800002e0 B diagnostic_index\n800002e4 B diagnostic_expected\n800002e8 B diagnostic_actual\n800002ec B __bss_end\n80001000 A __stack_top\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-nm",
+        "-u",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-objdump",
+        "-d",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf"
+      ],
+      "returncode": 0,
+      "stdout": "\n/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf:     file format elf32-littleriscv\n\n\nDisassembly of section .entry:\n\n80000000 <_start>:\n80000000:\t1000006f          \tj\t80000100 <_boot>\n\nDisassembly of section .test_end:\n\n80000086 <test_end>:\n80000086:\ta001                \tj\t80000086 <test_end>\n\nDisassembly of section .text:\n\n80000100 <_boot>:\n80000100:\t00001117          \tauipc\tsp,0x1\n80000104:\tf0010113          \tadd\tsp,sp,-256 # 80001000 <__stack_top>\n80000108:\t30401073          \tcsrw\tmie,zero\n8000010c:\t30047073          \tcsrc\tmstatus,8\n80000110:\t00000297          \tauipc\tt0,0x0\n80000114:\t04028293          \tadd\tt0,t0,64 # 80000150 <trap_entry>\n80000118:\t30529073          \tcsrw\tmtvec,t0\n8000011c:\t00000297          \tauipc\tt0,0x0\n80000120:\t1c428293          \tadd\tt0,t0,452 # 800002e0 <diagnostic_index>\n80000124:\t00000317          \tauipc\tt1,0x0\n80000128:\t1c830313          \tadd\tt1,t1,456 # 800002ec <__bss_end>\n8000012c:\t0062f863          \tbgeu\tt0,t1,8000013c <_boot+0x3c>\n80000130:\t0002a023          \tsw\tzero,0(t0)\n80000134:\t00428293          \tadd\tt0,t0,4\n80000138:\tff5ff06f          \tj\t8000012c <_boot+0x2c>\n8000013c:\t00000097          \tauipc\tra,0x0\n80000140:\t028080e7          \tjalr\t40(ra) # 80000164 <main>\n80000144:\t00050193          \tmv\tgp,a0\n80000148:\t0ff0000f          \tfence\n8000014c:\tf3bff06f          \tj\t80000086 <test_end>\n\n80000150 <trap_entry>:\n80000150:\t342025f3          \tcsrr\ta1,mcause\n80000154:\t34102673          \tcsrr\ta2,mepc\n80000158:\t343026f3          \tcsrr\ta3,mtval\n8000015c:\t0e000193          \tli\tgp,224\n80000160:\tf27ff06f          \tj\t80000086 <test_end>\n\n80000164 <main>:\n80000164:\t1141                \tadd\tsp,sp,-16\n80000166:\t5ac37637          \tlui\ta2,0x5ac37\n8000016a:\t6811                \tlui\ta6,0x4\n8000016c:\t0fff3537          \tlui\ta0,0xfff3\n80000170:\tc622                \tsw\ts0,12(sp)\n80000172:\tc426                \tsw\ts1,8(sp)\n80000174:\t91760613          \tadd\ta2,a2,-1769 # 5ac36917 <_start-0x253c96e9>\n80000178:\t1871                \tadd\ta6,a6,-4 # 3ffc <_start-0x7fffc004>\n8000017a:\t1575                \tadd\ta0,a0,-3 # fff2ffd <_start-0x7000d003>\n8000017c:\ta0000737          \tlui\ta4,0xa0000\n80000180:\t4781                \tli\ta5,0\n80000182:\t6e11                \tlui\tt3,0x4\n80000184:\t10003337          \tlui\tt1,0x10003\n80000188:\t000608b7          \tlui\ta7,0x60\n8000018c:\t00c7c5b3          \txor\ta1,a5,a2\n80000190:\t00a786b3          \tadd\ta3,a5,a0\n80000194:\tc30c                \tsw\ta1,0(a4)\n80000196:\t8eb1                \txor\ta3,a3,a2\n80000198:\t010705b3          \tadd\ta1,a4,a6\n8000019c:\t979a                \tadd\ta5,a5,t1\n8000019e:\tc194                \tsw\ta3,0(a1)\n800001a0:\t9772                \tadd\ta4,a4,t3\n800001a2:\tff1795e3          \tbne\ta5,a7,8000018c <main+0x28>\n800001a6:\t0ff0000f          \tfence\n800001aa:\t6f85                \tlui\tt6,0x1\n800001ac:\t5ac378b7          \tlui\ta7,0x5ac37\n800001b0:\t0fff3f37          \tlui\tt5,0xfff3\n800001b4:\t6e91                \tlui\tt4,0x4\n800001b6:\tffff8293          \tadd\tt0,t6,-1 # fff <_start-0x7ffff001>\n800001ba:\t91788893          \tadd\ta7,a7,-1769 # 5ac36917 <_start-0x253c96e9>\n800001be:\t1f75                \tadd\tt5,t5,-3 # fff2ffd <_start-0x7000d003>\n800001c0:\t1ef1                \tadd\tt4,t4,-4 # 3ffc <_start-0x7fffc004>\n800001c2:\t4701                \tli\ta4,0\n800001c4:\ta0000537          \tlui\ta0,0xa0000\n800001c8:\t4581                \tli\ta1,0\n800001ca:\t00000797          \tauipc\ta5,0x0\n800001ce:\t11678793          \tadd\ta5,a5,278 # 800002e0 <diagnostic_index>\n800001d2:\t6491                \tlui\ts1,0x4\n800001d4:\t10003437          \tlui\ts0,0x10003\n800001d8:\t000203b7          \tlui\tt2,0x20\n800001dc:\ta829                \tj\t800001f6 <main+0x92>\n800001de:\t000e2683          \tlw\ta3,0(t3) # 4000 <_start-0x7fffc000>\n800001e2:\t0067a023          \tsw\tt1,0(a5)\n800001e6:\tc3d0                \tsw\ta2,4(a5)\n800001e8:\tc794                \tsw\ta3,8(a5)\n800001ea:\t02c69963          \tbne\ta3,a2,8000021c <main+0xb8>\n800001ee:\t95a2                \tadd\ta1,a1,s0\n800001f0:\t9526                \tadd\ta0,a0,s1\n800001f2:\t02770b63          \tbeq\ta4,t2,80000228 <main+0xc4>\n800001f6:\t00052803          \tlw\ta6,0(a0) # a0000000 <__stack_top+0x1ffff000>\n800001fa:\t0115c6b3          \txor\ta3,a1,a7\n800001fe:\tc398                \tsw\ta4,0(a5)\n80000200:\tc3d4                \tsw\ta3,4(a5)\n80000202:\t01e58633          \tadd\ta2,a1,t5\n80000206:\t0107a423          \tsw\ta6,8(a5)\n8000020a:\t00570333          \tadd\tt1,a4,t0\n8000020e:\t01d50e33          \tadd\tt3,a0,t4\n80000212:\t01164633          \txor\ta2,a2,a7\n80000216:\t977e                \tadd\ta4,a4,t6\n80000218:\tfcd803e3          \tbeq\ta6,a3,800001de <main+0x7a>\n8000021c:\t06100513          \tli\ta0,97\n80000220:\t4432                \tlw\ts0,12(sp)\n80000222:\t44a2                \tlw\ts1,8(sp)\n80000224:\t0141                \tadd\tsp,sp,16\n80000226:\t8082                \tret\n80000228:\t11223637          \tlui\ta2,0x11223\n8000022c:\ta00006b7          \tlui\ta3,0xa0000\n80000230:\t34460613          \tadd\ta2,a2,836 # 11223344 <_start-0x6eddccbc>\n80000234:\tc290                \tsw\ta2,0(a3)\n80000236:\tfa500593          \tli\ta1,-91\n8000023a:\t00b68023          \tsb\ta1,0(a3) # a0000000 <__stack_top+0x1ffff000>\n8000023e:\t05a00513          \tli\ta0,90\n80000242:\t00a680a3          \tsb\ta0,1(a3)\n80000246:\t00268593          \tadd\ta1,a3,2\n8000024a:\tfc300513          \tli\ta0,-61\n8000024e:\t00a58023          \tsb\ta0,0(a1)\n80000252:\t03c00513          \tli\ta0,60\n80000256:\t00a681a3          \tsb\ta0,3(a3)\n8000025a:\t0ff0000f          \tfence\n8000025e:\t3cc36637          \tlui\ta2,0x3cc36\n80000262:\t4288                \tlw\ta0,0(a3)\n80000264:\taa560613          \tadd\ta2,a2,-1371 # 3cc35aa5 <_start-0x433ca55b>\n80000268:\t00000817          \tauipc\ta6,0x0\n8000026c:\t06082c23          \tsw\tzero,120(a6) # 800002e0 <diagnostic_index>\n80000270:\tc3d0                \tsw\ta2,4(a5)\n80000272:\tc788                \tsw\ta0,8(a5)\n80000274:\t04c51d63          \tbne\ta0,a2,800002ce <main+0x16a>\n80000278:\t661d                \tlui\ta2,0x7\n8000027a:\t65460613          \tadd\ta2,a2,1620 # 7654 <_start-0x7fff89ac>\n8000027e:\t00c69023          \tsh\ta2,0(a3)\n80000282:\tedc00613          \tli\ta2,-292\n80000286:\t00c59023          \tsh\ta2,0(a1)\n8000028a:\t0ff0000f          \tfence\n8000028e:\tfedc7637          \tlui\ta2,0xfedc7\n80000292:\t428c                \tlw\ta1,0(a3)\n80000294:\t65460693          \tadd\ta3,a2,1620 # fedc7654 <__stack_top+0x7edc6654>\n80000298:\t00000617          \tauipc\ta2,0x0\n8000029c:\t04062423          \tsw\tzero,72(a2) # 800002e0 <diagnostic_index>\n800002a0:\tc3d4                \tsw\ta3,4(a5)\n800002a2:\tc78c                \tsw\ta1,8(a5)\n800002a4:\t02d59863          \tbne\ta1,a3,800002d4 <main+0x170>\n800002a8:\ta0080637          \tlui\ta2,0xa0080\n800002ac:\t89abd6b7          \tlui\ta3,0x89abd\n800002b0:\t1671                \tadd\ta2,a2,-4 # a007fffc <__stack_top+0x2007effc>\n800002b2:\tdef68693          \tadd\ta3,a3,-529 # 89abcdef <__stack_top+0x9abbdef>\n800002b6:\tc214                \tsw\ta3,0(a2)\n800002b8:\t0ff0000f          \tfence\n800002bc:\t177d                \tadd\ta4,a4,-1 # 9fffffff <__stack_top+0x1fffefff>\n800002be:\t4210                \tlw\ta2,0(a2)\n800002c0:\tc398                \tsw\ta4,0(a5)\n800002c2:\tc3d4                \tsw\ta3,4(a5)\n800002c4:\tc790                \tsw\ta2,8(a5)\n800002c6:\t00d61a63          \tbne\ta2,a3,800002da <main+0x176>\n800002ca:\t4505                \tli\ta0,1\n800002cc:\tbf91                \tj\t80000220 <main+0xbc>\n800002ce:\t06200513          \tli\ta0,98\n800002d2:\tb7b9                \tj\t80000220 <main+0xbc>\n800002d4:\t06300513          \tli\ta0,99\n800002d8:\tb7a1                \tj\t80000220 <main+0xbc>\n800002da:\t06400513          \tli\ta0,100\n800002de:\tb789                \tj\t80000220 <main+0xbc>\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-objcopy",
+        "-O",
+        "binary",
+        "--gap-fill=0",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf",
+        "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.bin"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-gcc",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "riscv64-unknown-elf-gcc (gbedea461d) 13.1.1 20230713\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    }
+  ]
+}

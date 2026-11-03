@@ -1,0 +1,81 @@
+
+Discarded input sections
+
+ .comment       0x00000000       0x23 /tmp/ccvd81X4.o
+ .note.GNU-stack
+                0x00000000        0x0 /tmp/ccvd81X4.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /tmp/ccTE495U.o
+LOAD /tmp/ccvd81X4.o
+                0x80000000                        . = 0x80000000
+
+.entry          0x80000000        0x4
+ *(.text.entry)
+ .text.entry    0x80000000        0x4 /tmp/ccTE495U.o
+                0x80000000                _start
+                0x00000001                        ASSERT ((SIZEOF (.entry) <= 0x86), Entry overlaps TB termination PC)
+                0x80000086                        . = 0x80000086
+
+.test_end       0x80000086        0x2
+ *(.text.test_end)
+ .text.test_end
+                0x80000086        0x2 /tmp/ccTE495U.o
+                0x80000086                test_end
+                0x00000001                        ASSERT ((SIZEOF (.test_end) == 0x2), Expected 2-byte termination loop)
+                0x80000100                        . = 0x80000100
+
+.text           0x80000100      0x1e0
+ *(.text.boot)
+ .text.boot     0x80000100       0x64 /tmp/ccTE495U.o
+                0x80000100                _boot
+                0x80000150                trap_entry
+ *(.text .text.*)
+ .text          0x80000164        0x0 /tmp/ccTE495U.o
+ .text          0x80000164        0x0 /tmp/ccvd81X4.o
+ .text.startup  0x80000164      0x17c /tmp/ccvd81X4.o
+                0x80000164                main
+
+.rela.dyn       0x800002e0        0x0
+ .rela.text.boot
+                0x800002e0        0x0 /tmp/ccTE495U.o
+
+.rodata
+ *(.rodata .rodata.*)
+                0x800002e0                        . = ALIGN (0x4)
+
+.data           0x800002e0        0x0
+ *(.data .data.* .sdata .sdata.*)
+ .data          0x800002e0        0x0 /tmp/ccTE495U.o
+ .data          0x800002e0        0x0 /tmp/ccvd81X4.o
+
+.bss            0x800002e0        0xc
+                0x800002e0                        . = ALIGN (0x4)
+                0x800002e0                        __bss_start = .
+ *(.bss .bss.* .sbss .sbss.* COMMON)
+ .bss           0x800002e0        0x0 /tmp/ccTE495U.o
+ .bss           0x800002e0        0xc /tmp/ccvd81X4.o
+                0x800002e0                diagnostic_index
+                0x800002e4                diagnostic_expected
+                0x800002e8                diagnostic_actual
+                0x800002ec                        . = ALIGN (0x4)
+                0x800002ec                        __bss_end = .
+                0x80001000                        __stack_top = 0x80001000
+                0x00000001                        ASSERT ((__bss_end <= 0x80000c00), Need at least 1 KiB stack within first 4 KiB ITCM)
+
+/DISCARD/
+ *(.comment .note.* .eh_frame .eh_frame.*)
+OUTPUT(/mnt/d/嵌赛芯片设计赛道/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x00000000       0x38
+ .riscv.attributes
+                0x00000000       0x31 /tmp/ccTE495U.o
+ .riscv.attributes
+                0x00000031       0x34 /tmp/ccvd81X4.o

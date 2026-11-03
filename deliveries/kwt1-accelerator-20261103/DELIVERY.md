@@ -1,25 +1,13 @@
-# 本次交付范围与复现
+# 更新范围与复现边界
 
-本交付复制15个生产RTL、4个头文件、当前模型、TB、脚本、C驱动/镜像、E203接线工具和4个固定上游测试样本；包含模块说明、历史开发文档、选定报告/日志、精度原报告与两个已封存服务器复测包。本次没有修改生产RTL或将它们合并到仓库根目录的工程。
+本轮是在已有交付快照上增量更新，不改仓库根工程或main。原15个生产模块和4个头文件与上次提交逐字相同，数值仍为X16/Q12、W16/Q16、bias32/Q28、acc40、RNE16、Y16/Q12。
 
-没有携带官方SRAM/工艺库、EDA软件/许可证、编译器运行时、音频/权重全库、大型trace、故意错误副本、完整历史源快照、ELF/二进制和simv。服务器截图不转载，receipt保留截图哈希及截图转录身份，不能将其描述成已下载完整服务器报告。旧文档对省略文件的链接可能只在原本地工程可用；不改写原证据。早期架构文档记录草拟过程，当前ICB无PAIR/可变shift，缓冲深度1，字段宽度以生产宏及ICB说明为准。
+新增自有共享SRAM生产源码、组件/CPU加载验证工具、源码和预编译.verilog镜像、截图转录凭据及服务器路径映射；另附已封存共享v2和连续12组服务器包。没有带入官方商业SRAM/工艺库、EDA软件/许可证、编译器运行时、全音频/权重库或大型波形。没有重新生成或冒充服务器实际E203顶层。整SoC的完整平台工程仍在服务器kwt-soc。
 
-`delivery-manifest.json`记录全部交付文件的SHA256（不含其自身）。`handoff-summary.json`给出机器可读状态。完整原验证精度报告副本放在verification/precision-20261102-01/original-reports/；原summary中的绝对路径保留用于追溯。
+server-layout是22份自有RTL的同名路径子集，不能独立编译完整SoC。check_server_sources只做SHA256只读比较；原E203/生成顶层/库仅列已有位置，不把路径存在说成内容验收。
 
-## 使用方式
+维护源码integration/e203各工具目录可能比服务器封存包多文档/回归测试，且不保证包含封存package-sha256.json；服务器重跑应使用已有解压封存包或server-packages中的相应已测封存包，不能对缺失依赖的维护源码直接宣布可运行。case3服务器使用修复v2，原v1压缩包存在clk声明顺序错误，因此没有作为本轮推荐重跑包新增。
 
-在这个独立工程根目录运行，建议Linux/WSL，Python3.10+、NumPy、Icarus。安装依赖须按各自机器环境决定。
+真实CPU全12本轮未完成；单case3已通过。正式计时工具草稿未纳入发布。平均功耗、能耗、面积和150MHz STA仍无报告；ARM_UD_MODEL功能模式不代替历史hold核查。原TB性能基线按目标150MHz折算，不是系统正式成绩。
 
-```sh
-python3 -B tools/verify_delivery.py
-python3 -B -m unittest discover -s tests -v
-python3 -B -m unittest discover -s integration/e203/tests -p test_prepare_kwt_soc.py -v
-```
-
-RTL基础回归可运行`python3 -B scripts/verify_icb.py --contract-models`，只使用本地合同模型，不代表官方宏。默认真实数据导出依赖本地原始模型/音频路径；GitHub不携带这些全库。需要重放固定真实12任务时直接使用server-packages中的封存包，它自带所需量化矩阵、黄金、浮点参考及来源清单，服务器只需Python标准库/VCS和原路径官方SRAM模型。请阅读对应包README，解压并用新的输出目录，不覆盖历史。
-
-性能包解压后的默认输出为official-run-01，只读引用官方模型。原始integration/e203/performance_baseline/run_official.py是打包素材；可直接运行的部署形状由tar.gz提供，不要单独复制这个py后省略performance.py、real12_audit.py、package-sha256.json、fixtures和rtl。
-
-`integration/e203/shared_ram_dev`仅保留本地原型，不在生产filelist中，未接入服务器SoC。其仿真数组禁止综合。交叉编译器已安装在原本地WSL，不含在本交付；构建报告有版本/ISA/ABI。固件构建报告中的PENDING是构建时历史状态，后续CPU成功凭据另见receipt和README，不覆盖历史JSON。
-
-本次交付前仅重新运行短的软件/接线工具测试并校验源哈希/封存包。已有长RTL、真实CPU和官方SRAM结果沿用其原报告及证据边界，不冒充本次又跑了一遍。
+delivery-manifest.json记录全部交付文件（不含自身）SHA256；verify_delivery.py只验证完整性，不是新硬件验收。服务器结果基于用户截图转录，完整服务器日志/JSON尚未独立下载。完整SoC综合所需源/库/SDC由队友在现有平台配置，仿真FPGA宏和TB不可照搬为ASIC配置。

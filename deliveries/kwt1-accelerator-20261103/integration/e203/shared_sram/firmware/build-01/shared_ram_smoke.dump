@@ -1,0 +1,167 @@
+
+/mnt/d/嵌赛芯片设计赛道/kwt1-accelerator/integration/e203/shared_sram/firmware/build-01/shared_ram_smoke.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .entry:
+
+80000000 <_start>:
+80000000:	1000006f          	j	80000100 <_boot>
+
+Disassembly of section .test_end:
+
+80000086 <test_end>:
+80000086:	a001                	j	80000086 <test_end>
+
+Disassembly of section .text:
+
+80000100 <_boot>:
+80000100:	00001117          	auipc	sp,0x1
+80000104:	f0010113          	add	sp,sp,-256 # 80001000 <__stack_top>
+80000108:	30401073          	csrw	mie,zero
+8000010c:	30047073          	csrc	mstatus,8
+80000110:	00000297          	auipc	t0,0x0
+80000114:	04028293          	add	t0,t0,64 # 80000150 <trap_entry>
+80000118:	30529073          	csrw	mtvec,t0
+8000011c:	00000297          	auipc	t0,0x0
+80000120:	1c428293          	add	t0,t0,452 # 800002e0 <diagnostic_index>
+80000124:	00000317          	auipc	t1,0x0
+80000128:	1c830313          	add	t1,t1,456 # 800002ec <__bss_end>
+8000012c:	0062f863          	bgeu	t0,t1,8000013c <_boot+0x3c>
+80000130:	0002a023          	sw	zero,0(t0)
+80000134:	00428293          	add	t0,t0,4
+80000138:	ff5ff06f          	j	8000012c <_boot+0x2c>
+8000013c:	00000097          	auipc	ra,0x0
+80000140:	028080e7          	jalr	40(ra) # 80000164 <main>
+80000144:	00050193          	mv	gp,a0
+80000148:	0ff0000f          	fence
+8000014c:	f3bff06f          	j	80000086 <test_end>
+
+80000150 <trap_entry>:
+80000150:	342025f3          	csrr	a1,mcause
+80000154:	34102673          	csrr	a2,mepc
+80000158:	343026f3          	csrr	a3,mtval
+8000015c:	0e000193          	li	gp,224
+80000160:	f27ff06f          	j	80000086 <test_end>
+
+80000164 <main>:
+80000164:	1141                	add	sp,sp,-16
+80000166:	5ac37637          	lui	a2,0x5ac37
+8000016a:	6811                	lui	a6,0x4
+8000016c:	0fff3537          	lui	a0,0xfff3
+80000170:	c622                	sw	s0,12(sp)
+80000172:	c426                	sw	s1,8(sp)
+80000174:	91760613          	add	a2,a2,-1769 # 5ac36917 <_start-0x253c96e9>
+80000178:	1871                	add	a6,a6,-4 # 3ffc <_start-0x7fffc004>
+8000017a:	1575                	add	a0,a0,-3 # fff2ffd <_start-0x7000d003>
+8000017c:	a0000737          	lui	a4,0xa0000
+80000180:	4781                	li	a5,0
+80000182:	6e11                	lui	t3,0x4
+80000184:	10003337          	lui	t1,0x10003
+80000188:	000608b7          	lui	a7,0x60
+8000018c:	00c7c5b3          	xor	a1,a5,a2
+80000190:	00a786b3          	add	a3,a5,a0
+80000194:	c30c                	sw	a1,0(a4)
+80000196:	8eb1                	xor	a3,a3,a2
+80000198:	010705b3          	add	a1,a4,a6
+8000019c:	979a                	add	a5,a5,t1
+8000019e:	c194                	sw	a3,0(a1)
+800001a0:	9772                	add	a4,a4,t3
+800001a2:	ff1795e3          	bne	a5,a7,8000018c <main+0x28>
+800001a6:	0ff0000f          	fence
+800001aa:	6f85                	lui	t6,0x1
+800001ac:	5ac378b7          	lui	a7,0x5ac37
+800001b0:	0fff3f37          	lui	t5,0xfff3
+800001b4:	6e91                	lui	t4,0x4
+800001b6:	ffff8293          	add	t0,t6,-1 # fff <_start-0x7ffff001>
+800001ba:	91788893          	add	a7,a7,-1769 # 5ac36917 <_start-0x253c96e9>
+800001be:	1f75                	add	t5,t5,-3 # fff2ffd <_start-0x7000d003>
+800001c0:	1ef1                	add	t4,t4,-4 # 3ffc <_start-0x7fffc004>
+800001c2:	4701                	li	a4,0
+800001c4:	a0000537          	lui	a0,0xa0000
+800001c8:	4581                	li	a1,0
+800001ca:	00000797          	auipc	a5,0x0
+800001ce:	11678793          	add	a5,a5,278 # 800002e0 <diagnostic_index>
+800001d2:	6491                	lui	s1,0x4
+800001d4:	10003437          	lui	s0,0x10003
+800001d8:	000203b7          	lui	t2,0x20
+800001dc:	a829                	j	800001f6 <main+0x92>
+800001de:	000e2683          	lw	a3,0(t3) # 4000 <_start-0x7fffc000>
+800001e2:	0067a023          	sw	t1,0(a5)
+800001e6:	c3d0                	sw	a2,4(a5)
+800001e8:	c794                	sw	a3,8(a5)
+800001ea:	02c69963          	bne	a3,a2,8000021c <main+0xb8>
+800001ee:	95a2                	add	a1,a1,s0
+800001f0:	9526                	add	a0,a0,s1
+800001f2:	02770b63          	beq	a4,t2,80000228 <main+0xc4>
+800001f6:	00052803          	lw	a6,0(a0) # a0000000 <__stack_top+0x1ffff000>
+800001fa:	0115c6b3          	xor	a3,a1,a7
+800001fe:	c398                	sw	a4,0(a5)
+80000200:	c3d4                	sw	a3,4(a5)
+80000202:	01e58633          	add	a2,a1,t5
+80000206:	0107a423          	sw	a6,8(a5)
+8000020a:	00570333          	add	t1,a4,t0
+8000020e:	01d50e33          	add	t3,a0,t4
+80000212:	01164633          	xor	a2,a2,a7
+80000216:	977e                	add	a4,a4,t6
+80000218:	fcd803e3          	beq	a6,a3,800001de <main+0x7a>
+8000021c:	06100513          	li	a0,97
+80000220:	4432                	lw	s0,12(sp)
+80000222:	44a2                	lw	s1,8(sp)
+80000224:	0141                	add	sp,sp,16
+80000226:	8082                	ret
+80000228:	11223637          	lui	a2,0x11223
+8000022c:	a00006b7          	lui	a3,0xa0000
+80000230:	34460613          	add	a2,a2,836 # 11223344 <_start-0x6eddccbc>
+80000234:	c290                	sw	a2,0(a3)
+80000236:	fa500593          	li	a1,-91
+8000023a:	00b68023          	sb	a1,0(a3) # a0000000 <__stack_top+0x1ffff000>
+8000023e:	05a00513          	li	a0,90
+80000242:	00a680a3          	sb	a0,1(a3)
+80000246:	00268593          	add	a1,a3,2
+8000024a:	fc300513          	li	a0,-61
+8000024e:	00a58023          	sb	a0,0(a1)
+80000252:	03c00513          	li	a0,60
+80000256:	00a681a3          	sb	a0,3(a3)
+8000025a:	0ff0000f          	fence
+8000025e:	3cc36637          	lui	a2,0x3cc36
+80000262:	4288                	lw	a0,0(a3)
+80000264:	aa560613          	add	a2,a2,-1371 # 3cc35aa5 <_start-0x433ca55b>
+80000268:	00000817          	auipc	a6,0x0
+8000026c:	06082c23          	sw	zero,120(a6) # 800002e0 <diagnostic_index>
+80000270:	c3d0                	sw	a2,4(a5)
+80000272:	c788                	sw	a0,8(a5)
+80000274:	04c51d63          	bne	a0,a2,800002ce <main+0x16a>
+80000278:	661d                	lui	a2,0x7
+8000027a:	65460613          	add	a2,a2,1620 # 7654 <_start-0x7fff89ac>
+8000027e:	00c69023          	sh	a2,0(a3)
+80000282:	edc00613          	li	a2,-292
+80000286:	00c59023          	sh	a2,0(a1)
+8000028a:	0ff0000f          	fence
+8000028e:	fedc7637          	lui	a2,0xfedc7
+80000292:	428c                	lw	a1,0(a3)
+80000294:	65460693          	add	a3,a2,1620 # fedc7654 <__stack_top+0x7edc6654>
+80000298:	00000617          	auipc	a2,0x0
+8000029c:	04062423          	sw	zero,72(a2) # 800002e0 <diagnostic_index>
+800002a0:	c3d4                	sw	a3,4(a5)
+800002a2:	c78c                	sw	a1,8(a5)
+800002a4:	02d59863          	bne	a1,a3,800002d4 <main+0x170>
+800002a8:	a0080637          	lui	a2,0xa0080
+800002ac:	89abd6b7          	lui	a3,0x89abd
+800002b0:	1671                	add	a2,a2,-4 # a007fffc <__stack_top+0x2007effc>
+800002b2:	def68693          	add	a3,a3,-529 # 89abcdef <__stack_top+0x9abbdef>
+800002b6:	c214                	sw	a3,0(a2)
+800002b8:	0ff0000f          	fence
+800002bc:	177d                	add	a4,a4,-1 # 9fffffff <__stack_top+0x1fffefff>
+800002be:	4210                	lw	a2,0(a2)
+800002c0:	c398                	sw	a4,0(a5)
+800002c2:	c3d4                	sw	a3,4(a5)
+800002c4:	c790                	sw	a2,8(a5)
+800002c6:	00d61a63          	bne	a2,a3,800002da <main+0x176>
+800002ca:	4505                	li	a0,1
+800002cc:	bf91                	j	80000220 <main+0xbc>
+800002ce:	06200513          	li	a0,98
+800002d2:	b7b9                	j	80000220 <main+0xbc>
+800002d4:	06300513          	li	a0,99
+800002d8:	b7a1                	j	80000220 <main+0xbc>
+800002da:	06400513          	li	a0,100
+800002de:	b789                	j	80000220 <main+0xbc>

@@ -1,0 +1,599 @@
+
+/mnt/d/嵌赛芯片设计赛道/kwt1-accelerator/integration/e203/real_shared_task/build-01/real_shared_task.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .entry:
+
+80000000 <_start>:
+80000000:	1000006f          	j	80000100 <_boot>
+
+Disassembly of section .test_end:
+
+80000086 <test_end>:
+80000086:	a001                	j	80000086 <test_end>
+
+Disassembly of section .text:
+
+80000100 <_boot>:
+80000100:	00001117          	auipc	sp,0x1
+80000104:	f0010113          	add	sp,sp,-256 # 80001000 <__stack_top>
+80000108:	30401073          	csrw	mie,zero
+8000010c:	30047073          	csrc	mstatus,8
+80000110:	00000297          	auipc	t0,0x0
+80000114:	04028293          	add	t0,t0,64 # 80000150 <trap_entry>
+80000118:	30529073          	csrw	mtvec,t0
+8000011c:	00000297          	auipc	t0,0x0
+80000120:	66428293          	add	t0,t0,1636 # 80000780 <kwt_diag>
+80000124:	00000317          	auipc	t1,0x0
+80000128:	69030313          	add	t1,t1,1680 # 800007b4 <__bss_end>
+8000012c:	0062f863          	bgeu	t0,t1,8000013c <_boot+0x3c>
+80000130:	0002a023          	sw	zero,0(t0)
+80000134:	00428293          	add	t0,t0,4
+80000138:	ff5ff06f          	j	8000012c <_boot+0x2c>
+8000013c:	00000097          	auipc	ra,0x0
+80000140:	63c080e7          	jalr	1596(ra) # 80000778 <main>
+80000144:	00050193          	mv	gp,a0
+80000148:	0ff0000f          	fence
+8000014c:	f3bff06f          	j	80000086 <test_end>
+
+80000150 <trap_entry>:
+80000150:	342025f3          	csrr	a1,mcause
+80000154:	34102673          	csrr	a2,mepc
+80000158:	343026f3          	csrr	a3,mtval
+8000015c:	0e000193          	li	gp,224
+80000160:	f27ff06f          	j	80000086 <test_end>
+
+80000164 <status_read>:
+80000164:	1141                	add	sp,sp,-16
+80000166:	4501                	li	a0,0
+80000168:	c606                	sw	ra,12(sp)
+8000016a:	00000097          	auipc	ra,0x0
+8000016e:	5f2080e7          	jalr	1522(ra) # 8000075c <kwt_read32>
+80000172:	40b2                	lw	ra,12(sp)
+80000174:	00000717          	auipc	a4,0x0
+80000178:	62a72223          	sw	a0,1572(a4) # 80000798 <kwt_diag+0x18>
+8000017c:	0141                	add	sp,sp,16
+8000017e:	8082                	ret
+
+80000180 <fail>:
+80000180:	1141                	add	sp,sp,-16
+80000182:	c422                	sw	s0,8(sp)
+80000184:	842a                	mv	s0,a0
+80000186:	4571                	li	a0,28
+80000188:	c606                	sw	ra,12(sp)
+8000018a:	00000097          	auipc	ra,0x0
+8000018e:	5d2080e7          	jalr	1490(ra) # 8000075c <kwt_read32>
+80000192:	00000797          	auipc	a5,0x0
+80000196:	60a7a523          	sw	a0,1546(a5) # 8000079c <kwt_diag+0x1c>
+8000019a:	40b2                	lw	ra,12(sp)
+8000019c:	8522                	mv	a0,s0
+8000019e:	4422                	lw	s0,8(sp)
+800001a0:	0141                	add	sp,sp,16
+800001a2:	8082                	ret
+
+800001a4 <drain_block>:
+800001a4:	7179                	add	sp,sp,-48
+800001a6:	ce4e                	sw	s3,28(sp)
+800001a8:	00000997          	auipc	s3,0x0
+800001ac:	5d898993          	add	s3,s3,1496 # 80000780 <kwt_diag>
+800001b0:	d422                	sw	s0,40(sp)
+800001b2:	d04a                	sw	s2,32(sp)
+800001b4:	0049a403          	lw	s0,4(s3)
+800001b8:	4965                	li	s2,25
+800001ba:	03247933          	remu	s2,s0,s2
+800001be:	cc52                	sw	s4,24(sp)
+800001c0:	d606                	sw	ra,44(sp)
+800001c2:	d226                	sw	s1,36(sp)
+800001c4:	ca56                	sw	s5,20(sp)
+800001c6:	c85a                	sw	s6,16(sp)
+800001c8:	c65e                	sw	s7,12(sp)
+800001ca:	c462                	sw	s8,8(sp)
+800001cc:	47e1                	li	a5,24
+800001ce:	03000a13          	li	s4,48
+800001d2:	00f90463          	beq	s2,a5,800001da <drain_block+0x36>
+800001d6:	04000a13          	li	s4,64
+800001da:	18f00793          	li	a5,399
+800001de:	0287f363          	bgeu	a5,s0,80000204 <drain_block+0x60>
+800001e2:	05000513          	li	a0,80
+800001e6:	5422                	lw	s0,40(sp)
+800001e8:	50b2                	lw	ra,44(sp)
+800001ea:	5492                	lw	s1,36(sp)
+800001ec:	5902                	lw	s2,32(sp)
+800001ee:	49f2                	lw	s3,28(sp)
+800001f0:	4a62                	lw	s4,24(sp)
+800001f2:	4ad2                	lw	s5,20(sp)
+800001f4:	4b42                	lw	s6,16(sp)
+800001f6:	4bb2                	lw	s7,12(sp)
+800001f8:	4c22                	lw	s8,8(sp)
+800001fa:	6145                	add	sp,sp,48
+800001fc:	00000317          	auipc	t1,0x0
+80000200:	f8430067          	jr	-124(t1) # 80000180 <fail>
+80000204:	02000513          	li	a0,32
+80000208:	00000097          	auipc	ra,0x0
+8000020c:	554080e7          	jalr	1364(ra) # 8000075c <kwt_read32>
+80000210:	512007b7          	lui	a5,0x51200
+80000214:	07c1                	add	a5,a5,16 # 51200010 <_start-0x2edffff0>
+80000216:	fcf516e3          	bne	a0,a5,800001e2 <drain_block+0x3e>
+8000021a:	02800513          	li	a0,40
+8000021e:	00000097          	auipc	ra,0x0
+80000222:	53e080e7          	jalr	1342(ra) # 8000075c <kwt_read32>
+80000226:	00140a93          	add	s5,s0,1
+8000022a:	01550563          	beq	a0,s5,80000234 <drain_block+0x90>
+8000022e:	05100513          	li	a0,81
+80000232:	bf55                	j	800001e6 <drain_block+0x42>
+80000234:	47e5                	li	a5,25
+80000236:	02f45433          	divu	s0,s0,a5
+8000023a:	02400513          	li	a0,36
+8000023e:	00000097          	auipc	ra,0x0
+80000242:	51e080e7          	jalr	1310(ra) # 8000075c <kwt_read32>
+80000246:	090a                	sll	s2,s2,0x2
+80000248:	010a1713          	sll	a4,s4,0x10
+8000024c:	00841793          	sll	a5,s0,0x8
+80000250:	0127e7b3          	or	a5,a5,s2
+80000254:	8fd9                	or	a5,a5,a4
+80000256:	fcf51ce3          	bne	a0,a5,8000022e <drain_block+0x8a>
+8000025a:	02c00513          	li	a0,44
+8000025e:	00000097          	auipc	ra,0x0
+80000262:	4fe080e7          	jalr	1278(ra) # 8000075c <kwt_read32>
+80000266:	c501                	beqz	a0,8000026e <drain_block+0xca>
+80000268:	05200513          	li	a0,82
+8000026c:	bfad                	j	800001e6 <drain_block+0x42>
+8000026e:	00441493          	sll	s1,s0,0x4
+80000272:	4b01                	li	s6,0
+80000274:	28008bb7          	lui	s7,0x28008
+80000278:	004b5413          	srl	s0,s6,0x4
+8000027c:	03000513          	li	a0,48
+80000280:	00000097          	auipc	ra,0x0
+80000284:	4dc080e7          	jalr	1244(ra) # 8000075c <kwt_read32>
+80000288:	00fb7c13          	and	s8,s6,15
+8000028c:	944a                	add	s0,s0,s2
+8000028e:	9c26                	add	s8,s8,s1
+80000290:	00841793          	sll	a5,s0,0x8
+80000294:	97e2                	add	a5,a5,s8
+80000296:	00f9a623          	sw	a5,12(s3)
+8000029a:	97de                	add	a5,a5,s7
+8000029c:	85aa                	mv	a1,a0
+8000029e:	00a9aa23          	sw	a0,20(s3)
+800002a2:	00279513          	sll	a0,a5,0x2
+800002a6:	00000097          	auipc	ra,0x0
+800002aa:	4ae080e7          	jalr	1198(ra) # 80000754 <shared_write32>
+800002ae:	0089a783          	lw	a5,8(s3)
+800002b2:	0785                	add	a5,a5,1
+800002b4:	00f9a423          	sw	a5,8(s3)
+800002b8:	0b05                	add	s6,s6,1
+800002ba:	fb6a1fe3          	bne	s4,s6,80000278 <drain_block+0xd4>
+800002be:	02c00513          	li	a0,44
+800002c2:	00000097          	auipc	ra,0x0
+800002c6:	49a080e7          	jalr	1178(ra) # 8000075c <kwt_read32>
+800002ca:	01450563          	beq	a0,s4,800002d4 <drain_block+0x130>
+800002ce:	05500513          	li	a0,85
+800002d2:	bf11                	j	800001e6 <drain_block+0x42>
+800002d4:	512005b7          	lui	a1,0x51200
+800002d8:	05c1                	add	a1,a1,16 # 51200010 <_start-0x2edffff0>
+800002da:	03400513          	li	a0,52
+800002de:	00000097          	auipc	ra,0x0
+800002e2:	48c080e7          	jalr	1164(ra) # 8000076a <kwt_write32>
+800002e6:	85d6                	mv	a1,s5
+800002e8:	03800513          	li	a0,56
+800002ec:	00000097          	auipc	ra,0x0
+800002f0:	47e080e7          	jalr	1150(ra) # 8000076a <kwt_write32>
+800002f4:	85d2                	mv	a1,s4
+800002f6:	03c00513          	li	a0,60
+800002fa:	00000097          	auipc	ra,0x0
+800002fe:	470080e7          	jalr	1136(ra) # 8000076a <kwt_write32>
+80000302:	04000513          	li	a0,64
+80000306:	4585                	li	a1,1
+80000308:	00000097          	auipc	ra,0x0
+8000030c:	462080e7          	jalr	1122(ra) # 8000076a <kwt_write32>
+80000310:	50b2                	lw	ra,44(sp)
+80000312:	0159a223          	sw	s5,4(s3)
+80000316:	5422                	lw	s0,40(sp)
+80000318:	5492                	lw	s1,36(sp)
+8000031a:	5902                	lw	s2,32(sp)
+8000031c:	49f2                	lw	s3,28(sp)
+8000031e:	4a62                	lw	s4,24(sp)
+80000320:	4ad2                	lw	s5,20(sp)
+80000322:	4b42                	lw	s6,16(sp)
+80000324:	4bb2                	lw	s7,12(sp)
+80000326:	4c22                	lw	s8,8(sp)
+80000328:	4501                	li	a0,0
+8000032a:	6145                	add	sp,sp,48
+8000032c:	8082                	ret
+
+8000032e <send_command>:
+8000032e:	1141                	add	sp,sp,-16
+80000330:	10056793          	or	a5,a0,256
+80000334:	c04a                	sw	s2,0(sp)
+80000336:	892a                	mv	s2,a0
+80000338:	4541                	li	a0,16
+8000033a:	c606                	sw	ra,12(sp)
+8000033c:	c422                	sw	s0,8(sp)
+8000033e:	c226                	sw	s1,4(sp)
+80000340:	8432                	mv	s0,a2
+80000342:	00000717          	auipc	a4,0x0
+80000346:	42f72f23          	sw	a5,1086(a4) # 80000780 <kwt_diag>
+8000034a:	00000097          	auipc	ra,0x0
+8000034e:	420080e7          	jalr	1056(ra) # 8000076a <kwt_write32>
+80000352:	85a2                	mv	a1,s0
+80000354:	4551                	li	a0,20
+80000356:	64e1                	lui	s1,0x18
+80000358:	00000097          	auipc	ra,0x0
+8000035c:	412080e7          	jalr	1042(ra) # 8000076a <kwt_write32>
+80000360:	6a048493          	add	s1,s1,1696 # 186a0 <_start-0x7ffe7960>
+80000364:	00000097          	auipc	ra,0x0
+80000368:	e00080e7          	jalr	-512(ra) # 80000164 <status_read>
+8000036c:	09057713          	and	a4,a0,144
+80000370:	cf01                	beqz	a4,80000388 <send_command+0x5a>
+80000372:	04100513          	li	a0,65
+80000376:	4422                	lw	s0,8(sp)
+80000378:	40b2                	lw	ra,12(sp)
+8000037a:	4492                	lw	s1,4(sp)
+8000037c:	4902                	lw	s2,0(sp)
+8000037e:	0141                	add	sp,sp,16
+80000380:	00000317          	auipc	t1,0x0
+80000384:	e0030067          	jr	-512(t1) # 80000180 <fail>
+80000388:	02057413          	and	s0,a0,32
+8000038c:	cc11                	beqz	s0,800003a8 <send_command+0x7a>
+8000038e:	00000097          	auipc	ra,0x0
+80000392:	e16080e7          	jalr	-490(ra) # 800001a4 <drain_block>
+80000396:	842a                	mv	s0,a0
+80000398:	c115                	beqz	a0,800003bc <send_command+0x8e>
+8000039a:	8522                	mv	a0,s0
+8000039c:	40b2                	lw	ra,12(sp)
+8000039e:	4422                	lw	s0,8(sp)
+800003a0:	4492                	lw	s1,4(sp)
+800003a2:	4902                	lw	s2,0(sp)
+800003a4:	0141                	add	sp,sp,16
+800003a6:	8082                	ret
+800003a8:	00157793          	and	a5,a0,1
+800003ac:	cb81                	beqz	a5,800003bc <send_command+0x8e>
+800003ae:	85ca                	mv	a1,s2
+800003b0:	4561                	li	a0,24
+800003b2:	00000097          	auipc	ra,0x0
+800003b6:	3b8080e7          	jalr	952(ra) # 8000076a <kwt_write32>
+800003ba:	b7c5                	j	8000039a <send_command+0x6c>
+800003bc:	14fd                	add	s1,s1,-1
+800003be:	f0dd                	bnez	s1,80000364 <send_command+0x36>
+800003c0:	04200513          	li	a0,66
+800003c4:	bf4d                	j	80000376 <send_command+0x48>
+
+800003c6 <kwt_task_test>:
+800003c6:	7179                	add	sp,sp,-48
+800003c8:	d606                	sw	ra,44(sp)
+800003ca:	d422                	sw	s0,40(sp)
+800003cc:	d226                	sw	s1,36(sp)
+800003ce:	d04a                	sw	s2,32(sp)
+800003d0:	ce4e                	sw	s3,28(sp)
+800003d2:	cc52                	sw	s4,24(sp)
+800003d4:	ca56                	sw	s5,20(sp)
+800003d6:	c85a                	sw	s6,16(sp)
+800003d8:	c65e                	sw	s7,12(sp)
+800003da:	c462                	sw	s8,8(sp)
+800003dc:	00000097          	auipc	ra,0x0
+800003e0:	d88080e7          	jalr	-632(ra) # 80000164 <status_read>
+800003e4:	09057793          	and	a5,a0,144
+800003e8:	c781                	beqz	a5,800003f0 <kwt_task_test+0x2a>
+800003ea:	04100513          	li	a0,65
+800003ee:	a039                	j	800003fc <kwt_task_test+0x36>
+800003f0:	4785                	li	a5,1
+800003f2:	89aa                	mv	s3,a0
+800003f4:	02f50363          	beq	a0,a5,8000041a <kwt_task_test+0x54>
+800003f8:	04000513          	li	a0,64
+800003fc:	5422                	lw	s0,40(sp)
+800003fe:	50b2                	lw	ra,44(sp)
+80000400:	5492                	lw	s1,36(sp)
+80000402:	5902                	lw	s2,32(sp)
+80000404:	49f2                	lw	s3,28(sp)
+80000406:	4a62                	lw	s4,24(sp)
+80000408:	4ad2                	lw	s5,20(sp)
+8000040a:	4b42                	lw	s6,16(sp)
+8000040c:	4bb2                	lw	s7,12(sp)
+8000040e:	4c22                	lw	s8,8(sp)
+80000410:	6145                	add	sp,sp,48
+80000412:	00000317          	auipc	t1,0x0
+80000416:	d6e30067          	jr	-658(t1) # 80000180 <fail>
+8000041a:	4571                	li	a0,28
+8000041c:	00000097          	auipc	ra,0x0
+80000420:	340080e7          	jalr	832(ra) # 8000075c <kwt_read32>
+80000424:	f971                	bnez	a0,800003f8 <kwt_task_test+0x32>
+80000426:	512005b7          	lui	a1,0x51200
+8000042a:	05c1                	add	a1,a1,16 # 51200010 <_start-0x2edffff0>
+8000042c:	4511                	li	a0,4
+8000042e:	00000097          	auipc	ra,0x0
+80000432:	33c080e7          	jalr	828(ra) # 8000076a <kwt_write32>
+80000436:	4589                	li	a1,2
+80000438:	4521                	li	a0,8
+8000043a:	00000097          	auipc	ra,0x0
+8000043e:	330080e7          	jalr	816(ra) # 8000076a <kwt_write32>
+80000442:	4581                	li	a1,0
+80000444:	4531                	li	a0,12
+80000446:	00000097          	auipc	ra,0x0
+8000044a:	324080e7          	jalr	804(ra) # 8000076a <kwt_write32>
+8000044e:	4601                	li	a2,0
+80000450:	4581                	li	a1,0
+80000452:	4501                	li	a0,0
+80000454:	00000097          	auipc	ra,0x0
+80000458:	eda080e7          	jalr	-294(ra) # 8000032e <send_command>
+8000045c:	842a                	mv	s0,a0
+8000045e:	14051063          	bnez	a0,8000059e <kwt_task_test+0x1d8>
+80000462:	6909                	lui	s2,0x2
+80000464:	a0000a37          	lui	s4,0xa0000
+80000468:	8c090913          	add	s2,s2,-1856 # 18c0 <_start-0x7fffe740>
+8000046c:	00241513          	sll	a0,s0,0x2
+80000470:	9552                	add	a0,a0,s4
+80000472:	00000097          	auipc	ra,0x0
+80000476:	2da080e7          	jalr	730(ra) # 8000074c <shared_read32>
+8000047a:	862a                	mv	a2,a0
+8000047c:	85a2                	mv	a1,s0
+8000047e:	4505                	li	a0,1
+80000480:	00000097          	auipc	ra,0x0
+80000484:	eae080e7          	jalr	-338(ra) # 8000032e <send_command>
+80000488:	84aa                	mv	s1,a0
+8000048a:	18051763          	bnez	a0,80000618 <kwt_task_test+0x252>
+8000048e:	0405                	add	s0,s0,1
+80000490:	fd241ee3          	bne	s0,s2,8000046c <kwt_task_test+0xa6>
+80000494:	28006a37          	lui	s4,0x28006
+80000498:	28002ab7          	lui	s5,0x28002
+8000049c:	40000b13          	li	s6,1024
+800004a0:	85a6                	mv	a1,s1
+800004a2:	4531                	li	a0,12
+800004a4:	00000097          	auipc	ra,0x0
+800004a8:	2c6080e7          	jalr	710(ra) # 8000076a <kwt_write32>
+800004ac:	4601                	li	a2,0
+800004ae:	4581                	li	a1,0
+800004b0:	4509                	li	a0,2
+800004b2:	00000097          	auipc	ra,0x0
+800004b6:	e7c080e7          	jalr	-388(ra) # 8000032e <send_command>
+800004ba:	842a                	mv	s0,a0
+800004bc:	e16d                	bnez	a0,8000059e <kwt_task_test+0x1d8>
+800004be:	ff047793          	and	a5,s0,-16
+800004c2:	97a6                	add	a5,a5,s1
+800004c4:	00f47713          	and	a4,s0,15
+800004c8:	9756                	add	a4,a4,s5
+800004ca:	0792                	sll	a5,a5,0x4
+800004cc:	97ba                	add	a5,a5,a4
+800004ce:	00279513          	sll	a0,a5,0x2
+800004d2:	00000097          	auipc	ra,0x0
+800004d6:	27a080e7          	jalr	634(ra) # 8000074c <shared_read32>
+800004da:	862a                	mv	a2,a0
+800004dc:	85a2                	mv	a1,s0
+800004de:	450d                	li	a0,3
+800004e0:	00000097          	auipc	ra,0x0
+800004e4:	e4e080e7          	jalr	-434(ra) # 8000032e <send_command>
+800004e8:	892a                	mv	s2,a0
+800004ea:	12051963          	bnez	a0,8000061c <kwt_task_test+0x256>
+800004ee:	0405                	add	s0,s0,1
+800004f0:	fd6417e3          	bne	s0,s6,800004be <kwt_task_test+0xf8>
+800004f4:	002a1b93          	sll	s7,s4,0x2
+800004f8:	4c41                	li	s8,16
+800004fa:	855e                	mv	a0,s7
+800004fc:	00000097          	auipc	ra,0x0
+80000500:	250080e7          	jalr	592(ra) # 8000074c <shared_read32>
+80000504:	862a                	mv	a2,a0
+80000506:	85ca                	mv	a1,s2
+80000508:	4511                	li	a0,4
+8000050a:	00000097          	auipc	ra,0x0
+8000050e:	e24080e7          	jalr	-476(ra) # 8000032e <send_command>
+80000512:	842a                	mv	s0,a0
+80000514:	e549                	bnez	a0,8000059e <kwt_task_test+0x1d8>
+80000516:	0905                	add	s2,s2,1
+80000518:	0b91                	add	s7,s7,4 # 28008004 <_start-0x57ff7ffc>
+8000051a:	ff8910e3          	bne	s2,s8,800004fa <kwt_task_test+0x134>
+8000051e:	4601                	li	a2,0
+80000520:	4581                	li	a1,0
+80000522:	4515                	li	a0,5
+80000524:	00000097          	auipc	ra,0x0
+80000528:	e0a080e7          	jalr	-502(ra) # 8000032e <send_command>
+8000052c:	892a                	mv	s2,a0
+8000052e:	e57d                	bnez	a0,8000061c <kwt_task_test+0x256>
+80000530:	ccb1                	beqz	s1,8000058c <kwt_task_test+0x1c6>
+80000532:	0485                	add	s1,s1,1
+80000534:	47c1                	li	a5,16
+80000536:	0a41                	add	s4,s4,16 # 28006010 <_start-0x57ff9ff0>
+80000538:	f6f494e3          	bne	s1,a5,800004a0 <kwt_task_test+0xda>
+8000053c:	00000497          	auipc	s1,0x0
+80000540:	24448493          	add	s1,s1,580 # 80000780 <kwt_diag>
+80000544:	20000793          	li	a5,512
+80000548:	6a61                	lui	s4,0x18
+8000054a:	c09c                	sw	a5,0(s1)
+8000054c:	18f00a93          	li	s5,399
+80000550:	6a0a0a13          	add	s4,s4,1696 # 186a0 <_start-0x7ffe7960>
+80000554:	40dc                	lw	a5,4(s1)
+80000556:	06faf163          	bgeu	s5,a5,800005b8 <kwt_task_test+0x1f2>
+8000055a:	30000793          	li	a5,768
+8000055e:	6461                	lui	s0,0x18
+80000560:	c09c                	sw	a5,0(s1)
+80000562:	6a040413          	add	s0,s0,1696 # 186a0 <_start-0x7ffe7960>
+80000566:	00000097          	auipc	ra,0x0
+8000056a:	bfe080e7          	jalr	-1026(ra) # 80000164 <status_read>
+8000056e:	09057793          	and	a5,a0,144
+80000572:	e6079ce3          	bnez	a5,800003ea <kwt_task_test+0x24>
+80000576:	00857793          	and	a5,a0,8
+8000057a:	cbd1                	beqz	a5,8000060e <kwt_task_test+0x248>
+8000057c:	02657793          	and	a5,a0,38
+80000580:	4711                	li	a4,4
+80000582:	06e78563          	beq	a5,a4,800005ec <kwt_task_test+0x226>
+80000586:	05700513          	li	a0,87
+8000058a:	bd8d                	j	800003fc <kwt_task_test+0x36>
+8000058c:	4601                	li	a2,0
+8000058e:	4581                	li	a1,0
+80000590:	4519                	li	a0,6
+80000592:	00000097          	auipc	ra,0x0
+80000596:	d9c080e7          	jalr	-612(ra) # 8000032e <send_command>
+8000059a:	842a                	mv	s0,a0
+8000059c:	d959                	beqz	a0,80000532 <kwt_task_test+0x16c>
+8000059e:	8522                	mv	a0,s0
+800005a0:	50b2                	lw	ra,44(sp)
+800005a2:	5422                	lw	s0,40(sp)
+800005a4:	5492                	lw	s1,36(sp)
+800005a6:	5902                	lw	s2,32(sp)
+800005a8:	49f2                	lw	s3,28(sp)
+800005aa:	4a62                	lw	s4,24(sp)
+800005ac:	4ad2                	lw	s5,20(sp)
+800005ae:	4b42                	lw	s6,16(sp)
+800005b0:	4bb2                	lw	s7,12(sp)
+800005b2:	4c22                	lw	s8,8(sp)
+800005b4:	6145                	add	sp,sp,48
+800005b6:	8082                	ret
+800005b8:	00000097          	auipc	ra,0x0
+800005bc:	bac080e7          	jalr	-1108(ra) # 80000164 <status_read>
+800005c0:	09057793          	and	a5,a0,144
+800005c4:	e20793e3          	bnez	a5,800003ea <kwt_task_test+0x24>
+800005c8:	02057513          	and	a0,a0,32
+800005cc:	c909                	beqz	a0,800005de <kwt_task_test+0x218>
+800005ce:	00000097          	auipc	ra,0x0
+800005d2:	bd6080e7          	jalr	-1066(ra) # 800001a4 <drain_block>
+800005d6:	842a                	mv	s0,a0
+800005d8:	f179                	bnez	a0,8000059e <kwt_task_test+0x1d8>
+800005da:	8922                	mv	s2,s0
+800005dc:	bfa5                	j	80000554 <kwt_task_test+0x18e>
+800005de:	00190413          	add	s0,s2,1
+800005e2:	ff441ce3          	bne	s0,s4,800005da <kwt_task_test+0x214>
+800005e6:	05600513          	li	a0,86
+800005ea:	bd09                	j	800003fc <kwt_task_test+0x36>
+800005ec:	6799                	lui	a5,0x6
+800005ee:	4498                	lw	a4,8(s1)
+800005f0:	30078793          	add	a5,a5,768 # 6300 <_start-0x7fff9d00>
+800005f4:	f8f719e3          	bne	a4,a5,80000586 <kwt_task_test+0x1c0>
+800005f8:	4571                	li	a0,28
+800005fa:	00000097          	auipc	ra,0x0
+800005fe:	162080e7          	jalr	354(ra) # 8000075c <kwt_read32>
+80000602:	f151                	bnez	a0,80000586 <kwt_task_test+0x1c0>
+80000604:	40000793          	li	a5,1024
+80000608:	c09c                	sw	a5,0(s1)
+8000060a:	844e                	mv	s0,s3
+8000060c:	bf49                	j	8000059e <kwt_task_test+0x1d8>
+8000060e:	147d                	add	s0,s0,-1
+80000610:	f839                	bnez	s0,80000566 <kwt_task_test+0x1a0>
+80000612:	05800513          	li	a0,88
+80000616:	b3dd                	j	800003fc <kwt_task_test+0x36>
+80000618:	842a                	mv	s0,a0
+8000061a:	b751                	j	8000059e <kwt_task_test+0x1d8>
+8000061c:	844a                	mv	s0,s2
+8000061e:	b741                	j	8000059e <kwt_task_test+0x1d8>
+
+80000620 <shared_task_test>:
+80000620:	1101                	add	sp,sp,-32
+80000622:	cc22                	sw	s0,24(sp)
+80000624:	ca26                	sw	s1,20(sp)
+80000626:	c84a                	sw	s2,16(sp)
+80000628:	ce06                	sw	ra,28(sp)
+8000062a:	c64e                	sw	s3,12(sp)
+8000062c:	c452                	sw	s4,8(sp)
+8000062e:	c256                	sw	s5,4(sp)
+80000630:	c05a                	sw	s6,0(sp)
+80000632:	00000417          	auipc	s0,0x0
+80000636:	16e40413          	add	s0,s0,366 # 800007a0 <shared_diag>
+8000063a:	10000793          	li	a5,256
+8000063e:	a0039937          	lui	s2,0xa0039
+80000642:	c01c                	sw	a5,0(s0)
+80000644:	a00204b7          	lui	s1,0xa0020
+80000648:	c0090913          	add	s2,s2,-1024 # a0038c00 <__stack_top+0x20037c00>
+8000064c:	deadc5b7          	lui	a1,0xdeadc
+80000650:	8526                	mv	a0,s1
+80000652:	eef58593          	add	a1,a1,-273 # deadbeef <__stack_top+0x5eadaeef>
+80000656:	0491                	add	s1,s1,4 # a0020004 <__stack_top+0x2001f004>
+80000658:	00000097          	auipc	ra,0x0
+8000065c:	0fc080e7          	jalr	252(ra) # 80000754 <shared_write32>
+80000660:	ff2496e3          	bne	s1,s2,8000064c <shared_task_test+0x2c>
+80000664:	1357a5b7          	lui	a1,0x1357a
+80000668:	a0020537          	lui	a0,0xa0020
+8000066c:	bdf58593          	add	a1,a1,-1057 # 13579bdf <_start-0x6ca86421>
+80000670:	1571                	add	a0,a0,-4 # a001fffc <__stack_top+0x2001effc>
+80000672:	00000097          	auipc	ra,0x0
+80000676:	0e2080e7          	jalr	226(ra) # 80000754 <shared_write32>
+8000067a:	2468b5b7          	lui	a1,0x2468b
+8000067e:	8526                	mv	a0,s1
+80000680:	ce058593          	add	a1,a1,-800 # 2468ace0 <_start-0x5b975320>
+80000684:	00000097          	auipc	ra,0x0
+80000688:	0d0080e7          	jalr	208(ra) # 80000754 <shared_write32>
+8000068c:	20000793          	li	a5,512
+80000690:	c01c                	sw	a5,0(s0)
+80000692:	00000097          	auipc	ra,0x0
+80000696:	d34080e7          	jalr	-716(ra) # 800003c6 <kwt_task_test>
+8000069a:	4785                	li	a5,1
+8000069c:	84aa                	mv	s1,a0
+8000069e:	06f51763          	bne	a0,a5,8000070c <shared_task_test+0xec>
+800006a2:	30000793          	li	a5,768
+800006a6:	6a99                	lui	s5,0x6
+800006a8:	c01c                	sw	a5,0(s0)
+800006aa:	a00209b7          	lui	s3,0xa0020
+800006ae:	4901                	li	s2,0
+800006b0:	00020b37          	lui	s6,0x20
+800006b4:	9abe                	add	s5,s5,a5
+800006b6:	854e                	mv	a0,s3
+800006b8:	00000097          	auipc	ra,0x0
+800006bc:	094080e7          	jalr	148(ra) # 8000074c <shared_read32>
+800006c0:	8a2a                	mv	s4,a0
+800006c2:	01698533          	add	a0,s3,s6
+800006c6:	00000097          	auipc	ra,0x0
+800006ca:	086080e7          	jalr	134(ra) # 8000074c <shared_read32>
+800006ce:	01242423          	sw	s2,8(s0)
+800006d2:	01442823          	sw	s4,16(s0)
+800006d6:	c448                	sw	a0,12(s0)
+800006d8:	06aa1763          	bne	s4,a0,80000746 <shared_task_test+0x126>
+800006dc:	0905                	add	s2,s2,1
+800006de:	01242223          	sw	s2,4(s0)
+800006e2:	0991                	add	s3,s3,4 # a0020004 <__stack_top+0x2001f004>
+800006e4:	fd5919e3          	bne	s2,s5,800006b6 <shared_task_test+0x96>
+800006e8:	a0020537          	lui	a0,0xa0020
+800006ec:	40000793          	li	a5,1024
+800006f0:	1571                	add	a0,a0,-4 # a001fffc <__stack_top+0x2001effc>
+800006f2:	c01c                	sw	a5,0(s0)
+800006f4:	00000097          	auipc	ra,0x0
+800006f8:	058080e7          	jalr	88(ra) # 8000074c <shared_read32>
+800006fc:	1357a7b7          	lui	a5,0x1357a
+80000700:	bdf78793          	add	a5,a5,-1057 # 13579bdf <_start-0x6ca86421>
+80000704:	00f50f63          	beq	a0,a5,80000722 <shared_task_test+0x102>
+80000708:	07100493          	li	s1,113
+8000070c:	40f2                	lw	ra,28(sp)
+8000070e:	4462                	lw	s0,24(sp)
+80000710:	8526                	mv	a0,s1
+80000712:	4942                	lw	s2,16(sp)
+80000714:	44d2                	lw	s1,20(sp)
+80000716:	49b2                	lw	s3,12(sp)
+80000718:	4a22                	lw	s4,8(sp)
+8000071a:	4a92                	lw	s5,4(sp)
+8000071c:	4b02                	lw	s6,0(sp)
+8000071e:	6105                	add	sp,sp,32
+80000720:	8082                	ret
+80000722:	a0039537          	lui	a0,0xa0039
+80000726:	c0050513          	add	a0,a0,-1024 # a0038c00 <__stack_top+0x20037c00>
+8000072a:	00000097          	auipc	ra,0x0
+8000072e:	022080e7          	jalr	34(ra) # 8000074c <shared_read32>
+80000732:	2468b7b7          	lui	a5,0x2468b
+80000736:	ce078793          	add	a5,a5,-800 # 2468ace0 <_start-0x5b975320>
+8000073a:	fcf517e3          	bne	a0,a5,80000708 <shared_task_test+0xe8>
+8000073e:	50000793          	li	a5,1280
+80000742:	c01c                	sw	a5,0(s0)
+80000744:	b7e1                	j	8000070c <shared_task_test+0xec>
+80000746:	07000493          	li	s1,112
+8000074a:	b7c9                	j	8000070c <shared_task_test+0xec>
+
+8000074c <shared_read32>:
+8000074c:	4108                	lw	a0,0(a0)
+8000074e:	0ff0000f          	fence
+80000752:	8082                	ret
+
+80000754 <shared_write32>:
+80000754:	c10c                	sw	a1,0(a0)
+80000756:	0ff0000f          	fence
+8000075a:	8082                	ret
+
+8000075c <kwt_read32>:
+8000075c:	110007b7          	lui	a5,0x11000
+80000760:	953e                	add	a0,a0,a5
+80000762:	4108                	lw	a0,0(a0)
+80000764:	0ff0000f          	fence
+80000768:	8082                	ret
+
+8000076a <kwt_write32>:
+8000076a:	110007b7          	lui	a5,0x11000
+8000076e:	953e                	add	a0,a0,a5
+80000770:	c10c                	sw	a1,0(a0)
+80000772:	0ff0000f          	fence
+80000776:	8082                	ret
+
+80000778 <main>:
+80000778:	00000317          	auipc	t1,0x0
+8000077c:	ea830067          	jr	-344(t1) # 80000620 <shared_task_test>
