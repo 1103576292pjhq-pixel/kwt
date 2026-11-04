@@ -1,0 +1,91 @@
+[
+  {
+    "argv": [
+      "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-gcc",
+      "-std=c11",
+      "-O2",
+      "-flto",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-march=rv32imac_zicsr_zifencei",
+      "-mabi=ilp32",
+      "-mcmodel=medany",
+      "-msmall-data-limit=0",
+      "-mno-relax",
+      "-ffreestanding",
+      "-fno-builtin",
+      "-fno-pic",
+      "-fno-stack-protector",
+      "-fstack-usage",
+      "-nostdlib",
+      "-nostartfiles",
+      "-Wl,--build-id=none",
+      "-Wl,--no-relax",
+      "-Wl,-Map=/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.map",
+      "-T",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/link.ld",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/start.S",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/task_test.c",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/shared_task.c",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/real_io.c",
+      "-o",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.elf"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-nm",
+      "-n",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.elf"
+    ],
+    "returncode": 0,
+    "stdout": "80000000 T _start\n80000086 T test_end\n80000100 T _boot\n80000150 T trap_entry\n80000164 T main\n80000374 B __bss_start\n80000374 b shared_diag\n80000388 b kwt_diag\n800003a8 B __bss_end\n80001000 A __stack_top\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-nm",
+      "-u",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.elf"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-objdump",
+      "-d",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.elf"
+    ],
+    "returncode": 0,
+    "stdout": "\n/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.elf:     file format elf32-littleriscv\n\n\nDisassembly of section .entry:\n\n80000000 <_start>:\n80000000:\t1000006f          \tj\t80000100 <_boot>\n\nDisassembly of section .test_end:\n\n80000086 <test_end>:\n80000086:\ta001                \tj\t80000086 <test_end>\n\nDisassembly of section .text:\n\n80000100 <_boot>:\n80000100:\t00001117          \tauipc\tsp,0x1\n80000104:\tf0010113          \tadd\tsp,sp,-256 # 80001000 <__stack_top>\n80000108:\t30401073          \tcsrw\tmie,zero\n8000010c:\t30047073          \tcsrc\tmstatus,8\n80000110:\t00000297          \tauipc\tt0,0x0\n80000114:\t04028293          \tadd\tt0,t0,64 # 80000150 <trap_entry>\n80000118:\t30529073          \tcsrw\tmtvec,t0\n8000011c:\t00000297          \tauipc\tt0,0x0\n80000120:\t25828293          \tadd\tt0,t0,600 # 80000374 <shared_diag>\n80000124:\t00000317          \tauipc\tt1,0x0\n80000128:\t28430313          \tadd\tt1,t1,644 # 800003a8 <__bss_end>\n8000012c:\t0062f863          \tbgeu\tt0,t1,8000013c <_boot+0x3c>\n80000130:\t0002a023          \tsw\tzero,0(t0)\n80000134:\t00428293          \tadd\tt0,t0,4\n80000138:\tff5ff06f          \tj\t8000012c <_boot+0x2c>\n8000013c:\t00000097          \tauipc\tra,0x0\n80000140:\t028080e7          \tjalr\t40(ra) # 80000164 <main>\n80000144:\t00050193          \tmv\tgp,a0\n80000148:\t0ff0000f          \tfence\n8000014c:\tf3bff06f          \tj\t80000086 <test_end>\n\n80000150 <trap_entry>:\n80000150:\t342025f3          \tcsrr\ta1,mcause\n80000154:\t34102673          \tcsrr\ta2,mepc\n80000158:\t343026f3          \tcsrr\ta3,mtval\n8000015c:\t0e000193          \tli\tgp,224\n80000160:\tf27ff06f          \tj\t80000086 <test_end>\n\n80000164 <main>:\n80000164:\t10000793          \tli\ta5,256\n80000168:\t00000617          \tauipc\ta2,0x0\n8000016c:\t20c60613          \tadd\ta2,a2,524 # 80000374 <shared_diag>\n80000170:\tdeadc6b7          \tlui\ta3,0xdeadc\n80000174:\ta0039737          \tlui\ta4,0xa0039\n80000178:\tc21c                \tsw\ta5,0(a2)\n8000017a:\teef68693          \tadd\ta3,a3,-273 # deadbeef <__stack_top+0x5eadaeef>\n8000017e:\tc0070713          \tadd\ta4,a4,-1024 # a0038c00 <__stack_top+0x20037c00>\n80000182:\ta00207b7          \tlui\ta5,0xa0020\n80000186:\tc394                \tsw\ta3,0(a5)\n80000188:\t0ff0000f          \tfence\n8000018c:\t0791                \tadd\ta5,a5,4 # a0020004 <__stack_top+0x2001f004>\n8000018e:\tfee79ce3          \tbne\ta5,a4,80000186 <main+0x22>\n80000192:\t1357a6b7          \tlui\ta3,0x1357a\n80000196:\ta0020737          \tlui\ta4,0xa0020\n8000019a:\tbdf68693          \tadd\ta3,a3,-1057 # 13579bdf <_start-0x6ca86421>\n8000019e:\tfed72e23          \tsw\ta3,-4(a4) # a001fffc <__stack_top+0x2001effc>\n800001a2:\ta00206b7          \tlui\ta3,0xa0020\n800001a6:\t0ff0000f          \tfence\n800001aa:\t2468b737          \tlui\ta4,0x2468b\n800001ae:\tce070713          \tadd\ta4,a4,-800 # 2468ace0 <_start-0x5b975320>\n800001b2:\tc398                \tsw\ta4,0(a5)\n800001b4:\t0ff0000f          \tfence\n800001b8:\t20000793          \tli\ta5,512\n800001bc:\tc21c                \tsw\ta5,0(a2)\n800001be:\t110007b7          \tlui\ta5,0x11000\n800001c2:\t4398                \tlw\ta4,0(a5)\n800001c4:\t0ff0000f          \tfence\n800001c8:\t4b4457b7          \tlui\ta5,0x4b445\n800001cc:\td3178793          \tadd\ta5,a5,-719 # 4b444d31 <_start-0x34bbb2cf>\n800001d0:\t08000513          \tli\ta0,128\n800001d4:\t00f70363          \tbeq\ta4,a5,800001da <main+0x76>\n800001d8:\t8082                \tret\n800001da:\t110005b7          \tlui\ta1,0x11000\n800001de:\t0591                \tadd\ta1,a1,4 # 11000004 <_start-0x6efffffc>\n800001e0:\t419c                \tlw\ta5,0(a1)\n800001e2:\t0ff0000f          \tfence\n800001e6:\t8b85                \tand\ta5,a5,1\n800001e8:\t10079363          \tbnez\ta5,800002ee <main+0x18a>\n800001ec:\t110007b7          \tlui\ta5,0x11000\n800001f0:\ta0000737          \tlui\ta4,0xa0000\n800001f4:\tcb98                \tsw\ta4,16(a5)\n800001f6:\t0ff0000f          \tfence\n800001fa:\t110007b7          \tlui\ta5,0x11000\n800001fe:\ta0008737          \tlui\ta4,0xa0008\n80000202:\tcbd8                \tsw\ta4,20(a5)\n80000204:\t0ff0000f          \tfence\n80000208:\t110007b7          \tlui\ta5,0x11000\n8000020c:\ta0018737          \tlui\ta4,0xa0018\n80000210:\tcf98                \tsw\ta4,24(a5)\n80000212:\t0ff0000f          \tfence\n80000216:\t110007b7          \tlui\ta5,0x11000\n8000021a:\tcfd4                \tsw\ta3,28(a5)\n8000021c:\t0ff0000f          \tfence\n80000220:\t51200737          \tlui\ta4,0x51200\n80000224:\t110007b7          \tlui\ta5,0x11000\n80000228:\t0741                \tadd\ta4,a4,16 # 51200010 <_start-0x2edffff0>\n8000022a:\td398                \tsw\ta4,32(a5)\n8000022c:\t0ff0000f          \tfence\n80000230:\t110007b7          \tlui\ta5,0x11000\n80000234:\t4709                \tli\ta4,2\n80000236:\td3d8                \tsw\ta4,36(a5)\n80000238:\t0ff0000f          \tfence\n8000023c:\t110007b7          \tlui\ta5,0x11000\n80000240:\t4705                \tli\ta4,1\n80000242:\tc798                \tsw\ta4,8(a5)\n80000244:\t0ff0000f          \tfence\n80000248:\t000f47b7          \tlui\ta5,0xf4\n8000024c:\t24078793          \tadd\ta5,a5,576 # f4240 <_start-0x7ff0bdc0>\n80000250:\ta011                \tj\t80000254 <main+0xf0>\n80000252:\tc7ed                \tbeqz\ta5,8000033c <main+0x1d8>\n80000254:\t4198                \tlw\ta4,0(a1)\n80000256:\t0ff0000f          \tfence\n8000025a:\t00177693          \tand\ta3,a4,1\n8000025e:\t17fd                \tadd\ta5,a5,-1\n80000260:\tfaed                \tbnez\ta3,80000252 <main+0xee>\n80000262:\t110007b7          \tlui\ta5,0x11000\n80000266:\td658                \tsw\ta4,44(a2)\n80000268:\t5b94                \tlw\ta3,48(a5)\n8000026a:\t0ff0000f          \tfence\n8000026e:\t110007b7          \tlui\ta5,0x11000\n80000272:\tda14                \tsw\ta3,48(a2)\n80000274:\t5794                \tlw\ta3,40(a5)\n80000276:\t0ff0000f          \tfence\n8000027a:\t110007b7          \tlui\ta5,0x11000\n8000027e:\tce54                \tsw\ta3,28(a2)\n80000280:\t5bd4                \tlw\ta3,52(a5)\n80000282:\t0ff0000f          \tfence\n80000286:\t4789                \tli\ta5,2\n80000288:\tce14                \tsw\ta3,24(a2)\n8000028a:\t04f71f63          \tbne\ta4,a5,800002e8 <main+0x184>\n8000028e:\t5a1c                \tlw\ta5,48(a2)\n80000290:\tefa1                \tbnez\ta5,800002e8 <main+0x184>\n80000292:\t6699                \tlui\ta3,0x6\n80000294:\t30068693          \tadd\ta3,a3,768 # 6300 <_start-0x7fff9d00>\n80000298:\t4e58                \tlw\ta4,28(a2)\n8000029a:\t04d71763          \tbne\ta4,a3,800002e8 <main+0x184>\n8000029e:\t4e0c                \tlw\ta1,24(a2)\n800002a0:\t19000693          \tli\ta3,400\n800002a4:\t08200513          \tli\ta0,130\n800002a8:\tf2d598e3          \tbne\ta1,a3,800001d8 <main+0x74>\n800002ac:\t30000693          \tli\ta3,768\n800002b0:\t853a                \tmv\ta0,a4\n800002b2:\tc214                \tsw\ta3,0(a2)\n800002b4:\ta0020737          \tlui\ta4,0xa0020\n800002b8:\t00020837          \tlui\ta6,0x20\n800002bc:\ta029                \tj\t800002c6 <main+0x162>\n800002be:\tc25c                \tsw\ta5,4(a2)\n800002c0:\t0711                \tadd\ta4,a4,4 # a0020004 <__stack_top+0x2001f004>\n800002c2:\t02a78963          \tbeq\ta5,a0,800002f4 <main+0x190>\n800002c6:\t4314                \tlw\ta3,0(a4)\n800002c8:\t0ff0000f          \tfence\n800002cc:\t010705b3          \tadd\ta1,a4,a6\n800002d0:\t418c                \tlw\ta1,0(a1)\n800002d2:\t0ff0000f          \tfence\n800002d6:\tc61c                \tsw\ta5,8(a2)\n800002d8:\tca14                \tsw\ta3,16(a2)\n800002da:\tc64c                \tsw\ta1,12(a2)\n800002dc:\t0785                \tadd\ta5,a5,1 # 11000001 <_start-0x6effffff>\n800002de:\tfed580e3          \tbeq\ta1,a3,800002be <main+0x15a>\n800002e2:\t07000513          \tli\ta0,112\n800002e6:\t8082                \tret\n800002e8:\t08200513          \tli\ta0,130\n800002ec:\t8082                \tret\n800002ee:\t08100513          \tli\ta0,129\n800002f2:\t8082                \tret\n800002f4:\t40000713          \tli\ta4,1024\n800002f8:\ta00207b7          \tlui\ta5,0xa0020\n800002fc:\tc218                \tsw\ta4,0(a2)\n800002fe:\t17f1                \tadd\ta5,a5,-4 # a001fffc <__stack_top+0x2001effc>\n80000300:\t4398                \tlw\ta4,0(a5)\n80000302:\t0ff0000f          \tfence\n80000306:\t1357a7b7          \tlui\ta5,0x1357a\n8000030a:\tbdf78793          \tadd\ta5,a5,-1057 # 13579bdf <_start-0x6ca86421>\n8000030e:\t00f70563          \tbeq\ta4,a5,80000318 <main+0x1b4>\n80000312:\t07100513          \tli\ta0,113\n80000316:\t8082                \tret\n80000318:\ta00397b7          \tlui\ta5,0xa0039\n8000031c:\tc0078793          \tadd\ta5,a5,-1024 # a0038c00 <__stack_top+0x20037c00>\n80000320:\t4398                \tlw\ta4,0(a5)\n80000322:\t0ff0000f          \tfence\n80000326:\t2468b7b7          \tlui\ta5,0x2468b\n8000032a:\tce078793          \tadd\ta5,a5,-800 # 2468ace0 <_start-0x5b975320>\n8000032e:\tfef712e3          \tbne\ta4,a5,80000312 <main+0x1ae>\n80000332:\t50000793          \tli\ta5,1280\n80000336:\tc21c                \tsw\ta5,0(a2)\n80000338:\t4505                \tli\ta0,1\n8000033a:\t8082                \tret\n8000033c:\t110007b7          \tlui\ta5,0x11000\n80000340:\t4709                \tli\ta4,2\n80000342:\tc798                \tsw\ta4,8(a5)\n80000344:\t0ff0000f          \tfence\n80000348:\t000f4737          \tlui\ta4,0xf4\n8000034c:\t110006b7          \tlui\ta3,0x11000\n80000350:\t24070713          \tadd\ta4,a4,576 # f4240 <_start-0x7ff0bdc0>\n80000354:\t0691                \tadd\ta3,a3,4 # 11000004 <_start-0x6efffffc>\n80000356:\ta011                \tj\t8000035a <main+0x1f6>\n80000358:\tcb11                \tbeqz\ta4,8000036c <main+0x208>\n8000035a:\t429c                \tlw\ta5,0(a3)\n8000035c:\t0ff0000f          \tfence\n80000360:\t8b85                \tand\ta5,a5,1\n80000362:\t177d                \tadd\ta4,a4,-1\n80000364:\tfbf5                \tbnez\ta5,80000358 <main+0x1f4>\n80000366:\t08300513          \tli\ta0,131\n8000036a:\t8082                \tret\n8000036c:\t08400513          \tli\ta0,132\n80000370:\t8082                \tret\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-objcopy",
+      "-O",
+      "binary",
+      "--gap-fill=0",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.elf",
+      "/mnt/d/\u5d4c\u8d5b\u82af\u7247\u8bbe\u8ba1\u8d5b\u9053/kwt1-accelerator/integration/e203/dma_accelerator/firmware/build-01/real_shared_task.bin"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/home/juhui/.local/opt/nuclei-2024.06/gcc/bin/riscv64-unknown-elf-gcc",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "riscv64-unknown-elf-gcc (gbedea461d) 13.1.1 20230713\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "stderr": ""
+  }
+]
