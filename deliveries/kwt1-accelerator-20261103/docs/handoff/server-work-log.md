@@ -2,6 +2,8 @@
 
 更新：2026-11-04。按用户要求，只记清已做、正在做和未完成的事；具体证据放verification。
 
+> 当前状态以 [current-team-status.md](current-team-status.md) 为准。下文按时间追加，早期“尚未完成”和旧活动路径仅代表当时状态。
+
 ## 已完成
 
 - 独立FFN1加速器、内部SRAM封装和ICB接口。
@@ -114,3 +116,15 @@ DMA05根因确认：截图显示20根DMA声明被插到Apache版权块注释内�
 
 ## DMA12服务器完成
 用户截图确认12/12通过，每项554144周期，总6649728，304128输出，最大NRMSE 0.02214978%，150MHz归一化270.687763 task/s、平均3.694293ms；STA待完成。activity=all运行最终通过。原始report.json、总线细项及波形尚未取回，证据保存在verification/e203-dma-suite12-server-20261104-01。本轮已提醒测试结束可以整理目录，但未移动服务器文件。准备同步GitHub原交接分支。
+
+GitHub已同步：1103576292pjhq-pixel/kwt，handoff/ffn1-accelerator，提交ade948411e4272f98b81cb5edc7f99d549c31193。225文件变更（新增220，修改5），未删除文件、未改旧rtl/main/其他仓库目录。826文件交付完整性检查通过，更新ref使用旧head租约。服务器目录未移动；原始报告、访存细项和波形待取回。
+
+
+服务器正式版本提升：已准备tools/promote_dma_server.py及upload同名副本。本地模拟平台迁移检查通过：备份在工程外、正式RTL/镜像字节保持、旧根目录测试包移出、新runner/模板路径可解析；未冒充实际服务器迁移。脚本须核对DMA12完整PASS、包/RTL/固件/平台输入哈希后才执行，移走旧accelerator/旧SoC顶层及旧包，保留verification报告波形、当前共享SRAM与数据目录。新正式入口accelerator/run_suite.py，生产顶层rtl/e203/soc/kwt_dma_soc_top.v。服务器实际执行和迁移后三任务回归待用户运行。
+
+
+服务器正式目录迁移已验证：截图显示22目标526旧文件移出工程备份，PROMOTED；verification/dma_current_check_01三任务全部通过，每项554144周期，总1662432，输出76032，精度分别0.01590282%、0.01318576%、0.01737469%。新正式入口可用，原12任务指标保持。迁移回执仍写PENDING是脚本执行时历史状态，实际回归以本次报告为准。桌面独立kwt1-accelerator旧目录尚未归档；本条路径更新尚未同步GitHub。
+
+
+## 2026-11-04 迁移交接增量整理
+核对迁移后3任务回执和此前GitHub发布回执，修正当前状态表与README的旧活动路径，补充当前DMA综合入口并给旧综合/目录说明标记历史身份。未改RTL、固件、数值方案，未重跑已通过仿真，未重复服务器迁移。同步目标仍是原交接分支，实际提交见 upload/team-handoff-20261104-02/github-update-receipt.json。服务器原始报告、活动清单和详细总线计数仍待用户取回；旧桌面工程未移动。

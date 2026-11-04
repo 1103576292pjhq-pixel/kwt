@@ -2,6 +2,9 @@
 
 更新日期：2026-11-04。此文是给队友的当前入口；2026-11-03交接文档保留历史信息。
 
+> 2026-11-04 迁移后更新：服务器正式入口已提升为 accelerator/rtl、rtl/e203/soc/kwt_dma_soc_top.v 和 accelerator/run_suite.py。旧候选包目录已移出工程，以下旧路径仅供历史追溯。迁移后三任务 verification/dma_current_check_01 全部通过，每项554144周期，总1662432周期，76032输出。旧526文件/22目标归档到工程外 kwt-soc-before-dma-20261104-122733。原12任务成绩保留；本轮增量发布的实际提交以 upload/team-handoff-20261104-02/github-update-receipt.json 为准。
+
+
 ## 我们这轮做了什么
 
 1. 优化CPU搬运驱动和ICB接口，减少软件指令及寄存器访问开销。
@@ -16,11 +19,11 @@
 
 | 项目 | 状态 |
 |---|---|
-| DMA计算/搬运RTL | 本地与服务器候选包都有；服务器DMA06单任务已通过 |
+| DMA计算/搬运RTL | 本地维护目录保留；服务器已提升至 accelerator/rtl，12任务及迁移后3任务通过 |
 | DMA06单任务固件 | 882字节，固定case3层号；对应下表554138周期 |
 | 新12任务固件 | 900字节，从共享内存读取层号，并检查任务初始状态；服务器12任务全部通过 |
-| 原服务器accelerator/rtl和原SoC顶层 | 尚未用DMA版覆盖，仍是旧工程 |
-| GitHub交接分支 | 本轮正在更新到原交接分支；提交号以发布回执为准 |
+| 服务器正式RTL与SoC顶层 | accelerator/rtl 与 rtl/e203/soc/kwt_dma_soc_top.v；旧目标已移至工程外备份 |
+| GitHub交接分支 | ade9484 为迁移前发布；本轮迁移交接增量见新发布回执 |
 | 150MHz、面积、功耗和能耗 | 尚无新版综合/STA/功耗报告，不得填为通过 |
 
 计算仍为99×64乘64×256加偏置，400块、25344输出、1622016 MAC。
@@ -32,19 +35,22 @@
 本地根目录：`D:/嵌赛芯片设计赛道/kwt1-accelerator`。
 服务器根目录：`/storage1/2026contest/server2/s2_21usr/Desktop/e203-integration/kwt-soc`。
 
-| 用途 | 本地相对路径 | 服务器相对路径 |
+| 用途 | 本地相对路径 | 当前服务器相对路径 |
 |---|---|---|
-| DMA模块与原理说明 | integration/e203/dma_accelerator/ | dma_server_test_01/kwt-dma-server/rtl/dma/（源码副本） |
-| DMA06单任务环境维护版 | integration/e203/dma_server/ | dma_server_test_01/kwt-dma-server/ |
-| DMA06通过证据 | verification/e203-dma-server-20261104-01/ | verification/dma_soc_06/ |
-| 当前12任务测试环境、RTL副本、C源码和镜像 | integration/e203/dma_suite/ | dma_suite_test_01/kwt-dma-suite/ |
-| 实际上传12任务快照 | upload/dma-suite-20261104-01/kwt-dma-suite/ | dma_suite_test_01/kwt-dma-suite/ |
+| DMA模块维护及原理 | integration/e203/dma_accelerator/ | accelerator/rtl/dma/ |
+| 最新12任务环境维护版 | integration/e203/dma_suite/ | accelerator/ |
+| 生产SoC顶层 | 维护生成器 prepare_soc.py；不是服务器完整镜像 | rtl/e203/soc/kwt_dma_soc_top.v |
+| 测试入口 | integration/e203/dma_suite/run_suite.py（迁移前路径配置） | accelerator/run_suite.py |
+| DMA06历史证据 | verification/e203-dma-server-20261104-01/ | verification/dma_soc_06/ |
 | 12任务结果 | verification/e203-dma-suite12-server-20261104-01/（截图转录） | verification/dma_suite12_01/ |
-| 共享SRAM拼接RTL | 见旧服务器目录说明 | shared_sram_bundle_01/kwt-shared-sram-v2/rtl/ |
+| 迁移后3任务结果 | verification/e203-dma-promotion-server-20261104-01/（截图转录） | verification/dma_current_check_01/ |
+| 共享SRAM拼接RTL | integration/e203/shared_sram/rtl/ | shared_sram_bundle_01/kwt-shared-sram-v2/rtl/ |
 
-服务器历史包经过终端补丁，本地维护版已修复同一问题，但没有下载整个服务器目录逐字节镜像。
-最新12任务上传快照有完整SHA256清单，后续以它及结果目录的生成清单核对版本。
-不要直接把整个verification目录纳入综合，也不要用旧accelerator/rtl冒充DMA版。
+本地根 rtl/ 为历史实现；服务器 accelerator/rtl/ 已是当前DMA实现，两者不能混淆。
+本地 dma_server 是DMA06历史环境维护版；dma_suite 是最新12任务维护版。
+upload/dma-suite-20261104-01 与封存包保留迁移前快照；服务器迁移适配过 runner 与模板，尚未取回完整镜像。
+旧 dma_server_test_01、dma_suite_test_01 等目录已移出正式工程，只用于历史追溯。
+不要将 verification/ 或仿真模型递归纳入综合。综合入口见[当前综合交接](synthesis-handoff-current.md)。
 
 ## DMA新增模块
 
@@ -105,9 +111,9 @@ VCD须由队友映射综合网表、检查覆盖并使用SRAM功耗模型；波�
 
 ## 给队友的下一步
 
-1. 当前可阅读DMA架构及源代码准备综合；选择DMA候选源码，不能继续默用旧目录。
+1. 从服务器正式 accelerator/rtl 选择DMA源码，按当前综合交接核对ASIC清单、库和约束。
 2. 12任务已完成并补齐截图可见指标；下一步取回服务器原始report.json和metrics.csv，保留编译/运行日志及波形。
-3. 再整理正式源码、测试程序、驱动/加载环境和报告目录，更新路径并验证；运行期间不移动文件。
+3. 正式目录迁移与3任务回归已完成，不重复迁移；取回原始报告后核对 DMA_CURRENT.json 历史状态。
 4. 本轮更新目标为1103576292pjhq-pixel/kwt的handoff/ffn1-accelerator分支；发布回执记录实际提交号。
 5. 继续完成ASIC综合/STA、面积、活动映射、功耗与单任务能耗，保持同一配置。
 

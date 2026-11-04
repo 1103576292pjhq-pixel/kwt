@@ -1,5 +1,7 @@
 # 服务器目录与仓库对应表
 
+> 历史快照：本文旧顶层及旧活动路径不再作为当前入口。请先读[当前状态](current-team-status.md)和[当前DMA综合交接](synthesis-handoff-current.md)。服务器迁移已完成，不重复执行。
+
 更新：2026-11-03。本表以用户终端/文件管理器截图和已有运行凭据为准。服务器完整源码盘点JSON尚未取回；仓库不是整个服务器或完整E203平台的逐字镜像。
 
 ## 从哪里进入
@@ -31,6 +33,8 @@ Desktop/
 | `real12_verify_01/kwt-real12-validation/fixtures/` | case1..12的X/W/bias/整数黄金/浮点参考及manifest | 当前真实数据测试复用，保留 |
 | `real_shared_case3_test_01/kwt-real-shared-case3-v2/` | 已通过的真实case3 CPU驱动、加载器和镜像 | 验证代码；测试加载mux不是生产综合模块 |
 | `real_shared_suite_test_01/kwt-real-shared-suite/` | 12组不复位连续验证程序 | 用户要求停止；最后仅确认前三组完成、第4组加载 |
+| `real_shared_timing_test_01/kwt-real-shared-timing/` | case3驱动、ICB加载器、计时探针及预编译镜像 | 单任务加载至写回测量已由截图确认通过，仿真工具不加入综合 |
+| `verification/real_shared_timing_01/` | 当前周期测量生成物、日志、报告及结果轨迹 | 截图确认5106213周期；原始report/log尚未直接取回 |
 | `shared_task_test_01/` | CPU人工数据的共享SRAM完整任务验证 | 历史功能证据和可复现源 |
 | `verification/` | `.f`输入、生成仿真top、日志、报告及运行数据 | 其中的生成测试top不综合；`.f`和证据保留 |
 | `verification/soc_compile_01/soc.f` | 原SoC仿真源码清单 | 是仿真入口资料；不是已确认的ASIC综合清单 |
