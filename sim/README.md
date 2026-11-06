@@ -14,3 +14,7 @@
 ## 已恢复的ASIC原始脚本
 
 [ASIC仿真、综合与功耗脚本](../deliveries/kwt1-accelerator-20261103/integration/asic_flow/README.md)：22份，来源为此前聊天代码块及本地保存文件，已做语法检查。服务器生成的RTL、TB、清单及Tcl文件仍未完整取回；该目录是原始脚本归档，不是完整服务器镜像。
+
+## 2026-11-07 已核对快照
+
+[9个参数加载、计时、运行及驱动文件](../deliveries/kwt1-accelerator-20261103/integration/asic_flow/verified-testenv/README.md)已通过服务器截图摘要核对（统一LF换行）。平台连接封装和ASIC TB尚未补齐，快照不作为独立运行入口。未增加E203源码。
