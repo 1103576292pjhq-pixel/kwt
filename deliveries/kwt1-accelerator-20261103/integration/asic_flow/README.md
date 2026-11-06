@@ -48,3 +48,7 @@
 ## 已与服务器截图哈希核对的生成文件
 
 新增 [verified-adapters](verified-adapters/README.md)：ITCM、DTCM封装及TCM配置检查模块，三个文件SHA256均与服务器截图一致。其余上述缺失项仍待核对；已有脚本及原源码路径未修改。
+
+## ROM与通用单元截图恢复进度
+
+已转录 [ROM接口与通用单元候选](screenshot-candidates/README.md)。尚待服务器有效代码摘要比对；未覆盖生产RTL、未改动已有文件清单。请勿与已核对的TCM适配文件混淆。
