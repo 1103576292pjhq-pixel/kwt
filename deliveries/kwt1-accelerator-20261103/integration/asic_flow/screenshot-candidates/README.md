@@ -5,6 +5,10 @@
 - sirv_mrom_top.v：ASIC ROM pending/accept握手、ROM1KX32接口及保留的FPGA分支。
 - GENERIC_RVT_SMIC.v：通用单元映射；时钟门控选择CLKLANAQV4_12TH40。
 
-**尚未通过服务器有效代码摘要核对，也未编译/功能验证。不要替换生产文件或加入现有编译清单。** 与verified-adapters的三个逐字节哈希匹配文件分开存放。
+**通用单元已通过去注释和空白文本核对；ROM仍未通过。两者均未在本地编译/功能验证。不要自动替换生产文件或加入现有编译清单。** 与verified-adapters的三个逐字节哈希匹配文件分开存放。
 
 provenance.json同时记录本地完整SHA256与去注释、去空白后的代码摘要。后者相同仅证明这种规范化后的文本相同，不证明原文件字节一致或硬件等价；Synopsys注释另按截图保留。
+
+## 服务器核对结果（2026-11-06）
+
+用户终端截图确认：GENERIC_RVT_SMIC.v 为 MATCH，sirv_mrom_top.v 为 DIFFERENT。前者仅确认去注释和空白后的文本一致，原字节与综合指令注释不由这个摘要证明；ROM候选仍有转录差异，禁止用于替换服务器原件。服务器文件未修改。

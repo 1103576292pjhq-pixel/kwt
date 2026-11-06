@@ -51,4 +51,4 @@
 
 ## ROM与通用单元截图恢复进度
 
-已转录 [ROM接口与通用单元候选](screenshot-candidates/README.md)。尚待服务器有效代码摘要比对；未覆盖生产RTL、未改动已有文件清单。请勿与已核对的TCM适配文件混淆。
+已转录 [ROM接口与通用单元候选](screenshot-candidates/README.md)。服务器已确认通用单元去注释和空白后的文本MATCH；ROM为DIFFERENT，仍待纠正转录。未覆盖生产RTL、未改动已有文件清单。请勿与已核对的TCM适配文件混淆。
