@@ -1,3 +1,5 @@
+> **历史记录提示（2026-11-06）**：本文保留原版本内容。当前ASIC ROMFIX状态以[最新交接入口](START_HERE.md)为准；服务器最新源码尚未同步，勿混用历史指标。
+
 # FFN1 DMA版交接（2026-11-04）
 
 **当前唯一服务器工程：** `/storage1/2026contest/server2/s2_21usr/Desktop/e203-integration/kwt-soc`。
