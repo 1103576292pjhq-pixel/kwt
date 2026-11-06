@@ -44,3 +44,7 @@
 - 生产test_env迁移后的完整源快照，以及外部宏模型/库。
 
 此前已交付的DMA源与加载环境仍在 [dma_accelerator](../e203/dma_accelerator/) 和 [dma_suite](../e203/dma_suite/)；不要把这些历史副本自动标为服务器最新配置。商业库、网表、波形未纳入此次恢复。
+
+## 已与服务器截图哈希核对的生成文件
+
+新增 [verified-adapters](verified-adapters/README.md)：ITCM、DTCM封装及TCM配置检查模块，三个文件SHA256均与服务器截图一致。其余上述缺失项仍待核对；已有脚本及原源码路径未修改。
