@@ -1,7 +1,7 @@
 # FFN1 ASIC 交接入口（2026-11-06）
 
 ## 先读这一段
-本目录是 FFN1 加速器服务器工作的交付，与仓库根目录的完整编码器工程分别管理。当前服务器实验包含 ASIC ROM 握手修正，**仓库源码尚未同步为该服务器快照**。本次更新的是状态与证据索引，不代表最新服务器源码已经上传或可直接复现。
+本目录是 FFN1 加速器服务器工作的交付；仓库根目录现为分类导航，早期完整编码器工程已从本分支根目录移除。当前服务器实验包含 ASIC ROM 握手修正，**仓库源码尚未同步为该服务器快照**。本次更新的是状态与证据索引，不代表最新服务器源码已经上传或可直接复现。
 以下数值来自运行截图转录，原始报告尚待一起归档；不能把旧 README 的 FPGA 数值与这些 ASIC 结果混用。
 
 阅读顺序：本文 → metrics-current.json → docs/official/20261031-loading-and-timing-qa.md → 实际运行 read.tcl、sources.f、input-sha256.json。历史资料仅对其自身版本有效。
@@ -49,8 +49,13 @@ E203 负责控制，DMA 负责共享 SRAM 与加速器之间搬运，计算由�
 | macro/blackbox面积 | 3646774.761719，已包含于total |
 | 非macro差值 | 272347.506024，同一库单位 |
 | setup / hold | 报告显示0.00ns MET / 0.02ns MET，显示精度不保证实际裕量 |
-| 首任务功耗估计 | 约40.9mW，尚非最终12任务功耗 |
+| 12任务平均SoC功耗估算 | 40.858333 mW |
+| 平均每任务能耗估算 | 0.150470331 mJ |
+| 各任务功耗估算范围 | 40.8～40.9 mW |
+| 功耗批处理状态 | 12/12完成；TWELVE_TASK_ESTIMATES_READY_NOT_SIGNOFF，尚未最终确认 |
 不能把面积数值直接宣称为mm²；最新各模块面积尚未冻结。旧候选分项面积不代表ROMFIX版本。
+
+功耗结果来自最新终端截图，[逐任务数据与敏感性记录](verification/asic-power12-estimate-20261106/screenshot-receipt.json)已归档为转录数据，服务器原始result.json尚未下载。首任务2765个默认活动网络的两种敏感性场景得到40.4mW和49.8mW；仅覆盖首任务列出的网络，不能当作严格上下限或12任务范围。终端单项结果有舍入，平均能耗直接采用程序打印值。
 
 ## 改动范围
 生产RTL和队友 Desktop/kwt_dc/ 保持保护。本轮修正位于自己的 dc 实验副本：
@@ -64,13 +69,14 @@ E203 负责控制，DMA 负责共享 SRAM 与加速器之间搬运，计算由�
 - 生产：`e203-integration/kwt-soc/`；其下 e203/、accelerator/rtl/、test_env/、共享SRAM与fixture子目录。
 - 功能：`dc/runs/asic-rom-handshake-zsdiy719/`：suite12-report.json、case01..case12/audit-report.json、sources.f、sim/sirv_mrom_top.v。
 - 综合：`dc/runs/soc-romfix-synth-jlkfngx9/`：elab/read.tcl、synth/compile.tcl、constraints.sdc、area.rpt、timing_setup.rpt、timing_hold.rpt、constraints_precise.rpt、映射网表及input-sha256.json。
+- 最新12任务功耗估算：`dc/runs/asic-power12-estimate-7rjobfcv/result.json`，12/12已完成，非最终验收。
 - 功耗基础：`dc/runs/power-asic-romfix-task01-ecei0biq/`：power.tcl、power_total.rpt、switching_activity.rpt、units.rpt。
 - SRAM Q补充：`dc/runs/asic-sram-output-activity-1i3phlqa/`。
 最新read.tcl仍可依赖更早dc/runs中的适配文件，不能仅拷贝最新run目录。商业库路径记录在依赖清单中，不随仓库发布。
 
 ## 尚未完成，下一步
-1. 从服务器只读导出实际文件、脚本、依赖闭包与原始报告，校验SHA后同步本地和此仓库。
-2. 完成12任务相同计时窗口的SoC功耗及平均能耗：sum(P_i*T_i)/12。已准备批处理脚本不等于已运行。
+1. 按当前交付范围从服务器只读导出RTL、参数加载/仿真环境及ASIC配置并校验SHA；综合资料不纳入本次源码同步。结果摘要在此维护，原始功耗报告待核对。
+2. 12任务SoC功耗及平均能耗估算已完成（平均能耗口径sum(P_i*T_i)/12）；下一步核对原始报告、活动覆盖及默认活动影响，完成最终确认，无需因归档缺失重复跑已完成批处理。
 3. 首任务SRAM输出活动补充后仍有默认活动及X；默认存储器驱动网络约65.08%。已识别有效读采样点未见X，不代表全部活动覆盖或门级等价通过；不能强制X为0。
 4. 检查综合前后功能一致性，解决或说明 kwt_bus_clk 的min-cap违例（要求0.0005pF、实际0）。
 5. 确认面积单位、最新分项面积与加速器+接口+内部SRAM≤2.25mm²口径；E203/共享SRAM/复用互连另列。
